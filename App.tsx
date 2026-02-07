@@ -69,6 +69,13 @@ const AppRoutes: React.FC = () => {
     setIsLoggedIn(true);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    sessionStorage.removeItem('hasSeenFamilyPrayerPopup');
+    sessionStorage.removeItem('hasSeenWelcome');
+    setIsLoggedIn(false);
+  };
+
   if (!hasSeenWelcome) {
     return <Welcome onFinish={() => setHasSeenWelcome(true)} />;
   }
@@ -84,7 +91,7 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
-      <Route element={<MainLayout />}>
+      <Route element={<MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/mushaf" element={<Mushaf />} />
         <Route path="/surah/:number" element={<SurahDetail />} />
@@ -104,7 +111,12 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-const MainLayout: React.FC = () => {
+interface MainLayoutProps {
+    isLoggedIn: boolean;
+    handleLogout: () => void;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => {
   const { theme } = useTheme();
   const { isReadingMode, zoom } = useUI();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -134,6 +146,8 @@ const MainLayout: React.FC = () => {
                 onSettingsClick={() => setSettingsOpen(!isSettingsOpen)}
                 isSettingsOpen={isSettingsOpen}
                 setSettingsOpen={setSettingsOpen}
+                isLoggedIn={isLoggedIn}
+                handleLogout={handleLogout}
              />}
             <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-y-auto">
               <Outlet />
@@ -155,9 +169,11 @@ interface HeaderProps {
   onSettingsClick: () => void;
   isSettingsOpen: boolean;
   setSettingsOpen: (isOpen: boolean) => void;
+  isLoggedIn: boolean;
+  handleLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSettingsOpen, setSettingsOpen }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSettingsOpen, setSettingsOpen, isLoggedIn, handleLogout }) => {
     return (
         <header className="sticky top-0 bg-soft-white/80 dark:bg-dark-blue/80 backdrop-blur-sm z-20 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-4">
@@ -182,7 +198,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
                     <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Buka pengaturan">
                         <Cog className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                     </button>
-                    <SettingsDropdown isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} />
+                    <SettingsDropdown isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
                 </div>
             </div>
         </header>
