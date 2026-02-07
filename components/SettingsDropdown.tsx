@@ -3,14 +3,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUI } from '../contexts/UIContext';
 import { useTranslation, languages } from '../contexts/LanguageContext';
-import { Sun, Moon, ZoomIn, ZoomOut, Book, Languages, Download, X } from 'lucide-react';
+import { Sun, Moon, ZoomIn, ZoomOut, Book, Languages, Download, X, LogOut } from 'lucide-react';
 
 interface SettingsDropdownProps {
     isOpen: boolean;
     onClose: () => void;
+    isLoggedIn: boolean;
+    handleLogout: () => void;
 }
 
-const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ isOpen, onClose }) => {
+const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
     const { theme, toggleTheme } = useTheme();
     const { increaseZoom, decreaseZoom, toggleReadingMode, isReadingMode } = useUI();
     const { changeLanguage, currentLanguage, isLoading, t } = useTranslation();
@@ -119,6 +121,18 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ isOpen, onClose }) 
                         </button>
                     </div>
                 </div>
+
+                 {isLoggedIn && (
+                    <>
+                        <div className="border-t border-gray-200 dark:border-gray-700"></div>
+                        <button 
+                            onClick={handleLogout} 
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-red-600 bg-red-500/10 rounded-lg hover:bg-red-500/20 transition"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );
