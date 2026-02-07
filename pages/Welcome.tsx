@@ -11,10 +11,18 @@ const Welcome: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
 
     useEffect(() => {
         sessionStorage.setItem('hasSeenWelcome', 'true');
+        
+        // Calculate total typing time
+        const typingSpeed = 100; // ms per character
+        const bufferTime = 500; // ms after typing finishes
+        const totalChars = texts.join("").length;
+        const totalNewlines = texts.length - 1;
+        const totalTypingDuration = (totalChars + totalNewlines) * typingSpeed + bufferTime;
+
         const navigateTimer = setTimeout(() => {
             onFinish();
             navigate('/login');
-        }, 6000);
+        }, totalTypingDuration);
 
         return () => clearTimeout(navigateTimer);
     }, [navigate, onFinish]);
@@ -27,8 +35,10 @@ const Welcome: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
                 setCurrentText(prev => prev + texts[textIndex][charIndex]);
                 setCharIndex(prev => prev + 1);
             } else {
-                // Move to next line
-                setCurrentText(prev => prev + '\n');
+                // Move to next line if not the last line
+                if (textIndex < texts.length -1) {
+                    setCurrentText(prev => prev + '\n');
+                }
                 setTextIndex(prev => prev + 1);
                 setCharIndex(0);
             }

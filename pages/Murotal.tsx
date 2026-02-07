@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchAllSurahs } from '../services/quranApi';
 import { Surah } from '../types';
 import { Play, Pause, SkipBack, SkipForward, Loader2 } from 'lucide-react';
@@ -46,7 +46,7 @@ const Murotal: React.FC = () => {
     loadSurahs();
   }, []);
   
-  const changeSurah = (direction: 'next' | 'prev') => {
+  const changeSurah = useCallback((direction: 'next' | 'prev') => {
       if (!selectedSurah || surahs.length === 0) return;
       const currentIndex = surahs.findIndex(s => s.number === selectedSurah.number);
       let newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
@@ -54,50 +54,69 @@ const Murotal: React.FC = () => {
       if (newIndex >= 0 && newIndex < surahs.length) {
           setSelectedSurah(surahs[newIndex]);
       }
-  };
+  }, [selectedSurah, surahs]);
 
+  // Effect to handle audio loading and playback
   useEffect(() => {
+    // Cleanup previous audio instance
     if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.src = '';
         audioRef.current = null;
     }
+    
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
 
     if (selectedSurah && selectedQari) {
       setIsAudioLoading(true);
       setError(null);
       const audioUrl = `https://cdn.islamic.network/quran/audio/128/${selectedQari}/${selectedSurah.number}.mp3`;
       const newAudio = new Audio(audioUrl);
-      
-      const wasPlaying = isPlaying;
+      audioRef.current = newAudio;
 
-      newAudio.onplay = () => setIsPlaying(true);
-      newAudio.onpause = () => setIsPlaying(false);
-      newAudio.onended = () => {
+      const handlePlay = () => setIsPlaying(true);
+      const handlePause = () => setIsPlaying(false);
+      const handleEnded = () => {
           setIsPlaying(false);
           if (autoplay) {
               changeSurah('next');
           }
       };
-      newAudio.onloadedmetadata = () => setDuration(newAudio.duration);
-      newAudio.ontimeupdate = () => setCurrentTime(newAudio.currentTime);
-      newAudio.oncanplaythrough = () => {
-          setIsAudioLoading(false);
-          if (wasPlaying || (autoplay && selectedSurah.number !== surahs[0].number)) {
-              newAudio.play().catch(e => console.error("Error auto-playing audio:", e));
-          }
+      const handleLoadedMetadata = () => setDuration(newAudio.duration);
+      const handleTimeUpdate = () => setCurrentTime(newAudio.currentTime);
+      const handleCanPlay = () => {
+        setIsAudioLoading(false);
+        if(autoplay) { // Autoplay logic
+            newAudio.play().catch(e => console.error("Error auto-playing audio:", e));
+        }
       };
-      newAudio.onerror = () => {
+      const handleError = () => {
         setIsAudioLoading(false);
         setError("Gagal memuat audio. Coba ganti qari atau surah lain.");
-      }
+      };
 
-      audioRef.current = newAudio;
+      newAudio.addEventListener('play', handlePlay);
+      newAudio.addEventListener('pause', handlePause);
+      newAudio.addEventListener('ended', handleEnded);
+      newAudio.addEventListener('loadedmetadata', handleLoadedMetadata);
+      newAudio.addEventListener('timeupdate', handleTimeUpdate);
+      newAudio.addEventListener('canplay', handleCanPlay);
+      newAudio.addEventListener('error', handleError);
+
+      // Cleanup function to remove event listeners
+      return () => {
+        newAudio.removeEventListener('play', handlePlay);
+        newAudio.removeEventListener('pause', handlePause);
+        newAudio.removeEventListener('ended', handleEnded);
+        newAudio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        newAudio.removeEventListener('timeupdate', handleTimeUpdate);
+        newAudio.removeEventListener('canplay', handleCanPlay);
+        newAudio.removeEventListener('error', handleError);
+      };
     }
-    
-    return () => {
-        audioRef.current?.pause();
-    }
-  }, [selectedSurah, selectedQari]);
+  }, [selectedSurah, selectedQari, autoplay, changeSurah, surahs]);
 
   const togglePlayPause = () => {
     if (audioRef.current) {
@@ -139,13 +158,13 @@ const Murotal: React.FC = () => {
       <div className="bg-white dark:bg-dark-blue-card p-6 rounded-2xl shadow-md max-w-xl mx-auto space-y-4">
         <div>
           <label htmlFor="qari-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('selectQari')}</label>
-          <select id="qari-select" value={selectedQari} onChange={e => setSelectedQari(e.target.value)} className="w-full p-3 bg-gray-100 dark:bg-dark-blue border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-dark">
+          <select id="qari-select" value={selectedQari} onChange={e => {setAutoplay(isPlaying); setSelectedQari(e.target.value);}} className="w-full p-3 bg-gray-100 dark:bg-dark-blue border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-dark">
             {qaris.map(qari => <option key={qari.id} value={qari.id}>{qari.name}</option>)}
           </select>
         </div>
         <div>
           <label htmlFor="surah-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('selectSurah')}</label>
-          <select id="surah-select" value={selectedSurah?.number || ''} onChange={e => setSelectedSurah(surahs.find(s => s.number === parseInt(e.target.value)) || null)} className="w-full p-3 bg-gray-100 dark:bg-dark-blue border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-dark">
+          <select id="surah-select" value={selectedSurah?.number || ''} onChange={e => {setAutoplay(isPlaying); setSelectedSurah(surahs.find(s => s.number === parseInt(e.target.value)) || null);}} className="w-full p-3 bg-gray-100 dark:bg-dark-blue border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-dark">
             {surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName} ({surah.name})</option>)}
           </select>
         </div>
@@ -173,13 +192,13 @@ const Murotal: React.FC = () => {
         </div>
 
         <div className="flex items-center justify-center space-x-6">
-            <button onClick={() => changeSurah('prev')} disabled={currentSurahIndex <= 0} className="p-2 text-gray-500 hover:text-emerald-dark disabled:opacity-30 disabled:cursor-not-allowed transition">
+            <button onClick={() => {setAutoplay(isPlaying); changeSurah('prev');}} disabled={currentSurahIndex <= 0} className="p-2 text-gray-500 hover:text-emerald-dark disabled:opacity-30 disabled:cursor-not-allowed transition">
                 <SkipBack />
             </button>
             <button onClick={togglePlayPause} disabled={isAudioLoading || !!error} className="p-4 bg-emerald-dark text-white rounded-full shadow-lg hover:scale-110 active:scale-100 transition-transform disabled:bg-emerald-dark/50 disabled:cursor-wait">
                 {isAudioLoading ? <Loader2 className="animate-spin" size={28}/> : (isPlaying ? <Pause size={28}/> : <Play size={28}/>)}
             </button>
-            <button onClick={() => changeSurah('next')} disabled={currentSurahIndex === -1 || currentSurahIndex >= surahs.length - 1} className="p-2 text-gray-500 hover:text-emerald-dark disabled:opacity-30 disabled:cursor-not-allowed transition">
+            <button onClick={() => {setAutoplay(isPlaying); changeSurah('next');}} disabled={currentSurahIndex === -1 || currentSurahIndex >= surahs.length - 1} className="p-2 text-gray-500 hover:text-emerald-dark disabled:opacity-30 disabled:cursor-not-allowed transition">
                 <SkipForward />
             </button>
         </div>

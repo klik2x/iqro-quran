@@ -65,6 +65,8 @@ const Tafsir: React.FC = () => {
         loadTafsir();
     }, [selectedSurah]);
 
+    const selectedSurahName = surahs.find(s => s.number === selectedSurah)?.englishName || '';
+
     return (
         <div className="space-y-6">
             <h1 className="text-3xl font-bold text-emerald-dark dark:text-white">{t('tafsirTitle')}</h1>
@@ -81,19 +83,20 @@ const Tafsir: React.FC = () => {
                     {surahListLoading ? <option>Memuat surah...</option> : surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName}</option>)}
                 </select>
             </div>
-            <div className="space-y-4" aria-live="polite" aria-busy={loading}>
-            {loading ? (
-                <LoadingSpinner />
-            ) : error ? (
-                <ErrorMessage message={error} />
-            ) : (
-                tafsir.map(item => (
-                    <div key={item.ayah} className="bg-white dark:bg-dark-blue-card p-4 rounded-xl shadow-sm">
-                        <span className="text-sm font-bold bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white px-3 py-1 rounded-full">Ayat {item.ayah}</span>
-                        <p className="mt-4 text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">{item.text}</p>
-                    </div>
-                ))
-            )}
+            <div className="space-y-4" role="region" aria-live="polite" aria-busy={loading}>
+                <h2 className="sr-only">Tafsir untuk Surah {selectedSurahName}</h2>
+                {loading ? (
+                    <LoadingSpinner />
+                ) : error ? (
+                    <ErrorMessage message={error} />
+                ) : (
+                    tafsir.map(item => (
+                        <div key={item.ayah} className="bg-white dark:bg-dark-blue-card p-4 rounded-xl shadow-sm">
+                            <span className="text-sm font-bold bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white px-3 py-1 rounded-full">Ayat {item.ayah}</span>
+                            <p className="mt-4 text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">{item.text}</p>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );
