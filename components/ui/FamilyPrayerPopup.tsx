@@ -31,6 +31,13 @@ const FamilyPrayerPopup: React.FC<FamilyPrayerPopupProps> = ({ onClose }) => {
                     <X size={20} />
                 </button>
                 <div className="text-center space-y-4">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-3">
+                        <p className="italic">
+                            “Barang siapa yang membaca satu huruf dari kitab Allah, maka baginya satu kebaikan. Satu kebaikan itu dibalas dengan sepuluh kali lipatnya... aliif itu satu huruf, laam itu satu huruf, dan miim itu satu huruf.”
+                        </p>
+                        <p className="font-semibold mt-1">(HR. Tirmidzi, no. 2910)</p>
+                    </div>
+
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                        "{t('popupIntro')}"
                     </p>

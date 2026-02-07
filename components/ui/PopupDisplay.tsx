@@ -2,14 +2,15 @@
 import React from 'react';
 import { usePopup } from '../../contexts/PopupContext';
 import { useTranslation } from '../../contexts/LanguageContext';
-import { Users } from 'lucide-react';
+import { Users, Edit2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const PopupDisplay: React.FC = () => {
     const { names } = usePopup();
     const { t } = useTranslation();
 
     return (
-        <div className="bg-white dark:bg-dark-blue-card p-6 rounded-2xl shadow-md">
+        <div className="bg-white dark:bg-dark-blue-card p-6 rounded-2xl shadow-md relative">
             <div className="flex items-start gap-3">
                 <Users className="h-6 w-6 text-emerald-dark dark:text-emerald-light flex-shrink-0 mt-1" />
                 <div>
@@ -30,6 +31,13 @@ const PopupDisplay: React.FC = () => {
                     )}
                 </div>
             </div>
+             <Link 
+                to="/doa-keluarga" 
+                className="absolute bottom-4 right-4 bg-emerald-dark text-white p-3 rounded-full shadow-lg hover:bg-opacity-80 active:scale-90 transition-transform"
+                aria-label="Ubah daftar nama doa keluarga"
+            >
+                <Edit2 size={20} />
+            </Link>
         </div>
     );
 };
