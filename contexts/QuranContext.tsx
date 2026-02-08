@@ -1,5 +1,5 @@
-
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+// Pastikan file quranApi.ts benar-benar mengekspor fungsi ini
 import { fetchTranslationEditions } from '../services/quranApi';
 
 interface QuranContextType {
@@ -23,10 +23,15 @@ export const QuranProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchTranslationEditions();
-        setEditions(data);
+        // Tambahkan pengecekan apakah fungsi tersedia sebelum dipanggil
+        if (typeof fetchTranslationEditions === 'function') {
+          const data = await fetchTranslationEditions();
+          setEditions(Array.isArray(data) ? data : []);
+        } else {
+          console.warn('fetchTranslationEditions is not a function. Check your quranApi.ts');
+        }
       } catch (e) {
-        console.error(e);
+        console.error('Failed to load editions:', e);
       }
     };
     load();
@@ -49,6 +54,8 @@ export const QuranProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
 export const useQuran = () => {
   const context = useContext(QuranContext);
-  if (!context) throw new Error('useQuran must be used within QuranProvider');
+  if (!context) {
+    throw new Error('useQuran must be used within a QuranProvider');
+  }
   return context;
 };
