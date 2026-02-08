@@ -1,6 +1,23 @@
 {
   "name": "IQRO Quran Digital V.2",
-  "description": "An accessible and feature-rich digital Quran application for learning and reading. It includes features like interactive Iqro lessons with audio, Murotal player, Tafsir, prayer collection, and voice recording, all designed with a modern, responsive, and inclusive user interface.",
+  "short_name": "IQRO Quran",
+  "description": "An accessible and feature-rich digital Quran application for learning and reading.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFBF7",
+  "theme_color": "#036666",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/klik2x/iqro-quran/8aa50dcb5f68c90f2d697a8ca4fea6f26cff9a3e/assets/Alif-Lam-Mim.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/klik2x/iqro-quran/8aa50dcb5f68c90f2d697a8ca4fea6f26cff9a3e/assets/Alif-Lam-Mim.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
   "requestFramePermissions": [
     "microphone"
   ]

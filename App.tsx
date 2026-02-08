@@ -1,17 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
-import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility } from 'lucide-react';
+import { HomeIcon, BookOpen, Mic, Headphones, BookHeart, Menu, X, Cog, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Download, BookText } from 'lucide-react';
 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 import { UIProvider, useUI } from './contexts/UIContext';
 import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
 import { PopupProvider } from './contexts/PopupContext';
+import { QuranProvider } from './contexts/QuranContext';
 
 import Dashboard from './pages/Dashboard';
 import Mushaf from './pages/Mushaf';
 import SurahDetail from './pages/SurahDetail';
+import JuzDetail from './pages/JuzDetail';
+import PageDetail from './pages/PageDetail';
 import Iqro from './pages/Iqro';
 import Rekam from './pages/Rekam';
 import Murotal from './pages/Murotal';
@@ -27,15 +30,10 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import FAQ from './pages/FAQ';
 import PopupEntry from './pages/PopupEntry';
-import FamilyPrayerPopup from './components/ui/FamilyPrayerPopup';
 
-// Custom Emoji Icon component for 🗣️
 const SpeakingHeadIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <span role="img" aria-label="Belajar Iqro" className={className}>
-        🗣️
-    </span>
+    <span role="img" aria-label="Belajar Iqro" className={className}>🗣️</span>
 );
-
 
 const App: React.FC = () => {
   return (
@@ -43,11 +41,13 @@ const App: React.FC = () => {
       <LanguageProvider>
         <UIProvider>
           <BookmarkProvider>
-            <PopupProvider>
-              <HashRouter>
-                <AppRoutes />
-              </HashRouter>
-            </PopupProvider>
+            <QuranProvider>
+              <PopupProvider>
+                <HashRouter>
+                  <AppRoutes />
+                </HashRouter>
+              </PopupProvider>
+            </QuranProvider>
           </BookmarkProvider>
         </UIProvider>
       </LanguageProvider>
@@ -60,30 +60,15 @@ const AppRoutes: React.FC = () => {
   const [hasSeenWelcome, setHasSeenWelcome] = useState(sessionStorage.getItem('hasSeenWelcome') === 'true');
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
+    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
   }, []);
 
-  const handleLogin = () => {
-    localStorage.setItem('isLoggedIn', 'true');
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    sessionStorage.removeItem('hasSeenFamilyPrayerPopup');
-    sessionStorage.removeItem('hasSeenWelcome');
-    setIsLoggedIn(false);
-  };
-
-  if (!hasSeenWelcome) {
-    return <Welcome onFinish={() => setHasSeenWelcome(true)} />;
-  }
+  if (!hasSeenWelcome) return <Welcome onFinish={() => setHasSeenWelcome(true)} />;
 
   if (!isLoggedIn) {
       return (
           <Routes>
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/login" element={<Login onLogin={() => { localStorage.setItem('isLoggedIn', 'true'); setIsLoggedIn(true); }} />} />
               <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
       );
@@ -91,10 +76,12 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
-      <Route element={<MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} />}>
+      <Route element={<MainLayout isLoggedIn={isLoggedIn} handleLogout={() => { localStorage.removeItem('isLoggedIn'); setIsLoggedIn(false); }} />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/mushaf" element={<Mushaf />} />
         <Route path="/surah/:number" element={<SurahDetail />} />
+        <Route path="/juz/:number" element={<JuzDetail />} />
+        <Route path="/page/:number" element={<PageDetail />} />
         <Route path="/iqro" element={<Iqro />} />
         <Route path="/murotal" element={<Murotal />} />
         <Route path="/tafsir" element={<Tafsir />} />
@@ -111,45 +98,20 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-interface MainLayoutProps {
-    isLoggedIn: boolean;
-    handleLogout: () => void;
-}
-
-const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => {
+const MainLayout: React.FC<{isLoggedIn: boolean, handleLogout: () => void}> = ({ isLoggedIn, handleLogout }) => {
   const { theme } = useTheme();
   const { isReadingMode, zoom } = useUI();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
-  const [showFamilyPrayerPopup, setShowFamilyPrayerPopup] = useState(false);
-
-  useEffect(() => {
-    const hasSeenPopup = sessionStorage.getItem('hasSeenFamilyPrayerPopup');
-    if (!hasSeenPopup) {
-      const timer = setTimeout(() => {
-        setShowFamilyPrayerPopup(true);
-        sessionStorage.setItem('hasSeenFamilyPrayerPopup', 'true');
-      }, 1500); // 1.5 second delay
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
 
   return (
-    <div className={`${theme} font-sans`} style={{ zoom: zoom }}>
+    <div className={`${theme} font-sans`} style={{ zoom }}>
       <div className="bg-soft-white dark:bg-dark-blue text-gray-800 dark:text-gray-200 min-h-screen">
         <div className="flex">
           {!isReadingMode && <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />}
           <div className={`flex-1 flex flex-col transition-all duration-300 ${isReadingMode ? 'md:ml-0' : 'md:ml-64'}`}>
-             {!isReadingMode && <Header 
-                onMenuClick={() => setSidebarOpen(!isSidebarOpen)} 
-                onSettingsClick={() => setSettingsOpen(!isSettingsOpen)}
-                isSettingsOpen={isSettingsOpen}
-                setSettingsOpen={setSettingsOpen}
-                isLoggedIn={isLoggedIn}
-                handleLogout={handleLogout}
-             />}
-            <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-y-auto">
+             {!isReadingMode && <Header onMenuClick={() => setSidebarOpen(true)} onSettingsClick={() => setSettingsOpen(!isSettingsOpen)} isSettingsOpen={isSettingsOpen} setSettingsOpen={setSettingsOpen} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />}
+            <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6">
               <Outlet />
             </main>
           </div>
@@ -157,47 +119,26 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
         {!isReadingMode && <BottomNav />}
         <ScrollButtons />
         {isReadingMode && <ReadingModeExitButton />}
-        {showFamilyPrayerPopup && <FamilyPrayerPopup onClose={() => setShowFamilyPrayerPopup(false)} />}
       </div>
     </div>
   );
 };
 
-
-interface HeaderProps {
-  onMenuClick: () => void;
-  onSettingsClick: () => void;
-  isSettingsOpen: boolean;
-  setSettingsOpen: (isOpen: boolean) => void;
-  isLoggedIn: boolean;
-  handleLogout: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSettingsOpen, setSettingsOpen, isLoggedIn, handleLogout }) => {
+const Header: React.FC<any> = ({ onMenuClick, onSettingsClick, isSettingsOpen, setSettingsOpen, isLoggedIn, handleLogout }) => {
     return (
-        <header className="sticky top-0 bg-soft-white/80 dark:bg-dark-blue/80 backdrop-blur-sm z-20 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <header className="sticky top-0 bg-white/80 dark:bg-dark-blue/80 backdrop-blur-md z-30 flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800 shadow-sm">
             <div className="flex items-center space-x-4">
-                <button onClick={onMenuClick} className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Buka menu">
-                    <Menu className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
-                </button>
-                 <div className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-emerald-dark dark:text-emerald-light">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                    </svg>
-                    <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO Quran</h1>
-                </div>
-            </div>
-            <div className="flex items-center gap-1">
-                <button className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Pengaturan Aksesibilitas" onClick={() => alert('Fitur aksesibilitas akan datang!')}>
-                    <Accessibility className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
-                </button>
-                <Link to="/" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Ke halaman utama">
-                    <HomeIcon className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
+                <button onClick={onMenuClick} className="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Menu size={20}/></button>
+                <Link to="/" className="flex items-center gap-2">
+                    <BookOpen className="text-emerald-dark dark:text-emerald-light" />
+                    <h1 className="text-lg font-bold text-emerald-dark dark:text-emerald-light">IQRO Quran</h1>
                 </Link>
+            </div>
+            <div className="flex items-center gap-2">
+                <button className="hidden sm:block p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" title="Instal Aplikasi"><Download size={20}/></button>
+                <Link to="/" className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><HomeIcon size={20}/></Link>
                 <div className="relative">
-                    <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Buka pengaturan">
-                        <Cog className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
-                    </button>
+                    <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Cog size={20}/></button>
                     <SettingsDropdown isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
                 </div>
             </div>
@@ -205,78 +146,65 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
     );
 };
 
-const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boolean) => void }> = ({ isSidebarOpen, setSidebarOpen }) => {
+const Sidebar: React.FC<any> = ({ isSidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
     const { t } = useTranslation();
-    const navItems = [
+    
+    const mainNav = [
         { path: '/', icon: HomeIcon, label: t('dashboard') },
         { path: '/mushaf', icon: BookOpen, label: t('mushaf') },
         { path: '/iqro', icon: SpeakingHeadIcon, label: t('learnIqro') },
         { path: '/murotal', icon: Headphones, label: t('murotal') },
-        { path: '/tafsir', icon: BookOpen, label: t('tafsir') },
+        { path: '/tafsir', icon: BookText, label: t('tafsir') },
         { path: '/doa', icon: BookHeart, label: t('prayers') },
         { path: '/rekam', icon: Mic, label: t('record') },
         { path: '/doa-keluarga', icon: Users, label: t('familyPrayer') },
     ];
 
-    const staticItems = [
+    const supportNav = [
         { path: '/bookmarks', icon: Bookmark, label: t('bookmark') },
-        { type: 'link', href: 'mailto:hijr.time+qoriquran@gmail.com', icon: Mail, label: t('contactUs') },
-        { type: 'link', href: 'https://sociabuzz.com/syukrankatsiron/tribe', icon: Heart, label: t('supportUs') },
+        { path: '#', icon: Mail, label: t('contactUs') },
+        { path: '#', icon: Heart, label: t('supportUs') },
         { path: '/privacy', icon: ShieldCheck, label: t('privacyPolicy') },
         { path: '/terms', icon: FileText, label: t('termsOfService') },
         { path: '/faq', icon: HelpCircle, label: t('faq') },
     ];
 
     return (
-        <aside className={`fixed top-0 left-0 h-full bg-white dark:bg-dark-blue-card w-64 z-40 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700 flex flex-col`}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <aside className={`fixed inset-y-0 left-0 w-64 bg-white dark:bg-dark-blue-card border-r border-gray-100 dark:border-gray-800 z-40 transform transition-transform duration-300 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+            <div className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-emerald-dark dark:text-emerald-light">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                    </svg>
-                    <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO</h1>
+                    <BookOpen className="text-emerald-dark" />
+                    <h1 className="text-2xl font-bold text-emerald-dark">IQRO</h1>
                 </div>
-                <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2">
-                    <X className="h-6 w-6" />
-                </button>
+                <button onClick={() => setSidebarOpen(false)} className="md:hidden"><X/></button>
             </div>
-            <nav className="p-4 flex-grow overflow-y-auto">
-              <ul>
-                  {navItems.map(item => (
-                      <li key={item.path}>
-                          <Link to={item.path} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                              { item.label === t('learnIqro')
-                                ? <item.icon className="w-5 text-center text-xl" />
-                                : <item.icon className="h-5 w-5" />
-                              }
-                              <span className="font-medium">{item.label}</span>
-                          </Link>
-                      </li>
-                  ))}
-              </ul>
-              <hr className="my-4 border-gray-200 dark:border-gray-700" />
-               <ul>
-                  {staticItems.map(item => (
-                      <li key={item.label}>
-                        {item.type === 'link' ? (
-                            <a href={item.href} target={item.href.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer" className="flex items-center space-x-3 px-3 py-3 my-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                               <item.icon className="h-5 w-5" />
-                               <span className="font-medium">{item.label}</span>
-                            </a>
-                        ) : (
-                          <Link to={item.path!} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                              <item.icon className="h-5 w-5" />
-                              <span className="font-medium">{item.label}</span>
-                          </Link>
-                        )}
-                      </li>
-                  ))}
-              </ul>
-            </nav>
-             <div className="text-center text-xs text-gray-400 p-4 border-t border-gray-200 dark:border-gray-700">
-                <p className="mb-1 font-mono">System V.2.0</p>
-                <p>Te_eR™ Inovative @2026</p>
+            
+            <div className="flex-1 overflow-y-auto px-4 space-y-6 pb-6">
+                <nav className="space-y-1">
+                    {mainNav.map(item => (
+                        <Link key={item.path} to={item.path} onClick={() => setSidebarOpen(false)} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === item.path ? 'bg-emerald-dark/10 text-emerald-dark' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+                            <item.icon size={18} className={location.pathname === item.path ? 'text-emerald-dark' : ''}/> 
+                            <span className="font-medium text-sm">{item.label}</span>
+                        </Link>
+                    ))}
+                </nav>
+
+                <div className="h-px bg-gray-100 dark:bg-gray-800 mx-4"></div>
+
+                <nav className="space-y-1">
+                    {supportNav.map(item => (
+                        <Link key={item.label} to={item.path} onClick={() => setSidebarOpen(false)} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === item.path ? 'bg-emerald-dark/10 text-emerald-dark' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+                            <item.icon size={18}/> 
+                            <span className="font-medium text-sm">{item.label}</span>
+                        </Link>
+                    ))}
+                </nav>
+            </div>
+
+            <div className="p-6 border-t border-gray-100 dark:border-gray-800 text-center space-y-1">
+                <p className="text-[10px] text-gray-400 font-medium">System V.2.0</p>
+                <p className="text-[10px] text-gray-400">Te_eR™ Inovative @2026</p>
             </div>
         </aside>
     );
@@ -284,34 +212,28 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
 
 const BottomNav: React.FC = () => {
     const location = useLocation();
-    const { t } = useTranslation();
     const navItems = [
         { path: '/iqro', icon: SpeakingHeadIcon, label: 'Iqro' },
-        { path: '/tafsir', icon: BookHeart, label: 'Tafsir' },
-        { path: '/mushaf', icon: BookOpen, label: 'Mushaf' },
-        { path: '/murotal', icon: Headphones, label: 'Audio' },
-        { path: '/rekam', icon: Mic, label: 'Rekam' },
+        { path: '/tafsir', icon: BookText, label: 'Tafsir' },
+        { path: '/mushaf', icon: BookOpen, label: 'Mushaf', isLarge: true },
+        { path: '/murotal', icon: Headphones, label: 'Murotal' },
+        { path: '/rekam', icon: Mic, label: 'Rekam' }
     ];
-    
+
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-dark-blue-card/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 md:hidden z-30">
-            <div className="flex justify-around items-center h-16">
-                {navItems.map(item => (
-                    <Link 
-                        to={item.path} 
-                        key={item.path} 
-                        className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-all duration-200 ${location.pathname === item.path ? 'text-emerald-dark dark:text-gold-light' : 'text-gray-500 dark:text-gray-400'} ${item.path === '/mushaf' ? 'transform -translate-y-3' : ''}`}
-                    >
-                        <div className={`flex items-center justify-center rounded-full transition-all duration-200 ${item.path === '/mushaf' ? 'bg-emerald-dark dark:bg-gold-light p-4 -mt-6 shadow-lg' : 'p-2'}`}>
-                          { item.label === 'Iqro'
-                            ? <item.icon className={`${item.path === '/mushaf' ? 'text-3xl' : 'text-2xl'}`} />
-                            : <item.icon className={`${item.path === '/mushaf' ? 'h-8 w-8 text-white dark:text-emerald-dark' : 'h-6 w-6'}`} />
-                          }
-                        </div>
-                        <span className={`text-[10px] mt-1 ${item.path === '/mushaf' ? 'font-semibold text-emerald-dark dark:text-gold-light' : ''}`}>{item.label}</span>
-                    </Link>
-                ))}
-            </div>
+        <nav className="fixed bottom-0 inset-x-0 bg-white/95 dark:bg-dark-blue-card/95 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 flex justify-around items-center p-2 md:hidden z-30">
+            {navItems.map((item, index) => (
+                <Link 
+                    key={index} 
+                    to={item.path} 
+                    className={`flex flex-col items-center justify-center transition-all ${
+                        item.isLarge ? 'relative -top-4 bg-emerald-dark text-white p-4 rounded-full shadow-xl ring-4 ring-soft-white dark:ring-dark-blue' : 'p-2'
+                    } ${location.pathname === item.path && !item.isLarge ? 'text-emerald-dark' : 'text-gray-400'}`}
+                >
+                    <item.icon size={item.isLarge ? 32 : 24}/>
+                    {!item.isLarge && <span className="text-[10px] mt-1 font-semibold">{item.label}</span>}
+                </Link>
+            ))}
         </nav>
     );
 };
