@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 
-// Audio Decoding Functions (as per guidelines)
+// Audio Decoding Functions
 function decode(base64: string): Uint8Array {
   const binaryString = atob(base64);
   const len = binaryString.length;
@@ -31,33 +31,26 @@ async function decodeAudioData(
   return buffer;
 }
 
-const API_KEY = process.env.GEMINI_API_KEY;
-if (!API_KEY) {
-    console.error("Gemini API key is not set. Please set GEMINI_API_KEY in your environment variables.");
-}
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
-
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 const outputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
 
-interface AudioPlayback {
-    play: () => {
-        sourceNode: AudioBufferSourceNode,
-        controls: { onended: (() => void) | null }
-    };
+// Updated interface to include factory for replaying audio
+export interface AudioPlayback {
     sourceNode: AudioBufferSourceNode;
     controls: { onended: (() => void) | null };
+    play: () => { sourceNode: AudioBufferSourceNode; controls: { onended: (() => void) | null } };
 }
 
-export const generateSpeech = async (text: string): Promise<AudioPlayback> => {
+export const generateSpeech = async (text: string, language: string = "Indonesian"): Promise<AudioPlayback> => {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Baca dengan jelas: ${text}` }] }],
+      contents: [{ parts: [{ text: `Read clearly in ${language} accent: ${text}` }] }],
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' }, // A calm, clear voice suitable for teaching
+            prebuiltVoiceConfig: { voiceName: 'Fenrir' }, // Clear male voice
           },
         },
       },
@@ -71,23 +64,25 @@ export const generateSpeech = async (text: string): Promise<AudioPlayback> => {
     const audioBytes = decode(base64Audio);
     const audioBuffer = await decodeAudioData(audioBytes, outputAudioContext, 24000, 1);
 
-    const controls = { onended: null as (() => void) | null };
-    
-    const play = () => {
+    // Factory to create a new source node for the same buffer, enabling replay functionality
+    const createPlayback = () => {
+        const controls = { onended: null as (() => void) | null };
         const source = outputAudioContext.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(outputAudioContext.destination);
         source.onended = () => {
             if (controls.onended) controls.onended();
         };
-        source.start();
         return { sourceNode: source, controls };
     };
 
-    // Initial play to return the source node
-    const { sourceNode } = play();
+    const initialPlayback = createPlayback();
+    initialPlayback.sourceNode.start();
 
-    return { play, sourceNode, controls };
+    return {
+        ...initialPlayback,
+        play: createPlayback
+    };
 
   } catch (error) {
     console.error("Error in generateSpeech service:", error);
@@ -95,31 +90,22 @@ export const generateSpeech = async (text: string): Promise<AudioPlayback> => {
   }
 };
 
-
 export const translateTexts = async (
   texts: Record<string, string>,
   targetLanguage: string
 ): Promise<Record<string, string>> => {
   try {
-    const model = "gemini-3-flash-preview";
     const prompt = `Translate the JSON object values from Indonesian to ${targetLanguage}. Maintain the JSON structure and keys exactly. Only translate the string values. Here is the JSON object: ${JSON.stringify(texts)}`;
-    
     const response = await ai.models.generateContent({
-      model,
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
       },
     });
-
     const translatedText = response.text;
-    if (!translatedText) {
-      throw new Error('No response text from translation API');
-    }
-    
-    // The response text might be wrapped in markdown ```json ... ```, let's clean it.
+    if (!translatedText) throw new Error('No response text from translation API');
     const cleanedJsonString = translatedText.replace(/^```json\s*|```\s*$/g, '').trim();
-    
     return JSON.parse(cleanedJsonString);
   } catch (error) {
     console.error(`Error translating to ${targetLanguage}:`, error);
