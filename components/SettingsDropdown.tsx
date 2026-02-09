@@ -61,7 +61,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ isOpen, onClose, is
     return (
         <div 
             ref={dropdownRef}
-            className="absolute top-full right-0 mt-2 w-72 bg-soft-white dark:bg-dark-blue-card rounded-2xl shadow-2xl p-4 z-50 border border-gray-200 dark:border-gray-700"
+            className="absolute top-full right-0 mt-2 w-72 bg-soft-white dark:bg-dark-blue-card rounded-2xl shadow-2xl p-4 z-[60] border border-gray-200 dark:border-gray-700"
         >
             <button 
                 onClick={onClose} 
