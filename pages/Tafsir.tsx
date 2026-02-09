@@ -1,147 +1,96 @@
-
 import React, { useState, useEffect } from 'react';
-import { fetchAllSurahs, fetchTafsir, fetchTafsirEditions } from '../services/quranApi';
+import { fetchAllSurahs } from '../services/quranApi';
+import { fetchTafsir } from '../services/quranService';
 import { Surah } from '../types';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
 import { useTranslation } from '../contexts/LanguageContext';
-import { BookText, BookOpenText, Eye, EyeOff, Languages } from 'lucide-react';
-import { useQuran } from '../contexts/QuranContext';
+import { formatHonorifics } from '../utils/honorifics';
+import { BookOpen, Info, Search } from 'lucide-react';
 
 const Tafsir: React.FC = () => {
     const [surahs, setSurahs] = useState<Surah[]>([]);
-    const [editions, setEditions] = useState<any[]>([]);
     const [selectedSurah, setSelectedSurah] = useState<number>(1);
-    const [selectedEdition, setSelectedEdition] = useState<string>('id.kemenag');
     const [tafsirData, setTafsirData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
-    const [listLoading, setListLoading] = useState(true);
+    const [surahListLoading, setSurahListLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { t } = useTranslation();
-    const { showLatin, setShowLatin, showTranslation, setShowTranslation } = useQuran();
 
     useEffect(() => {
-        const loadLists = async () => {
-            try {
-                setListLoading(true);
-                const [surahData, editionData] = await Promise.all([
-                    fetchAllSurahs(),
-                    fetchTafsirEditions()
-                ]);
-                setSurahs(surahData);
-                setEditions(editionData);
-            } catch (e) {
-                setError("Gagal memuat daftar surah dan edisi tafsir.");
-            } finally {
-                setListLoading(false);
-            }
-        };
-        loadLists();
+        fetchAllSurahs().then(setSurahs).finally(() => setSurahListLoading(false));
     }, []);
 
     useEffect(() => {
-        const loadTafsirData = async () => {
+        const loadTafsir = async () => {
             setLoading(true);
             setError(null);
             try {
-                const data = await fetchTafsir(selectedSurah, selectedEdition);
+                const data = await fetchTafsir(selectedSurah);
                 setTafsirData(data);
             } catch (err) {
-                setError("Tafsir untuk edisi ini tidak tersedia sementara.");
+                console.error("Failed to fetch tafsir:", err);
+                setError("Gagal memuat tafsir. Silakan periksa koneksi Anda.");
             } finally {
                 setLoading(false);
             }
         };
-        if (selectedSurah && selectedEdition) loadTafsirData();
-    }, [selectedSurah, selectedEdition]);
+        loadTafsir();
+    }, [selectedSurah]);
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-emerald-dark dark:text-white flex items-center gap-3">
-                <BookText className="text-emerald-dark dark:text-emerald-light" />
-                {t('tafsirTitle')}
-            </h1>
-
-            <div className="flex flex-col items-center space-y-4">
-                 <div className="bg-soft-white/95 dark:bg-dark-blue/95 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-center gap-4">
-                    <button 
-                        onClick={() => setShowTranslation(!showTranslation)} 
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-sm ${showTranslation ? 'bg-emerald-dark text-white' : 'bg-gray-100 dark:bg-gray-800'}`}
-                    >
-                        {showTranslation ? <EyeOff size={16}/> : <Eye size={16}/>} {showTranslation ? 'Hide' : 'Unhide'} Terjemahan
-                    </button>
-                    <button 
-                        onClick={() => setShowLatin(!showLatin)} 
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-sm ${showLatin ? 'bg-emerald-dark text-white' : 'bg-gray-100 dark:bg-gray-800'}`}
-                    >
-                        {showLatin ? <EyeOff size={16}/> : <Eye size={16}/>} {showLatin ? 'Hide' : 'Unhide'} Latin
-                    </button>
-                </div>
+        <div className="max-w-4xl mx-auto space-y-8 pb-24 px-4 animate-in fade-in duration-500">
+            <div className="text-center">
+                <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight uppercase">{t('tafsirTitle')}</h1>
+                <p className="text-slate-500 mt-2 font-medium italic">Memahami makna Al-Quran melalui penjelasan Al-Jalalayn.</p>
             </div>
             
-            <div className="sticky top-[72px] bg-soft-white dark:bg-dark-blue z-20 py-4 border-b border-gray-100 dark:border-gray-800">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div className="space-y-2">
-                        <label htmlFor="surah-select-tafsir" className="block text-xs font-bold text-gray-500 uppercase ml-1 tracking-widest">Pilih Surah</label>
-                        <select 
-                            id="surah-select-tafsir"
-                            aria-label="Pilih Surah"
-                            value={selectedSurah} 
-                            onChange={e => setSelectedSurah(parseInt(e.target.value))}
-                            disabled={listLoading}
-                            className="w-full p-3 bg-white dark:bg-dark-blue-card border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-dark shadow-sm transition-all font-semibold"
-                        >
-                            {listLoading ? <option>Memuat surah...</option> : surahs.map(s => <option key={s.number} value={s.number}>{s.number}. {s.englishName} ({s.name})</option>)}
-                        </select>
-                    </div>
-                    <div className="space-y-2">
-                        <label htmlFor="edition-select-tafsir" className="block text-xs font-bold text-gray-500 uppercase ml-1 tracking-widest">Pilih Edisi Tafsir</label>
-                        <select 
-                            id="edition-select-tafsir"
-                            aria-label="Pilih Edisi Tafsir"
-                            value={selectedEdition} 
-                            onChange={e => setSelectedEdition(e.target.value)}
-                            disabled={listLoading}
-                            className="w-full p-3 bg-white dark:bg-dark-blue-card border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-dark shadow-sm transition-all font-semibold"
-                        >
-                            {listLoading ? <option>Memuat edisi...</option> : editions.map(ed => <option key={ed.identifier} value={ed.identifier}>{ed.language.toUpperCase()} - {ed.name}</option>)}
-                        </select>
-                    </div>
+            <div className="sticky top-20 bg-soft-white/90 dark:bg-dark-blue/90 backdrop-blur-md z-30 py-6 px-4 border-b-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
+                    <Search size={24} />
+                  </div>
+                  <div className="flex-1 w-full">
+                    <label htmlFor="surah-select-tafsir" className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-1">{t('selectSurah')}</label>
+                    <select 
+                        id="surah-select-tafsir" 
+                        value={selectedSurah} 
+                        onChange={e => setSelectedSurah(parseInt(e.target.value))}
+                        disabled={surahListLoading}
+                        className="w-full p-4 bg-white dark:bg-dark-blue border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 outline-none font-bold transition-all disabled:opacity-50"
+                        aria-label="Pilih Surah untuk Tafsir"
+                    >
+                        {surahListLoading ? <option>Memuat surah...</option> : surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName} ({surah.name})</option>)}
+                    </select>
+                  </div>
                 </div>
             </div>
 
-            <div className="space-y-8 max-w-4xl mx-auto">
+            <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-3xl border border-blue-100 dark:border-blue-900/20 flex gap-4 text-blue-800 dark:text-blue-300 shadow-inner">
+              <Info className="shrink-0 text-blue-500" />
+              <p className="text-sm font-bold leading-relaxed">Tafsir membantu kita mendalami konteks dan makna spiritual dari setiap ayat untuk memandu kehidupan sehari-hari.</p>
+            </div>
+
+            <div className="space-y-6">
                 {loading ? (
-                    <LoadingSpinner />
+                    <div className="py-20"><LoadingSpinner /></div>
                 ) : error ? (
                     <ErrorMessage message={error} />
-                ) : (
-                    tafsirData?.ayahs?.map((ayah: any) => (
-                        <article 
-                            key={ayah.number} 
-                            className="bg-white dark:bg-dark-blue-card p-6 md:p-8 rounded-3xl shadow-md border border-gray-100 dark:border-gray-800 space-y-6"
-                            aria-labelledby={`ayah-${ayah.number}-title`}
-                        >
-                            <div className="flex items-center justify-between border-b border-gray-50 dark:border-gray-800 pb-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="w-10 h-10 rounded-full bg-emerald-dark text-white flex items-center justify-center font-bold text-sm shadow-inner">
-                                        {ayah.numberInSurah}
-                                    </span>
-                                    <h3 id={`ayah-${ayah.number}-title`} className="text-sm font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                        <BookOpenText size={16} />
-                                        Tafsir Ayat {ayah.numberInSurah}
-                                    </h3>
-                                </div>
+                ) : tafsirData ? (
+                    tafsirData.ayahs.map((ayah: any) => (
+                        <div key={ayah.number} className="bg-white dark:bg-dark-blue-card p-8 md:p-10 rounded-[2.5rem] shadow-lg border border-slate-100 dark:border-slate-800 hover:border-emerald-500/50 transition-all group">
+                            <div className="flex items-center gap-3 mb-6">
+                                <span className="text-[11px] font-black bg-emerald-600 text-white px-4 py-1.5 rounded-full uppercase tracking-widest shadow-md shadow-emerald-600/20">Ayat {ayah.numberInSurah}</span>
                             </div>
-                            
-                            {(showTranslation || showLatin) && (
-                                <div className="p-6 bg-emerald-light/5 dark:bg-emerald-dark/5 rounded-2xl border-l-4 border-emerald-dark">
-                                    <p className="text-gray-800 dark:text-gray-200 text-lg leading-relaxed antialiased whitespace-pre-wrap">
-                                        {ayah.text}
-                                    </p>
-                                </div>
-                            )}
-                        </article>
+                            <p className="text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed text-xl md:text-2xl font-bold tracking-tight">
+                                {formatHonorifics(ayah.text)}
+                            </p>
+                        </div>
                     ))
+                ) : (
+                    <div className="text-center py-20 bg-slate-50 dark:bg-dark-blue-card rounded-3xl border-2 border-dashed border-slate-200">
+                        <BookOpen size={48} className="mx-auto text-slate-300 mb-4" />
+                        <p className="text-slate-400 font-bold">Silakan pilih surah untuk membaca tafsirnya.</p>
+                    </div>
                 )}
             </div>
         </div>
