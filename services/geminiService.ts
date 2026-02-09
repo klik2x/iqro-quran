@@ -1,8 +1,9 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 
-// Audio Decoding Functions
-function decode(base64: string): Uint8Array {
+// Audio Decoding Functions (as per guidelines)
+// Renamed to decodeAudio and exported to fix missing export in RecordingModule
+export function decodeAudio(base64: string): Uint8Array {
   const binaryString = atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
@@ -12,7 +13,17 @@ function decode(base64: string): Uint8Array {
   return bytes;
 }
 
-async function decodeAudioData(
+// Added and exported encode function as per guidelines for Live API/RecordingModule
+export function encodeAudio(bytes: Uint8Array): string {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+export async function decodeAudioData(
   data: Uint8Array,
   ctx: AudioContext,
   sampleRate: number,
@@ -31,26 +42,37 @@ async function decodeAudioData(
   return buffer;
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+
+// Added helper to get Gemini instance for Live API as used in RecordingModule
+export const getGeminiInstance = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+
 const outputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
 
-// Updated interface to include factory for replaying audio
 export interface AudioPlayback {
+    play: () => {
+        sourceNode: AudioBufferSourceNode,
+        controls: { onended: (() => void) | null }
+    };
     sourceNode: AudioBufferSourceNode;
     controls: { onended: (() => void) | null };
-    play: () => { sourceNode: AudioBufferSourceNode; controls: { onended: (() => void) | null } };
 }
 
-export const generateSpeech = async (text: string, language: string = "Indonesian"): Promise<AudioPlayback> => {
+// Updated generateSpeech to support voice selection
+export const generateSpeech = async (
+  text: string, 
+  language: string = "Indonesian",
+  voice: string = "Kore"
+): Promise<AudioPlayback> => {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Read clearly in ${language} accent: ${text}` }] }],
+      contents: [{ parts: [{ text: `Read this clearly with a ${language} accent: ${text}` }] }],
       config: {
-        responseModalities: [Modality.AUDIO],
+        responseModalalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Fenrir' }, // Clear male voice
+            prebuiltVoiceConfig: { voiceName: voice as any },
           },
         },
       },
@@ -61,32 +83,38 @@ export const generateSpeech = async (text: string, language: string = "Indonesia
       throw new Error("No audio data received from API.");
     }
 
-    const audioBytes = decode(base64Audio);
+    const audioBytes = decodeAudio(base64Audio);
     const audioBuffer = await decodeAudioData(audioBytes, outputAudioContext, 24000, 1);
 
-    // Factory to create a new source node for the same buffer, enabling replay functionality
-    const createPlayback = () => {
-        const controls = { onended: null as (() => void) | null };
+    const controls = { onended: null as (() => void) | null };
+    
+    const play = () => {
         const source = outputAudioContext.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(outputAudioContext.destination);
         source.onended = () => {
             if (controls.onended) controls.onended();
         };
+        source.start();
         return { sourceNode: source, controls };
     };
 
-    const initialPlayback = createPlayback();
-    initialPlayback.sourceNode.start();
-
-    return {
-        ...initialPlayback,
-        play: createPlayback
-    };
+    const { sourceNode } = play();
+    return { play, sourceNode, controls };
 
   } catch (error) {
     console.error("Error in generateSpeech service:", error);
     throw error;
+  }
+};
+
+// Added speakText as a wrapper for generateSpeech to fix error in IqroModule
+export const speakText = async (text: string, voice: string = "Kore") => {
+  try {
+    const { play } = await generateSpeech(text, "Indonesian", voice);
+    play();
+  } catch (error) {
+    console.error("speakText error:", error);
   }
 };
 
@@ -96,6 +124,7 @@ export const translateTexts = async (
 ): Promise<Record<string, string>> => {
   try {
     const prompt = `Translate the JSON object values from Indonesian to ${targetLanguage}. Maintain the JSON structure and keys exactly. Only translate the string values. Here is the JSON object: ${JSON.stringify(texts)}`;
+    
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
@@ -103,8 +132,12 @@ export const translateTexts = async (
         responseMimeType: 'application/json',
       },
     });
+
     const translatedText = response.text;
-    if (!translatedText) throw new Error('No response text from translation API');
+    if (!translatedText) {
+      throw new Error('No response text from translation API');
+    }
+    
     const cleanedJsonString = translatedText.replace(/^```json\s*|```\s*$/g, '').trim();
     return JSON.parse(cleanedJsonString);
   } catch (error) {
