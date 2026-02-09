@@ -7,6 +7,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
+  // ... konfigurasi lainnya
+  define: {
+    'process.env': {},
+    'global': 'window', // Kadang diperlukan oleh library AI
+  },
+});
+
+export default defineConfig({
   // Base './' memastikan aset dipanggil dengan path relatif
   base: './',
   resolve: {
