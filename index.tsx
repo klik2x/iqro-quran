@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-// Pastikan file index.css ada di root atau folder yang sesuai
+// Pastikan path css ini benar. Jika index.css ada di root:
 import './index.css'; 
 
 const rootElement = document.getElementById('root');
