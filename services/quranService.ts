@@ -1,4 +1,4 @@
-import { Surah, Ayah, Qari } from '../types';
+import { Surah, Ayah, Qari, SurahDetail } from '../types';
 
 const BASE_URL = 'https://api.alquran.cloud/v1';
 
@@ -34,7 +34,7 @@ const handleResponse = async (response: Response) => {
   return data.data;
 };
 
-export const fetchSurahs = async (): Promise<Surah[]> => {
+export const fetchAllSurahs = async (): Promise<Surah[]> => {
   const response = await fetchWithRetry(`${BASE_URL}/surah`);
   return handleResponse(response);
 };
@@ -78,4 +78,51 @@ export const fetchDailyAyah = async () => {
   const ayahNumber = (dayOfYear % 6236) + 1;
   const response = await fetchWithRetry(`${BASE_URL}/ayah/${ayahNumber}/editions/quran-uthmani,id.indonesian`);
   return handleResponse(response);
+};
+
+// Merged from quranApi.tsx for use in Rekam and Dashboard
+export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
+    const response = await fetchWithRetry(`${BASE_URL}/surah/${surahNumber}/editions/quran-uthmani,en.sahih,en.transliteration,ar.alafasy`);
+    const data = await response.json();
+    const editions = data.data;
+
+    if (!editions || editions.length < 4) {
+        throw new Error('Could not fetch all required editions for the surah.');
+    }
+
+    const surahInfo = editions[0];
+
+    const combineAyahData = (editions: any[]): Ayah[] => {
+        const textEdition = editions[0].ayahs;
+        const translationEdition = editions[1].ayahs;
+        const transliterationEdition = editions[2].ayahs;
+        const audioEdition = editions[3].ayahs;
+
+        return textEdition.map((textAyah: any, index: number) => {
+            return {
+                number: textAyah.number,
+                text: textAyah.text,
+                translation: translationEdition[index].text,
+                textLatin: transliterationEdition[index].text,
+                audio: audioEdition[index].audio,
+                numberInSurah: textAyah.numberInSurah,
+                juz: textAyah.juz,
+                manzil: textAyah.manzil,
+                page: textAyah.page,
+                ruku: textAyah.ruku,
+                hizbQuarter: textAyah.hizbQuarter,
+                sajda: typeof textAyah.sajda === 'boolean' ? textAyah.sajda : false,
+            };
+        });
+    };
+
+    return {
+        number: surahInfo.number,
+        name: surahInfo.name,
+        englishName: surahInfo.englishName,
+        englishNameTranslation: surahInfo.englishNameTranslation,
+        numberOfAyahs: surahInfo.numberOfAyahs,
+        revelationType: surahInfo.revelationType,
+        ayahs: combineAyahData(editions),
+    };
 };

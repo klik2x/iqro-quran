@@ -67,9 +67,9 @@ export const generateSpeech = async (
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Read this clearly with a ${language} accent: ${text}` }] }],
+      contents: [{ parts: [{ text: text }] }],
       config: {
-        responseModalalities: [Modality.AUDIO],
+        responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: { voiceName: voice as any },
