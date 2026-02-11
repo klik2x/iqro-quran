@@ -1,4 +1,3 @@
-
 export const idStrings = {
   // General
   home: 'Home',
@@ -85,7 +84,8 @@ export const idStrings = {
   iqroLevel: "Iqro Level",
   noBookmarksIqro: "Belum ada bookmark di pelajaran Iqro.",
   bookmarkInstructionIqro: "Tandai pelajaran yang ingin Anda ulangi di mode Belajar.",
-
+  hijaiyah: "Hijaiyah",
+  reset: "Reset",
 
   // Murotal Page
   murotalPlayer: 'Pemutar Murotal',
