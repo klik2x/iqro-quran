@@ -4,7 +4,7 @@ export interface Surah {
   englishName: string;
   englishNameTranslation: string;
   numberOfAyahs: number;
-  revelationType: string;
+  revelationType: 'Meccan' | 'Medinan';
 }
 
 export interface Ayah {
@@ -16,15 +16,13 @@ export interface Ayah {
   page: number;
   ruku: number;
   hizbQuarter: number;
-  sajda: boolean | any;
-  // Added properties to fix property access errors in Dashboard, SurahDetail and Bookmarks
+  sajda: boolean;
   audio: string;
   translation: string;
   textLatin: string;
   surah?: Surah;
 }
 
-// Added SurahDetail interface to fix missing member error in SurahDetail and quranApi
 export interface SurahDetail extends Surah {
   ayahs: Ayah[];
 }
@@ -54,24 +52,15 @@ export interface HijaiyahLetter {
 }
 
 export interface IqroItem {
-  arabic: string;
+  char: string;
   latin: string;
 }
 
-export interface TajwidRule {
-  id: string;
-  name: string;
-  explanation: string;
-  example: string;
-  exampleLatin: string;
-}
-
-export interface QuizQuestion {
-  id: string;
-  question: string;
-  arabic?: string;
-  options: string[];
-  correctAnswer: number;
+export interface IqroSection {
+  title: string;
+  info: string;
+  items: IqroItem[];
+  guide?: string;
 }
 
 export interface IqroLevelData {
@@ -99,4 +88,20 @@ export interface AppState {
   darkMode: boolean;
   selectedSurah: number | null;
   qari: string;
+}
+
+export interface TajwidRule {
+    id: string;
+    name: string;
+    explanation: string;
+    example: string;
+    exampleLatin: string;
+}
+
+export interface QuizQuestion {
+    id: string;
+    question: string;
+    arabic?: string;
+    options: string[];
+    correctAnswer: number;
 }

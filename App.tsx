@@ -13,6 +13,7 @@ import Mushaf from './pages/Mushaf';
 import SurahDetail from './pages/SurahDetail';
 import JuzDetail from './pages/JuzDetail';
 import Iqro from './pages/Iqro';
+import IqroDetail from './pages/IqroDetail';
 import Rekam from './pages/Rekam';
 import Murotal from './pages/Murotal';
 import Tafsir from './pages/Tafsir';
@@ -97,6 +98,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/surah/:number" element={<SurahDetail />} />
         <Route path="/juz/:number" element={<JuzDetail />} />
         <Route path="/iqro" element={<Iqro />} />
+        <Route path="/iqro/:levelNumber" element={<IqroDetail />} />
         <Route path="/murotal" element={<Murotal />} />
         <Route path="/tafsir" element={<Tafsir />} />
         <Route path="/doa" element={<Doa />} />
@@ -123,6 +125,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [showFamilyPrayerPopup, setShowFamilyPrayerPopup] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const hasSeenPopup = sessionStorage.getItem('hasSeenFamilyPrayerPopup');
@@ -134,8 +137,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
       return () => clearTimeout(timer);
     }
   }, []);
-
-
+  
   return (
     <div className={`${theme} font-sans`} style={{ zoom: zoom }}>
       <div className="bg-soft-white dark:bg-dark-blue text-gray-800 dark:text-gray-200 min-h-screen">
