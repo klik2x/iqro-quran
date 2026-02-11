@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useRef } from 'react';
 import { tajwidData } from '../../data/tajwidData';
 import { Volume2, Loader2, ChevronDown } from 'lucide-react';
@@ -8,6 +7,16 @@ const TajwidView: React.FC = () => {
     const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
     const audioController = useRef<AudioBufferSourceNode | null>(null);
+    
+    const renderHighlighted = (text: string, highlight?: string) => {
+        if (!highlight) return text;
+        const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+        return <>{parts.map((part, i) => 
+            part.toLowerCase() === highlight.toLowerCase()
+            ? <span key={i} className="bg-emerald-200 dark:bg-emerald-700/50 rounded px-1">{part}</span> 
+            : part
+        )}</>;
+    };
 
     const playAudio = useCallback(async (text: string, id: string) => {
         if (loadingAudio) return;
@@ -50,7 +59,7 @@ const TajwidView: React.FC = () => {
                             {rule.examples?.map((ex, exIndex) => (
                                 <div key={exIndex} className="flex items-center justify-between p-2 rounded-md bg-gray-100 dark:bg-dark-blue-card">
                                     <div>
-                                        <p className="font-arabic text-2xl" dir="rtl">{ex.arabic}</p>
+                                        <p className="font-arabic text-2xl" dir="rtl">{renderHighlighted(ex.arabic, ex.highlight)}</p>
                                         <p className="text-sm italic text-emerald-dark dark:text-emerald-light">{ex.latin}</p>
                                     </div>
                                     <button 
@@ -74,7 +83,7 @@ const TajwidView: React.FC = () => {
                                 {sub.examples.map((ex, exSubIndex) => (
                                     <div key={exSubIndex} className="flex items-center justify-between p-2 rounded-md bg-gray-100 dark:bg-dark-blue-card">
                                         <div>
-                                            <p className="font-arabic text-2xl" dir="rtl">{ex.arabic}</p>
+                                            <p className="font-arabic text-2xl" dir="rtl">{renderHighlighted(ex.arabic, ex.highlight)}</p>
                                             <p className="text-sm italic text-emerald-dark dark:text-emerald-light">{ex.latin}</p>
                                         </div>
                                          <button 
