@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllSurahs } from '../services/quranApi';
-import { fetchTafsir } from '../services/quranService';
+import { fetchAllSurahs, fetchTafsir } from '../services/quranService';
 import { Surah } from '../types';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
 import { useTranslation } from '../contexts/LanguageContext';

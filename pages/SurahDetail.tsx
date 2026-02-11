@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Play, Share2, Loader2, 
   ZoomIn, ZoomOut, Copy, Check, Languages, Volume2, 
-  ChevronLeft, ChevronRight, Bookmark
+  ChevronLeft, ChevronRight, Bookmark, Download
 } from 'lucide-react';
 import { fetchSurahWithTranslation, fetchTranslationEditions } from '../services/quranService';
 import { generateSpeech } from '../services/geminiService';
@@ -107,6 +107,40 @@ const SurahDetail: React.FC = () => {
       setShareVerse({ arabic: ayah.text, translation: trans, surah: data[0].englishName, ayah: ayah.numberInSurah });
     }
   };
+  
+  const handleDownload = () => {
+    if (!data) return;
+
+    const arabicEd = data[0];
+    const translationEd = data[1];
+    const transliterationEd = data[2];
+    
+    let content = `Surah ${arabicEd.englishName} (${arabicEd.name})\n`;
+    content += `========================================\n\n`;
+
+    arabicEd.ayahs.forEach((ayah: any, index: number) => {
+        content += `[${ayah.numberInSurah}] ${ayah.text}\n`;
+        if (transliterationEd?.ayahs[index]?.text) {
+            content += `${transliterationEd.ayahs[index].text}\n`;
+        }
+        if (translationEd?.ayahs[index]?.text) {
+            content += `"${translationEd.ayahs[index].text}"\n`;
+        }
+        content += `\n`;
+    });
+    
+    content += `\nDiunduh dari IQRO Quran Digital`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Surah_${arabicEd.number}_${arabicEd.englishName}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-full py-48 gap-8">
@@ -183,6 +217,7 @@ const SurahDetail: React.FC = () => {
           <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Perkecil Font"><ZoomOut size={14}/></button>
           <span className="text-[10px] font-black w-6 text-center">{fontSize}</span>
           <button onClick={() => setFontSize(Math.min(100, fontSize + 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Perbesar Font"><ZoomIn size={14}/></button>
+          <button onClick={handleDownload} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Unduh Surah"><Download size={14}/></button>
         </div>
       </div>
 
@@ -208,7 +243,7 @@ const SurahDetail: React.FC = () => {
           const isBookmarkedAyah = isBookmarked(ayah.number);
 
           return (
-            <div key={ayah.number} className="group animate-fade-in">
+            <div key={ayah.number} className={`group animate-fade-in p-2 rounded-xl transition-colors ${playingAyah === ayah.number ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''}`}>
               <div className="flex flex-col gap-6">
                 <div className="text-right">
                   <p className="font-arabic leading-[2.8]" style={{ fontSize: `${fontSize}px` }} dir="rtl">

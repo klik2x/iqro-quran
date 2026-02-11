@@ -25,7 +25,6 @@ const Bookmarks: React.FC = () => {
     useEffect(() => {
         const translateBookmarks = async () => {
             if (translationLang === 'id.indonesian') {
-                // When switching back to Indonesian, just use the original bookmarks
                 const originalBookmarks = bookmarks.map(bm => {
                     const original = bookmarks.find(orig => orig.number === bm.number);
                     return { ...bm, translation: original?.translation || bm.translation };
@@ -45,7 +44,6 @@ const Bookmarks: React.FC = () => {
                 setTranslatedBookmarks(updatedBookmarks);
             } catch (error) {
                 console.error("Error translating bookmarks:", error);
-                 // Fallback to original bookmarks on error
                 setTranslatedBookmarks(bookmarks);
             } finally {
                 setIsTranslating(false);

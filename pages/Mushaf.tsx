@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Loader2, List, Layers } from 'lucide-react';
+import { Search, Loader2, List, Layers, BookUp } from 'lucide-react';
 import { Surah } from '../types';
-import { fetchSurahs } from '../services/quranService';
+import { fetchAllSurahs } from '../services/quranService';
 import { useTranslation } from '../contexts/LanguageContext';
 
 const Mushaf: React.FC = () => {
@@ -14,14 +14,28 @@ const Mushaf: React.FC = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetchSurahs().then(setSurahs).finally(() => setLoading(false));
+    fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
-  const filteredSurahs = surahs.filter(s => 
-    s.englishName.toLowerCase().includes(search.toLowerCase()) || 
-    s.name.includes(search) ||
-    s.number.toString().includes(search)
-  );
+  const cleanSearch = search.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  const filteredSurahs = surahs.filter(s => {
+    const cleanEnglishName = s.englishName.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    return cleanEnglishName.includes(cleanSearch) || 
+           s.name.includes(search) || // Direct match for Arabic
+           s.number.toString().includes(search);
+  });
+
+  const handleJump = () => {
+    const surahNum = prompt('Masukkan nomor surah (1-114):');
+    if (surahNum) {
+        const num = parseInt(surahNum, 10);
+        if (!isNaN(num) && num >= 1 && num <= 114) {
+            navigate(`/surah/${num}`);
+        } else {
+            alert('Nomor surah tidak valid.');
+        }
+    }
+  };
 
   if (loading) {
     return (
@@ -34,24 +48,27 @@ const Mushaf: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 pb-20 px-4">
-      {/* Point 1: Added "Daftar Surah" title */}
       <div className="text-center py-4">
         <h2 className="text-2xl font-bold text-emerald-dark dark:text-emerald-light">
           Daftar Surah
         </h2>
       </div>
 
-      {/* Point 2: Smoother sticky bar */}
       <div className="sticky top-[72px] bg-soft-white/90 dark:bg-dark-blue/90 backdrop-blur-xl z-20 py-2 space-y-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-          <input 
-            type="text" 
-            placeholder={t('searchSurah')}
-            className="pl-12 pr-6 py-3 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full focus:ring-4 focus:ring-emerald-500/10 outline-none w-full shadow-sm font-bold transition-all text-slate-900 dark:text-white"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="flex items-center gap-2">
+            <div className="relative flex-grow">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+              <input 
+                type="text" 
+                placeholder={t('searchSurah')}
+                className="pl-12 pr-6 py-3 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full focus:ring-4 focus:ring-emerald-500/10 outline-none w-full shadow-sm font-bold transition-all text-slate-900 dark:text-white"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button onClick={handleJump} className="p-3 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full shadow-sm text-emerald-dark dark:text-emerald-light" aria-label="Lompat ke Surah">
+                <BookUp size={20} />
+            </button>
         </div>
         
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700">

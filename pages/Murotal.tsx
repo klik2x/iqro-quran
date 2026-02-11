@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchAllSurahs } from '../services/quranApi';
+import { fetchAllSurahs } from '../services/quranService';
 import { Surah } from '../types';
 import { Play, Pause, SkipBack, SkipForward, Loader2, Music, ListMusic } from 'lucide-react';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
@@ -68,7 +68,8 @@ const Murotal: React.FC = () => {
     if (selectedSurah && selectedQari) {
       setIsAudioLoading(true);
       setError(null);
-      const audioUrl = `https://cdn.islamic.network/quran/audio/128/${selectedQari}/${selectedSurah.number}.mp3`;
+      // FIX: Corrected URL to use 'audio-surah' for playing full surahs instead of 'audio' for single ayahs.
+      const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${selectedQari}/${selectedSurah.number}.mp3`;
       const newAudio = new Audio(audioUrl);
       audioRef.current = newAudio;
 
@@ -147,7 +148,7 @@ const Murotal: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-10 pb-24 px-4 animate-in fade-in duration-500">
       <div className="text-center">
-        <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight">{t('murotalPlayer')}</h1>
+        <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight uppercase">{t('murotalPlayer')}</h1>
         <p className="text-slate-500 mt-2 font-medium">Dengarkan lantunan ayat suci dari Qari terbaik dunia.</p>
       </div>
 

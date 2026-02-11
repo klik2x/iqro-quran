@@ -218,7 +218,7 @@ const JuzDetail: React.FC = () => {
                     </div>
                  )}
 
-                <div className="group animate-fade-in">
+                <div className={`group animate-fade-in p-2 rounded-xl transition-colors ${playingAyah === ayah.number ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''}`}>
                   <div className="flex flex-col gap-6">
                     <div className="text-right">
                       <p className="font-arabic leading-[2.8]" style={{ fontSize: `${fontSize}px` }} dir="rtl">

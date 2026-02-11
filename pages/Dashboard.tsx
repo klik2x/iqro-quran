@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { fetchAllSurahs, fetchSurah } from '../services/quranApi';
+import { fetchAllSurahs, fetchSurah } from '../services/quranService';
 import { LoadingSpinner } from '../components/ui/Feedback';
 import { useTranslation } from '../contexts/LanguageContext';
 import { Play, Pause, Loader2 } from 'lucide-react';
