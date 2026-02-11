@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Loader2, List, Layers, ChevronRight } from 'lucide-react';
 import { Surah } from '../types';
-import { fetchSurahs } from '../services/quranService';
+// FIX: Corrected import from `fetchSurahs` to `fetchAllSurahs` as exported from quranService.
+import { fetchAllSurahs } from '../services/quranService';
 
 const SurahList: React.FC<{t: any}> = ({ t }) => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -12,7 +13,8 @@ const SurahList: React.FC<{t: any}> = ({ t }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchSurahs().then(setSurahs).finally(() => setLoading(false));
+    // FIX: Used the correctly imported function `fetchAllSurahs`.
+    fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
   const filteredSurahs = surahs.filter(s => 

@@ -1,8 +1,10 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Music, Loader2, ListMusic } from 'lucide-react';
 import { QARIS } from '../constants';
-import { fetchSurahs } from '../services/quranService';
+// FIX: Corrected import from `fetchSurahs` to `fetchAllSurahs` as exported from quranService.
+import { fetchAllSurahs } from '../services/quranService';
 import { Surah } from '../types';
 
 const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
@@ -13,7 +15,8 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchSurahs().then(setSurahs).finally(() => setLoading(false));
+    // FIX: Used the correctly imported function `fetchAllSurahs`.
+    fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
   const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${selectedQari}/${selectedSurah}.mp3`;
