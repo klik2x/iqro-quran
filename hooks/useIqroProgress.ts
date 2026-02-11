@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { iqroData } from '../data/iqroData';
 
@@ -33,10 +32,10 @@ export const useIqroProgress = () => {
     }, []);
 
     const calculateLevelCompletion = useCallback((level: number, sections: any[]) => {
-        if (!sections) return 0;
+        if (!sections) return { percentage: 0, completedItems: 0, totalItems: 0 };
 
         const totalItemsInLevel = sections.reduce((acc, section) => acc + section.items.length, 0);
-        if (totalItemsInLevel === 0) return 0;
+        if (totalItemsInLevel === 0) return { percentage: 0, completedItems: 0, totalItems: 0 };
 
         let completedItems = 0;
         sections.forEach((section, sectionIndex) => {
@@ -48,7 +47,11 @@ export const useIqroProgress = () => {
             });
         });
         
-        return (completedItems / totalItemsInLevel) * 100;
+        return {
+            percentage: (completedItems / totalItemsInLevel) * 100,
+            completedItems: completedItems,
+            totalItems: totalItemsInLevel
+        };
     }, [progress]);
 
     return { progress, markAsCompleted, resetProgress, calculateLevelCompletion };
