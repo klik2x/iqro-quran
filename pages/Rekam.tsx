@@ -4,6 +4,28 @@ import { useTranslation } from '../contexts/LanguageContext';
 import { Surah, Ayah } from '../types';
 import { fetchAllSurahs, fetchSurah } from '../services/quranService';
 
+// pages/Rekam.tsx atau Mushaf.tsx
+import { useAudioFeedback } from '../contexts/AudioFeedbackContext'; // Dari file baru sebelumnya
+import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
+const handleVoiceAnalysis = async (blob: Blob) => {
+  const { triggerTick, triggerSuccess } = useAudioFeedback();
+  
+  // 1. Beri getaran saat mulai analisis
+  triggerTick(); 
+
+  const result = await checkRecitationQuality(blob, currentAyah);
+
+  if (result && result.score >= 80) {
+    triggerSuccess(); // Getaran pola sukses
+    // Tampilkan Ikon Centang (Color Blind Safe)
+    setFeedback({ status: 'success', icon: <CheckCircle className="text-emerald-500" /> });
+  } else {
+    // Tampilkan Ikon Silang (Color Blind Safe)
+    setFeedback({ status: 'error', icon: <XCircle className="text-red-500" /> });
+  }
+};
+
 const Rekam: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
