@@ -29,3 +29,29 @@ export const preferredVoiceNames: Record<string, string> = {
   'en-US': 'Google US English', 
   'ar-SA': 'Google Arabic',
 };
+
+// data/voiceTriggers.ts (New File)
+
+export const VOICE_TRIGGERS = {
+  id: { // Indonesia
+    next: ['lanjut', 'berikutnya', 'seterusnya'],
+    prev: ['kembali', 'sebelumnya', 'balik'],
+    repeat: ['ulang', 'sekali lagi', 'putar lagi'],
+    highContrast: ['mode kontras', 'warna tajam', 'bantu penglihatan'],
+    startRecord: ['mulai rekam', 'setoran', 'tes bacaan'],
+  },
+  en: { // English
+    next: ['next', 'forward', 'continue'],
+    prev: ['back', 'previous', 'return'],
+    repeat: ['repeat', 'play again', 'once more'],
+    highContrast: ['high contrast', 'vision aid', 'sharp color'],
+    startRecord: ['start recording', 'test my reading', 'check tajwid'],
+  },
+  ar: { // Arabic
+    next: ['التالي', 'استمر'],
+    prev: ['السابق', 'عودة'],
+    repeat: ['اعادة', 'مرة أخرى'],
+    highContrast: ['تباين عال', 'وضع الرؤية'],
+    startRecord: ['ابدأ التسجيل', 'اختبر قراءتي'],
+  }
+};
