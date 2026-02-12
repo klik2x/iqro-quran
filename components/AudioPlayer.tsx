@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Music, Loader2, ListMusic } from 'lucide-react';
 import { QARIS } from '../constants';
