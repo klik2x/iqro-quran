@@ -66,3 +66,42 @@ export const getSurahFromVoice = (transcript: string): number | null => {
 };
 
 
+// utils/soundMapping.ts (Pencocokan Dialek Lokal Indonesia)
+export const surahSoundMap: Record<string, number> = {
+  // Mapping dialek "Lidah Indonesia" ke ID Surah
+ // utils/soundMapping.ts (Pencocokan Dialek Lokal Indonesia)
+export const surahSoundMap: Record<string, number> = {
+  // Mapping dialek "Lidah Indonesia" ke ID Surah
+  "alpatikah": 1, "patihah": 1, "fatihah": 1,
+  "bakoroh": 2, "sapi": 2, "baqarah": 2,
+  "ali imron": 3, "imron": 3,
+  "an-nisa": 4, "nisa": 4,
+  "yasin": 36, "yasinan": 36,
+  "tabarok": 67, "al-mulk": 67,
+  "kulhu": 112, "ikhlas": 112, // Sangat penting untuk lansia
+  "palaq": 113, "annas": 114
+};
+
+export const matchSurahVoice = (transcript: string): number | null => {
+  const normalized = transcript.toLowerCase().trim();
+  
+  // Cari kecocokan parsial
+  const found = Object.keys(surahSoundMap).find(key => normalized.includes(key));
+  return found ? surahSoundMap[found] : null;
+}; "alpatikah": 1, "patihah": 1, "fatihah": 1,
+  "bakoroh": 2, "sapi": 2, "baqarah": 2,
+  "ali imron": 3, "imron": 3,
+  "an-nisa": 4, "nisa": 4,
+  "yasin": 36, "yasinan": 36,
+  "tabarok": 67, "al-mulk": 67,
+  "kulhu": 112, "ikhlas": 112, // Sangat penting untuk lansia
+  "palaq": 113, "annas": 114
+};
+
+export const matchSurahVoice = (transcript: string): number | null => {
+  const normalized = transcript.toLowerCase().trim();
+  
+  // Cari kecocokan parsial
+  const found = Object.keys(surahSoundMap).find(key => normalized.includes(key));
+  return found ? surahSoundMap[found] : null;
+};
