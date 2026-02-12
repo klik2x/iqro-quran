@@ -41,3 +41,23 @@ export const analyzeRecitation = async (audioBlob: Blob, targetText: string, lan
     return { success: false, message: "Gagal menganalisis suara." };
   }
 };
+
+// Di services/vocalStudioService.ts
+export const sendToVocalStudio = async (blob: Blob, targetText: string, preferences: any) => {
+  const formData = new FormData();
+  formData.append('audio', blob);
+  formData.append('target_text', targetText);
+  
+  // Kirim preferensi user (bahasa, emosi, model) yang didapat dari Voice Command
+  formData.append('config', JSON.stringify({
+    language: preferences.lang || 'id',
+    emotion: preferences.emotion || 'calm',
+    voice_model: preferences.model || 'standard-hijaiyah'
+  }));
+
+  const response = await fetch('https://ttspro.vercel.app/api/analyze-recitation', {
+    method: 'POST',
+    body: formData
+  });
+  return await response.json();
+};
