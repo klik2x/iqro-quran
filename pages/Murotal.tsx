@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchAllSurahs, fetchAudioEditions } from '../services/quranService';
 import { Surah } from '../types';
