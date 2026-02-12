@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
   <head>
@@ -16,6 +17,13 @@
         --soft-white: #FDFBF7;
         --gold-dark: #D4AF37;
         --gold-light: #FFD700;
+
+        /* High Contrast Mode Colors */
+        --hc-bg: #000000;
+        --hc-text: #FFFFFF;
+        --hc-accent: #FFFF00;
+        --hc-button-bg: #FFFF00;
+        --hc-button-text: #000000;
       }
       html {
         -webkit-tap-highlight-color: transparent;
@@ -28,7 +36,7 @@
       }
       .font-arabic { 
         font-family: 'Amiri', serif; 
-        line-height: 2.8; 
+        line-height: 2.8; /* Increased line-height for better readability */
       }
       #root { 
         min-height: 100vh; 
@@ -62,10 +70,61 @@
         background: #1e293b;
       }
 
+      /* High Contrast Mode Styles */
+      .high-contrast {
+        background-color: var(--hc-bg) !important;
+        color: var(--hc-text) !important;
+      }
+      .high-contrast .dark\:bg-dark-blue-card { /* Ensure card backgrounds are black */
+        background-color: var(--hc-bg) !important;
+        border-color: var(--hc-accent) !important;
+      }
+      .high-contrast .dark\:text-white, .high-contrast .text-white { /* Ensure white text in HC mode */
+        color: var(--hc-text) !important;
+      }
+      .high-contrast .dark\:text-emerald-light, .high-contrast .text-emerald-dark { /* Ensure emerald/accent colors are HC accent */
+        color: var(--hc-accent) !important;
+      }
+      .high-contrast .bg-emerald-dark, .high-contrast .bg-emerald-600 { /* Ensure emerald backgrounds become HC accent */
+        background-color: var(--hc-accent) !important;
+        color: var(--hc-button-text) !important;
+      }
+      .high-contrast .bg-white { /* Ensure white backgrounds become black */
+        background-color: var(--hc-bg) !important;
+      }
+      .high-contrast .text-gray-600, .high-contrast .dark\:text-gray-300, .high-contrast .text-gray-700 { /* Adjust gray text for HC */
+        color: var(--hc-text) !important;
+      }
+      .high-contrast .bg-white\/20, .high-contrast .hover\:bg-white\/40, .high-contrast .bg-white\/30, .high-contrast .hover\:bg-white\/50 {
+        background-color: var(--hc-button-bg) !important;
+        color: var(--hc-button-text) !important;
+      }
+      .high-contrast .ayah-circle {
+        border-color: var(--hc-accent);
+        color: var(--hc-button-text);
+        background: var(--hc-accent);
+      }
+      .high-contrast .dark\:border-gray-800, .high-contrast .border-gray-100 {
+        border-color: var(--hc-accent) !important;
+      }
+      .high-contrast .ring-emerald-dark\/10 {
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+      .high-contrast .shadow-lg, .high-contrast .shadow-md, .high-contrast .shadow-sm {
+        box-shadow: none !important;
+      }
+
+
       /* For keyboard users */
       :focus-visible {
         outline: 2px solid #D4AF37;
         outline-offset: 2px;
+        border-radius: 4px;
+      }
+      .high-contrast :focus-visible {
+        outline: 3px solid var(--hc-accent);
+        outline-offset: 3px;
         border-radius: 4px;
       }
 
@@ -80,6 +139,9 @@
       ::-webkit-scrollbar-thumb {
         background: var(--emerald-dark);
         border-radius: 10px;
+      }
+      .high-contrast ::-webkit-scrollbar-thumb {
+        background: var(--hc-accent);
       }
       
       /* Utility to hide scrollbar */
@@ -107,7 +169,12 @@
               'gold-dark': '#D4AF37',
               'soft-white': '#FDFBF7',
               'dark-blue': '#0F172A',
-              'dark-blue-card': '#1E293B'
+              'dark-blue-card': '#1E293B',
+              'hc-bg': '#000000',
+              'hc-text': '#FFFFFF',
+              'hc-accent': '#FFFF00',
+              'hc-button-bg': '#FFFF00',
+              'hc-button-text': '#000000',
             },
             animation: {
               'fade-in': 'fadeIn 0.3s ease-out forwards',
@@ -131,17 +198,17 @@
 <script type="importmap">
 {
   "imports": {
-    "recharts": "https://esm.sh/recharts@^3.7.0",
-    "url": "https://esm.sh/url@^0.11.4",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "path": "https://esm.sh/path@^0.12.7",
     "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "path": "https://esm.sh/path@^0.12.7",
     "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3",
+    "url": "https://esm.sh/url@^0.11.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
     "html2canvas": "https://esm.sh/html2canvas@^1.4.1"
   }
 }

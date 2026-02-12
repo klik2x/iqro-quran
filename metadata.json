@@ -1,5 +1,6 @@
+
 {
-  "name": "IQRO Quran Digital V.2",
+  "name": "IQRO Quran Digital V.2.05-Aksesibilitas (A11y)",
   "description": "An accessible and feature-rich digital Quran application for learning and reading. It includes features like interactive Iqro lessons with audio, Murotal player, Tafsir, prayer collection, and voice recording, all designed with a modern, responsive, and inclusive user interface.",
   "requestFramePermissions": [
     "microphone"

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
 import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility } from 'lucide-react';
@@ -7,11 +8,13 @@ import { BookmarkProvider } from './contexts/BookmarkContext';
 import { UIProvider, useUI } from './contexts/UIContext';
 import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
 import { PopupProvider } from './contexts/PopupContext';
+import { QuranProvider } from './contexts/QuranContext'; // Import QuranProvider
 
 import Dashboard from './pages/Dashboard';
 import Mushaf from './pages/Mushaf';
 import SurahDetail from './pages/SurahDetail';
 import JuzDetail from './pages/JuzDetail';
+import PageDetail from './pages/PageDetail';
 import Iqro from './pages/Iqro';
 import IqroDetail from './pages/IqroDetail';
 import Rekam from './pages/Rekam';
@@ -44,11 +47,13 @@ const App: React.FC = () => {
       <LanguageProvider>
         <UIProvider>
           <BookmarkProvider>
-            <PopupProvider>
-              <HashRouter>
-                <AppRoutes />
-              </HashRouter>
-            </PopupProvider>
+            <QuranProvider> {/* Added QuranProvider here */}
+              <PopupProvider>
+                <HashRouter>
+                  <AppRoutes />
+                </HashRouter>
+              </PopupProvider>
+            </QuranProvider> {/* Closing QuranProvider */}
           </BookmarkProvider>
         </UIProvider>
       </LanguageProvider>
@@ -97,6 +102,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/mushaf" element={<Mushaf />} />
         <Route path="/surah/:number" element={<SurahDetail />} />
         <Route path="/juz/:number" element={<JuzDetail />} />
+        <Route path="/page/:number" element={<PageDetail />} />
         <Route path="/iqro" element={<Iqro />} />
         <Route path="/iqro/:levelNumber" element={<IqroDetail />} />
         <Route path="/murotal" element={<Murotal />} />
@@ -121,7 +127,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => {
   const { theme } = useTheme();
-  const { isReadingMode, zoom } = useUI();
+  const { isReadingMode, zoom, isHighContrast } = useUI(); // Get isHighContrast
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [showFamilyPrayerPopup, setShowFamilyPrayerPopup] = useState(false);
@@ -139,7 +145,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
   }, []);
   
   return (
-    <div className={`${theme} font-sans`} style={{ zoom: zoom }}>
+    // Apply high-contrast class conditionally
+    <div className={`${theme} font-sans ${isHighContrast ? 'high-contrast' : ''}`} style={{ zoom: zoom }}>
       <div className="bg-soft-white dark:bg-dark-blue text-gray-800 dark:text-gray-200 min-h-screen">
         <div className="flex">
           {!isReadingMode && <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />}
