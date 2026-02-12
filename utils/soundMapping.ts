@@ -53,3 +53,15 @@ export const soundMapping: Map<string, string> = new Map([
   ['تشغيل', 'play'], // tashghil
   ['ايقاف', 'stop'], // iqaf
 ]);
+
+export const getSurahFromVoice = (transcript: string): number | null => {
+  const cleanText = transcript.toLowerCase().replace(/\s/g, '');
+  
+  // 1. Cek dari mapping alias
+  for (const [alias, id] of Object.entries(surahAliasMap)) {
+    if (cleanText.includes(alias)) return id;
+  }
+  
+  return null;
+};
+
