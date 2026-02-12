@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useBookmarks, BookmarkedAyah } from '../contexts/BookmarkContext';
 import { BookOpenCheck } from 'lucide-react';
