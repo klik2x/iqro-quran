@@ -1,3 +1,10 @@
+// types.ts (Update)
+export interface IqroItem {
+  char: string;
+  latin: string;
+  instruction?: string; // Tambahan: "Huruf Alif dikuti fathah dibaca A"
+}
+
 export interface Surah {
   number: number;
   name: string;
