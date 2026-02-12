@@ -105,31 +105,3 @@ export interface QuizQuestion {
     options: string[];
     correctAnswer: number;
 }
-
-// New types for Murotal page
-export interface Mp3Reciter {
-  id: string;
-  name: string;
-  rewaya: string;
-  Server: string;
-  suras: string;
-}
-
-export interface QuranTvChannel {
-  id: string;
-  name: string;
-  url: string;
-  language: string;
-}
-
-export interface QuranVideo {
-  id: string;
-  title: string;
-  url: string;
-}
-
-export interface RadioStation {
-  id: string;
-  name:string;
-  radio_url: string;
-}
