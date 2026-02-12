@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPage } from '../services/quranService'; // FIX: Corrected import from quranApi to quranService, and function name
