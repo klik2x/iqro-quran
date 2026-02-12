@@ -4,6 +4,9 @@ import { Search, Loader2, List, Layers, BookUp } from 'lucide-react';
 import { Surah } from '../types';
 import { fetchAllSurahs } from '../services/quranService';
 import { useTranslation } from '../contexts/LanguageContext';
+import { useAudioFeedback } from '../contexts/AudioFeedbackContext';
+import { useVoiceSearch } from '../hooks/useVoiceSearch';
+import { analyzeVoiceWithAI } from '../services/vocalStudioService';
 
 const Mushaf: React.FC = () => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -12,7 +15,43 @@ const Mushaf: React.FC = () => {
   const [viewMode, setViewMode] = useState<'surah' | 'juz'>('surah');
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { triggerTick, triggerSuccess } = useAudioFeedback();
+  const { isListening, startListening } = useVoiceSearch((transcript) => {
+    // Navigasi Otomatis berdasarkan transkripsi
+    const foundSurah = surahs.find(s => 
 
+ transcript.toLowerCase().includes(s.englishName.toLowerCase())
+    );
+    
+    if (foundSurah) {
+      triggerSuccess();
+      navigate(`/surah/${foundSurah.number}`);
+    }
+  });
+
+  return (
+    <div className="flex gap-4 mb-6">
+      <div className="relative flex-1">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input 
+          placeholder="Cari Surah..." 
+          className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 focus:border-emerald-500 outline-none"
+        />
+      </div>
+      
+      {/* Tombol Mikrofon dengan Haptic Feedback */}
+      <button 
+        onClick={() => { triggerTick(); startListening(); }}
+        className={`w-14 h-14 flex items-center justify-center rounded-2xl transition-all shadow-lg 
+          ${isListening ? 'bg-red-500 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700'} text-white`}
+      >
+        <Mic size={24} />
+      </button>
+    </div>
+  );
+};
+      
+     
   useEffect(() => {
     fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
