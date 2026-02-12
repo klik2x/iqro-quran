@@ -1,4 +1,4 @@
-import { Surah, Ayah, Qari, SurahDetail, Mp3Reciter, QuranTvChannel, QuranVideo, RadioStation } from '../types';
+import { Surah, Ayah, Qari, SurahDetail } from '../types';
 
 const BASE_URL = 'https://api.alquran.cloud/v1';
 
@@ -125,29 +125,4 @@ export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
         revelationType: surahInfo.revelationType,
         ayahs: combineAyahData(editions),
     };
-};
-
-export const fetchMp3QuranReciters = async (): Promise<{ reciters: Mp3Reciter[] }> => {
-  const response = await fetchWithRetry(`https://www.mp3quran.net/api/mp3quran.json`);
-  return response.json();
-};
-
-export const fetchQuranTvChannels = async (): Promise<{ quran_tv: QuranTvChannel[] }> => {
-  const response = await fetchWithRetry(`https://www.mp3quran.net/api/TV/quran-TV.json`);
-  return response.json();
-};
-
-export const fetchQuranVideos = async (): Promise<{ quran_reflections_EN: QuranVideo[] }> => {
-    const response = await fetchWithRetry(`https://www.mp3quran.net/api/TV/en/quran_reflections_EN.json`);
-    return response.json();
-};
-
-export const fetchRadioId = async (): Promise<{ radios: RadioStation[] }> => {
-    const response = await fetchWithRetry(`https://www.mp3quran.net/api/radio-v2/radio_id.json`);
-    return response.json();
-};
-
-export const fetchRadioEn = async (): Promise<{ radios: RadioStation[] }> => {
-    const response = await fetchWithRetry(`https://www.mp3quran.net/api/radio/radio_en.json`);
-    return response.json();
 };
