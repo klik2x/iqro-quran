@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { fetchAllSurahs, fetchTafsir, fetchTranslationEditions } from '../services/quranService';
 import { Surah } from '../types';
