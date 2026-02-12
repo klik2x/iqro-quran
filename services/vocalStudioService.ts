@@ -1,28 +1,25 @@
 // services/vocalStudioService.ts (New File)
-import { Surah } from '../types';
 
-const VOCAL_STUDIO_API_URL = "https://api.vocalstudio.teer.id/v1/analyze";
+const ENGINE_URL = "https://ttspro.vercel.app/api/analyze-recitation";
 
-export interface VoiceAnalysisResult {
-  confidenceScore: number;
-  matchedText: string;
-  isCorrectTajwid: boolean;
-  suggestedSurahId?: number;
-}
-
-export const analyzeVoiceWithAI = async (audioBlob: Blob): Promise<VoiceAnalysisResult> => {
+export const analyzeRecitation = async (audioBlob: Blob, targetText: string, lang: string) => {
   const formData = new FormData();
-  formData.append('file', audioBlob);
+  formData.append('audio', audioBlob);
+  formData.append('target_text', targetText);
+  formData.append('language', lang);
 
   try {
-    const response = await fetch(VOCAL_STUDIO_API_URL, {
+    const response = await fetch(ENGINE_URL, {
       method: 'POST',
       body: formData,
-      // Jika butuh API Key: headers: { 'Authorization': 'Bearer YOUR_TEER_TOKEN' }
+      // API Key disematkan di ttspro server (.env), bukan di sini (frontend).
+      // Jadi user IQRO otomatis bisa pakai GRATIS & AMAN.
     });
+
+    if (!response.ok) throw new Error("AI Engine Offline");
     return await response.json();
   } catch (error) {
-    console.error("AI Analysis failed, falling back to local transcription", error);
-    throw error;
+    console.error("Vocal Studio Integration Error:", error);
+    return { success: false, message: "Gagal menganalisis suara." };
   }
 };
