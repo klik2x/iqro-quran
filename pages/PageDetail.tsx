@@ -1,7 +1,8 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPageDetail } from '../services/quranApi';
+import { fetchPage } from '../services/quranService'; // FIX: Corrected import from quranApi to quranService, and function name
 import { Ayah, Surah } from '../types';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
 import { ChevronLeft, Eye, EyeOff, Languages } from 'lucide-react';
@@ -29,7 +30,8 @@ const PageDetail: React.FC = () => {
     const load = async () => {
       try {
         setLoading(true);
-        const data = await fetchPageDetail(parseInt(number || '1'), selectedEdition);
+        // FIX: Changed function call from `fetchPageDetail` to `fetchPage`
+        const data = await fetchPage(parseInt(number || '1'), selectedEdition);
         setAyahs(data);
       } catch (err) {
         setError('Gagal memuat data Halaman.');
