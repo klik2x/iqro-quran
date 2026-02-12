@@ -114,6 +114,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/doa-keluarga" element={<PopupEntry />} />
+        <Route path="/admin-teer" element={<AdminStats />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
