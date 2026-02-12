@@ -250,3 +250,18 @@ export const stopVoiceCommandListener = () => {
  * @returns true jika sedang mendengarkan, false jika tidak.
  */
 export const getIsListeningStatus = () => isListeningStatus;
+
+
+// utils/voiceProcessor.ts
+export const parseVoiceCommand = (transcript: string) => {
+  const config = {
+    emotion: 'neutral',
+    lang: 'id'
+  };
+
+  if (transcript.includes('ramah') || transcript.includes('senang')) config.emotion = 'cheerful';
+  if (transcript.includes('sedih') || transcript.includes('lembut')) config.emotion = 'soft';
+  if (transcript.includes('inggris')) config.emotion = 'en';
+
+  return config;
+};
