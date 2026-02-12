@@ -71,3 +71,29 @@ export const useUI = (): UIContextType => {
   }
   return context;
 };
+
+// contexts/UIContext.tsx (Updated)
+export interface UIContextType {
+  zoom: number;
+  increaseZoom: () => void;
+  decreaseZoom: () => void;
+  isHighContrast: boolean; // Tambahan Baru
+  toggleHighContrast: () => void; // Tambahan Baru
+  isReadingMode: boolean;
+  // ...
+}
+
+export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [isHighContrast, setIsHighContrast] = useState(false);
+  
+  // Logic toggle class di body/html agar semua komponen berubah warna ke Hitam-Putih tajam
+  const toggleHighContrast = () => {
+    setIsHighContrast(prev => !prev);
+    if (!isHighContrast) {
+      document.documentElement.classList.add('high-contrast');
+    } else {
+      document.documentElement.classList.remove('high-contrast');
+    }
+  };
+
+  // ... rest of logic
