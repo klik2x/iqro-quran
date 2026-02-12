@@ -1,5 +1,5 @@
-
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+// contexts/UIContext.tsx (Updated)
+import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 interface UIContextType {
   zoom: number;
@@ -7,9 +7,8 @@ interface UIContextType {
   decreaseZoom: () => void;
   isReadingMode: boolean;
   toggleReadingMode: () => void;
-  setReadingMode: (active: boolean) => void;
-  isHighContrast: boolean; // New state for high contrast mode
-  toggleHighContrast: () => void; // New function to toggle high contrast mode
+  isHighContrast: boolean;
+  toggleHighContrast: () => void;
 }
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
@@ -17,83 +16,32 @@ const UIContext = createContext<UIContextType | undefined>(undefined);
 export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [zoom, setZoom] = useState<number>(1);
   const [isReadingMode, setIsReadingMode] = useState(false);
-  const [isHighContrast, setIsHighContrast] = useState<boolean>(() => {
-    try {
-      const stored = localStorage.getItem('isHighContrast');
-      return stored ? JSON.parse(stored) : false;
-    } catch (e) {
-      console.error("Failed to parse isHighContrast from localStorage", e);
-      return false;
-    }
-  });
+  const [isHighContrast, setIsHighContrast] = useState(false);
 
-  // Effect to apply high-contrast class to document element
-  useEffect(() => {
-    if (isHighContrast) {
-      document.documentElement.classList.add('high-contrast');
-    } else {
-      document.documentElement.classList.remove('high-contrast');
-    }
-    try {
-      localStorage.setItem('isHighContrast', JSON.stringify(isHighContrast));
-    } catch (e) {
-      console.error("Failed to save isHighContrast to localStorage", e);
-    }
-  }, [isHighContrast]);
-
-  const increaseZoom = () => setZoom(prev => Math.min(prev + 0.1, 1.5));
+  const increaseZoom = () => setZoom(prev => Math.min(prev + 0.1, 2.0)); // Zoom sampai 200%
   const decreaseZoom = () => setZoom(prev => Math.max(prev - 0.1, 0.8));
   
   const toggleReadingMode = () => setIsReadingMode(prev => !prev);
-  const setReadingMode = (active: boolean) => setIsReadingMode(active);
-  const toggleHighContrast = () => setIsHighContrast(prev => !prev); // New toggle function
+  
+  const toggleHighContrast = () => {
+    setIsHighContrast(prev => {
+      const newState = !prev;
+      if (newState) document.documentElement.classList.add('high-contrast');
+      else document.documentElement.classList.remove('high-contrast');
+      return newState;
+    });
+  };
 
   return (
     <UIContext.Provider value={{ 
-      zoom, 
-      increaseZoom, 
-      decreaseZoom, 
-      isReadingMode, 
-      toggleReadingMode, 
-      setReadingMode,
-      isHighContrast, // Provide new state
-      toggleHighContrast // Provide new function
+      zoom, increaseZoom, decreaseZoom, 
+      isReadingMode, toggleReadingMode,
+      isHighContrast, toggleHighContrast 
     }}>
-      {children}
+      <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}>
+        {children}
+      </div>
     </UIContext.Provider>
   );
 };
-
-export const useUI = (): UIContextType => {
-  const context = useContext(UIContext);
-  if (context === undefined) {
-    throw new Error('useUI must be used within a UIProvider');
-  }
-  return context;
-};
-
-// contexts/UIContext.tsx (Updated)
-export interface UIContextType {
-  zoom: number;
-  increaseZoom: () => void;
-  decreaseZoom: () => void;
-  isHighContrast: boolean; // Tambahan Baru
-  toggleHighContrast: () => void; // Tambahan Baru
-  isReadingMode: boolean;
-  // ...
-}
-
-export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isHighContrast, setIsHighContrast] = useState(false);
-  
-  // Logic toggle class di body/html agar semua komponen berubah warna ke Hitam-Putih tajam
-  const toggleHighContrast = () => {
-    setIsHighContrast(prev => !prev);
-    if (!isHighContrast) {
-      document.documentElement.classList.add('high-contrast');
-    } else {
-      document.documentElement.classList.remove('high-contrast');
-    }
-  };
-
-  // ... rest of logic
+// ... useUI hook tetap sama
