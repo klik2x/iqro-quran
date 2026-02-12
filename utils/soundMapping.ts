@@ -65,3 +65,4 @@ export const getSurahFromVoice = (transcript: string): number | null => {
   return null;
 };
 
+
