@@ -165,3 +165,18 @@ export const fetchPage = async (pageNumber: number, lang: string = 'id.indonesia
   const ayahs = combineAyahData(data);
   return ayahs;
 };
+
+export const getAudioUrl = (ayah: Ayah, qariIdentifier: string): string => {
+  // Menggunakan CDN islamic.network untuk akses audio yang lebih cepat & stabil
+  // Format: https://cdn.islamic.network/quran/audio/128/{identifier}/{ayahNumber}.mp3
+  return `https://cdn.islamic.network/quran/audio/128/${qariIdentifier}/${ayah.number}.mp3`;
+};
+
+/**
+ * Mendapatkan daftar Qari secara dinamis jika ingin menambah dari API
+ */
+export const fetchRemoteQaris = async (): Promise<Qari[]> => {
+  const response = await fetch(`${BASE_URL}/edition?format=audio&language=ar&type=surahbyayah`);
+  const data = await response.json();
+  return data.data; // Mengembalikan array sesuai interface Qari di types.ts
+};
