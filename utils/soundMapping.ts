@@ -65,6 +65,21 @@ export const getSurahFromVoice = (transcript: string): number | null => {
   return null;
 };
 
+// iqroquran.vercel.app/utils/soundMapping.ts
+
+export const INDONESIAN_SURAH_DIALECTS: Record<string, number> = {
+  "alfatihah": 1, "patihah": 1, "al fatihah": 1,
+  "al-baqarah": 2, "bakoroh": 2, "baqoroh": 2,
+  "ali imron": 3, "alimron": 3,
+  "an nisa": 4, "anisa": 4, "nisa": 4,
+  "yasin": 36, "yasinan": 36,
+  "arrahman": 55, "rahman": 55,
+  "al mulk": 67, "tabarok": 67, // Lansia sering menyebut 'Tabarok'
+  "al waqiah": 56, "wakiah": 56,
+  "al ikhlas": 112, "kulhu": 112, // Identik dengan 'Kulhu'
+  "al falaq": 113, "palaq": 113,
+  "an nas": 114, "annas": 114
+};
 
 // utils/soundMapping.ts (Pencocokan Dialek Lokal Indonesia)
 export const surahSoundMap: Record<string, number> = {
