@@ -1,3 +1,4 @@
+
 import { Surah, Ayah, Qari, SurahDetail } from '../types';
 
 const BASE_URL = 'https://api.alquran.cloud/v1';
@@ -34,6 +35,37 @@ const handleResponse = async (response: Response) => {
   return data.data;
 };
 
+// Extracted `combineAyahData` to be a top-level helper function
+const combineAyahData = (editions: any[]): Ayah[] => {
+    // Ensure all required editions are present before accessing
+    if (!editions || editions.length < 4) {
+        throw new Error('Insufficient editions for combineAyahData.');
+    }
+
+    const textEdition = editions[0].ayahs;
+    const translationEdition = editions[1].ayahs;
+    const transliterationEdition = editions[2].ayahs;
+    const audioEdition = editions[3].ayahs;
+
+    return textEdition.map((textAyah: any, index: number) => {
+        return {
+            number: textAyah.number,
+            text: textAyah.text,
+            // Ensure corresponding ayah exists before accessing properties
+            translation: translationEdition[index]?.text || '',
+            textLatin: transliterationEdition[index]?.text || '',
+            audio: audioEdition[index]?.audio || '',
+            numberInSurah: textAyah.numberInSurah,
+            juz: textAyah.juz,
+            manzil: textAyah.manzil,
+            page: textAyah.page,
+            ruku: textAyah.ruku,
+            hizbQuarter: textAyah.hizbQuarter,
+            sajda: typeof textAyah.sajda === 'boolean' ? textAyah.sajda : false,
+        };
+    });
+};
+
 export const fetchAllSurahs = async (): Promise<Surah[]> => {
   const response = await fetchWithRetry(`${BASE_URL}/surah`);
   return handleResponse(response);
@@ -55,6 +87,12 @@ export const fetchTafsir = async (surahNumber: number, tafsirEdition: string = '
 
 export const fetchTranslationEditions = async (): Promise<any[]> => {
     const response = await fetchWithRetry(`${BASE_URL}/edition/type/translation`);
+    return handleResponse(response);
+};
+
+// FIX: Added fetchAudioEditions to fetch qaris (audio editions)
+export const fetchAudioEditions = async (): Promise<Qari[]> => {
+    const response = await fetchWithRetry(`${BASE_URL}/edition?format=audio`);
     return handleResponse(response);
 };
 
@@ -80,7 +118,7 @@ export const fetchDailyAyah = async () => {
   return handleResponse(response);
 };
 
-// Merged from quranApi.tsx for use in Rekam and Dashboard
+// Merged from quranApi.tsx for use in Rekam and Dashboard, now re-using combineAyahData
 export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
     const response = await fetchWithRetry(`${BASE_URL}/surah/${surahNumber}/editions/quran-uthmani,en.sahih,en.transliteration,ar.alafasy`);
     const data = await response.json();
@@ -92,29 +130,8 @@ export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
 
     const surahInfo = editions[0];
 
-    const combineAyahData = (editions: any[]): Ayah[] => {
-        const textEdition = editions[0].ayahs;
-        const translationEdition = editions[1].ayahs;
-        const transliterationEdition = editions[2].ayahs;
-        const audioEdition = editions[3].ayahs;
-
-        return textEdition.map((textAyah: any, index: number) => {
-            return {
-                number: textAyah.number,
-                text: textAyah.text,
-                translation: translationEdition[index].text,
-                textLatin: transliterationEdition[index].text,
-                audio: audioEdition[index].audio,
-                numberInSurah: textAyah.numberInSurah,
-                juz: textAyah.juz,
-                manzil: textAyah.manzil,
-                page: textAyah.page,
-                ruku: textAyah.ruku,
-                hizbQuarter: textAyah.hizbQuarter,
-                sajda: typeof textAyah.sajda === 'boolean' ? textAyah.sajda : false,
-            };
-        });
-    };
+    // Reusing the extracted combineAyahData helper
+    const ayahs = combineAyahData(editions);
 
     return {
         number: surahInfo.number,
@@ -123,6 +140,28 @@ export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
         englishNameTranslation: surahInfo.englishNameTranslation,
         numberOfAyahs: surahInfo.numberOfAyahs,
         revelationType: surahInfo.revelationType,
-        ayahs: combineAyahData(editions),
+        ayahs: ayahs,
     };
+};
+
+/**
+ * Fetches all ayahs for a specific Quran page with Arabic text, translation, transliteration, and audio.
+ * @param pageNumber The page number to fetch (1-604).
+ * @param lang The translation language identifier (e.g., 'id.indonesian').
+ * @returns A promise that resolves to an array of Ayah objects for the specified page.
+ */
+export const fetchPage = async (pageNumber: number, lang: string = 'id.indonesian'): Promise<Ayah[]> => {
+  const editionsIdentifiers = ['quran-uthmani', lang, 'en.transliteration', 'ar.alafasy'];
+  const response = await fetchWithRetry(`${BASE_URL}/page/${pageNumber}/editions/${editionsIdentifiers.join(',')}`);
+  const data = await handleResponse(response); // data.data is already handled here and returns the array of editions
+
+  if (!data || !Array.isArray(data) || data.length < 4) {
+    throw new Error('Could not fetch all required editions for the page.');
+  }
+
+  // Reuse the extracted combineAyahData helper.
+  // The API response for /page/{pageNumber}/editions returns an array of edition objects,
+  // each containing an 'ayahs' array for that page.
+  const ayahs = combineAyahData(data);
+  return ayahs;
 };
