@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Loader2, List, Layers, BookUp } from 'lucide-react';
