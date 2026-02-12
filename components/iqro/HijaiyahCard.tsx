@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Loader2, Bookmark, CheckCircle2 } from 'lucide-react';
 import { useIqroProgress } from '../../hooks/useIqroProgress';
@@ -10,7 +11,7 @@ interface HijaiyahCardProps {
     sectionTitle: string;
     isLoading: boolean;
     isPlaying: boolean;
-    onPlay: () => void;
+    onPlay: () => void; // Ini adalah prop onPlay asli
     isLarge?: boolean;
 }
 
@@ -21,7 +22,7 @@ export const HijaiyahCard: React.FC<HijaiyahCardProps> = ({
     sectionTitle,
     isLoading,
     isPlaying,
-    onPlay,
+    onPlay, // Gunakan prop onPlay asli
     isLarge = false
 }) => {
     const { progress } = useIqroProgress();
@@ -31,7 +32,7 @@ export const HijaiyahCard: React.FC<HijaiyahCardProps> = ({
     const isCompleted = progress[id];
 
     const handleToggleBookmark = (e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent card's onPlay from firing
+        e.stopPropagation(); // Mencegah onPlay dari kartu terpicu
         const bookmarkItem: IqroBookmark = {
             id,
             level,
@@ -52,7 +53,7 @@ export const HijaiyahCard: React.FC<HijaiyahCardProps> = ({
     return (
         <div className="relative group">
             <button
-                onClick={onPlay}
+                onClick={onPlay} // Panggil prop onPlay asli secara langsung
                 disabled={isLoading}
                 aria-label={`Bunyikan ${item.latin}`}
                 className={`w-full flex flex-col items-center justify-center rounded-lg border-2 transition-all duration-200 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-dark focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dark-blue-card
@@ -73,7 +74,7 @@ export const HijaiyahCard: React.FC<HijaiyahCardProps> = ({
                      <Bookmark size={14} fill="currentColor" className="absolute top-1.5 left-1.5 text-blue-500" />
                  )}
             </button>
-             <button 
+             <button
                 onClick={handleToggleBookmark}
                 className="absolute bottom-1 right-1 p-1 text-gray-400 hover:text-gold-dark transition opacity-0 group-hover:opacity-100 focus:opacity-100"
                 aria-label={bookmarked ? 'Hapus bookmark' : 'Tambah bookmark'}

@@ -8,7 +8,7 @@ import { useIqroProgress } from '../../hooks/useIqroProgress';
 import { useTranslation } from '../../contexts/LanguageContext';
 
 type AudioPlaybackResult = {
-  sourceNode: AudioBufferSourceNode;
+  sourceNode?: AudioBufferSourceNode; // Make optional due to browser speech fallback
   controls: { onended: (() => void) | null };
 };
 
@@ -55,7 +55,7 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
         if (audioCache.current.has(id)) {
             const play = audioCache.current.get(id)!;
             const { sourceNode, controls } = play();
-            audioController.current = sourceNode;
+            audioController.current = sourceNode || null; // Update controller if actual sourceNode is returned
             setPlayingAudio(id);
             controls.onended = () => { setPlayingAudio(null); };
             return;
@@ -65,7 +65,7 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
         try {
             const { play, sourceNode, controls } = await generateSpeech(text);
             audioCache.current.set(id, play);
-            audioController.current = sourceNode;
+            audioController.current = sourceNode || null; // Update controller
             setPlayingAudio(id);
             controls.onended = () => { setPlayingAudio(null); };
         } catch (error) {
@@ -113,7 +113,7 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
                     onClick={goToPrev} 
                     disabled={currentIndex === 0} 
                     className="p-4 bg-gray-200 dark:bg-dark-blue rounded-full text-emerald-dark dark:text-emerald-light disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-700 transition"
-                    aria-label="Previous Item"
+                    aria-label={t('previousItem')}
                 >
                     <ArrowLeft />
                 </button>
@@ -121,7 +121,7 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
                     onClick={handleNextLesson} 
                     disabled={currentIndex === allItems.length - 1} 
                     className="flex-grow bg-emerald-dark text-white px-6 py-4 rounded-full hover:bg-opacity-90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    aria-label="Next Lesson"
+                    aria-label={t('nextLesson')}
                 >
                     <span>{t('nextLesson')}</span>
                     <SkipForward size={20} />
@@ -130,7 +130,7 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
                     onClick={goToNext} 
                     disabled={currentIndex === allItems.length - 1} 
                     className="p-4 bg-gray-200 dark:bg-dark-blue rounded-full text-emerald-dark dark:text-emerald-light disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-700 transition"
-                    aria-label="Next Item"
+                    aria-label={t('nextItem')}
                 >
                     <ArrowRight />
                 </button>

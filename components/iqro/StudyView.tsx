@@ -1,80 +1,87 @@
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { generateSpeech } from '../../services/geminiService';
 import { useIqroProgress } from '../../hooks/useIqroProgress';
 import { Info, BookText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { HijaiyahCard } from './HijaiyahCard';
-// FIX: The type `iroqroLevel` was not exported from `iqroData`. Changed to import `iqroData` to infer the type.
 import { iqroData } from '../../data/iqroData';
-
-type AudioPlaybackResult = {
-  sourceNode: AudioBufferSourceNode;
-  controls: { onended: (() => void) | null };
-};
+import { speak, stopSpeaking } from '../../utils/browserSpeech'; // Langsung import speak untuk pembelajaran Iqro
+import { defaultVoiceLangMapping } from '../../data/voiceTriggers'; // Untuk pemetaan bahasa
 
 interface StudyViewProps {
-    // FIX: Corrected the type to `typeof iqroData[0]` to match the actual data structure. This resolves the type error.
     levelData: typeof iqroData[0];
+    currentStudyPage: number; // Prop baru untuk kontrol eksternal
+    setStudyPage: (page: number | ((prev: number) => number)) => void; // Prop baru untuk kontrol eksternal
 }
 
-const StudyView: React.FC<StudyViewProps> = ({ levelData }) => {
+const StudyView: React.FC<StudyViewProps> = ({ levelData, currentStudyPage, setStudyPage }) => {
     const { markAsCompleted } = useIqroProgress();
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation(); // Dapatkan bahasa saat ini untuk speech browser
 
-    const [currentPage, setCurrentPage] = useState(0);
     const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
-    const audioCache = useRef<Map<string, () => AudioPlaybackResult>>(new Map());
-    const audioController = useRef<AudioBufferSourceNode | null>(null);
-    
-    // Reset to page 0 when level changes
+    // AudioController tidak digunakan secara langsung untuk speech browser, tetapi untuk melacak apakah ada yang sedang diputar
+    const audioController = useRef<SpeechSynthesisUtterance | null>(null); 
+
+    // Atur ulang status audio internal saat halaman atau level berubah
     useEffect(() => {
-        setCurrentPage(0);
-    }, [levelData]);
+        stopSpeaking(); // Pastikan setiap speech browser dihentikan
+        setPlayingAudio(null);
+        setLoadingAudio(null);
+    }, [currentStudyPage, levelData]);
 
-    const handlePlayAudio = useCallback(async (text: string, id: string) => {
+
+    const handlePlayAudio = useCallback(async (arabicText: string, latinText: string, id: string) => {
         if (loadingAudio) return;
-        if (playingAudio) audioController.current?.stop();
+        stopSpeaking(); // Hentikan setiap speech browser yang sedang diputar
 
-        if (audioCache.current.has(id)) {
-            const play = audioCache.current.get(id)!;
-            const { sourceNode, controls } = play();
-            audioController.current = sourceNode;
-            setPlayingAudio(id);
-            controls.onended = () => { setPlayingAudio(null); markAsCompleted(id); };
+        if (playingAudio === id) { // Jika audio yang sama, hentikan
+            setPlayingAudio(null);
             return;
         }
 
         setLoadingAudio(id);
+        setPlayingAudio(id); // Perbarui status pemutaran segera
+
         try {
-            const { play, sourceNode, controls } = await generateSpeech(text);
-            audioCache.current.set(id, play);
-            audioController.current = sourceNode;
-            setPlayingAudio(id);
-            controls.onended = () => { setPlayingAudio(null); markAsCompleted(id); };
+            const textToSpeak = `${arabicText}. Dibaca: ${latinText}`;
+            const browserLang = defaultVoiceLangMapping[currentLanguage] || 'id-ID';
+            
+            // Panggil Web Speech API secara langsung
+            await speak(textToSpeak, browserLang, undefined, () => {
+                setPlayingAudio(null); // Saat selesai, atur status pemutaran menjadi null
+                markAsCompleted(id); // Tandai sebagai selesai setelah pemutaran berhasil
+                setLoadingAudio(null);
+            });
         } catch (error) {
-            console.error("Error generating speech:", error);
+            console.error("Error playing browser speech:", error);
             alert("Gagal memutar audio. Coba lagi.");
-        } finally {
+            setPlayingAudio(null);
             setLoadingAudio(null);
+        } finally {
+            // setLoadingAudio akan diatur ke null oleh callback onend atau segera jika speak gagal secara sinkron.
+            // Pastikan direset jika tidak ada onend yang terpicu (misalnya, API tidak didukung)
+            if (!window.speechSynthesis) { // Jika API tidak didukung, onend tidak akan terpicu
+                setLoadingAudio(null);
+            }
         }
-    }, [loadingAudio, playingAudio, markAsCompleted]);
+    }, [loadingAudio, playingAudio, markAsCompleted, currentLanguage]);
     
-    const section = levelData.sections[currentPage];
-    if (!section) return <div className="p-8 text-center">Materi tidak ditemukan.</div>;
+    const section = levelData.sections[currentStudyPage];
+    if (!section) return <div className="p-8 text-center">{t('materialNotFound')}</div>;
 
     const totalPages = levelData.sections.length;
 
     const goToNextPage = () => {
-        if (currentPage < totalPages - 1) {
-            setCurrentPage(currentPage + 1);
+        if (currentStudyPage < totalPages - 1) {
+            setStudyPage(currentStudyPage + 1);
         }
     };
 
     const goToPrevPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(currentPage - 1);
+        if (currentStudyPage > 0) {
+            setStudyPage(currentStudyPage - 1);
         }
     };
 
@@ -97,7 +104,7 @@ const StudyView: React.FC<StudyViewProps> = ({ levelData }) => {
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                     {section.items.map((item, itemIndex) => {
-                        const id = `${levelData.level}-${currentPage}-${itemIndex}`;
+                        const id = `${levelData.level}-${currentStudyPage}-${itemIndex}`;
                         return (
                             <HijaiyahCard
                                 key={id}
@@ -107,7 +114,7 @@ const StudyView: React.FC<StudyViewProps> = ({ levelData }) => {
                                 sectionTitle={section.title}
                                 isLoading={loadingAudio === id}
                                 isPlaying={playingAudio === id}
-                                onPlay={() => handlePlayAudio(item.char, id)}
+                                onPlay={() => handlePlayAudio(item.char, item.latin, id)} // Meneruskan kedua teks Arab dan Latin
                             />
                         );
                     })}
@@ -121,24 +128,26 @@ const StudyView: React.FC<StudyViewProps> = ({ levelData }) => {
                 )}
             </div>
 
-            {/* Pagination Controls */}
+            {/* Kontrol Halaman */}
             <div className="flex items-center justify-between pt-4">
                 <button 
                     onClick={goToPrevPage} 
-                    disabled={currentPage === 0}
+                    disabled={currentStudyPage === 0}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-dark-blue rounded-lg font-semibold disabled:opacity-50"
+                    aria-label={t('previousPage')}
                 >
-                    <ChevronLeft size={18} /> Sebelumnya
+                    <ChevronLeft size={18} /> {t('previous')}
                 </button>
-                <span className="font-bold text-gray-600 dark:text-gray-300">
-                    Halaman {currentPage + 1} / {totalPages}
+                <span className="font-bold text-gray-600 dark:text-gray-300" aria-live="polite">
+                    {t('page')} {currentStudyPage + 1} / {totalPages}
                 </span>
                 <button 
                     onClick={goToNextPage} 
-                    disabled={currentPage === totalPages - 1}
+                    disabled={currentStudyPage === totalPages - 1}
                     className="flex items-center gap-2 px-4 py-2 bg-emerald-dark text-white rounded-lg font-semibold disabled:opacity-50"
+                    aria-label={t('nextPage')}
                 >
-                    Berikutnya <ChevronRight size={18} />
+                    {t('next')} <ChevronRight size={18} />
                 </button>
             </div>
         </div>
