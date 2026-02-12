@@ -1,3 +1,4 @@
+
 export const idStrings = {
   // General
   home: 'Home',
@@ -10,6 +11,9 @@ export const idStrings = {
   edit: 'Ubah',
   read: 'Baca',
   cancel: "Batal",
+  page: "Halaman",
+  previous: "Sebelumnya",
+  next: "Berikutnya",
 
   // Header & Sidebar
   dashboard: 'Dashboard',
@@ -34,6 +38,7 @@ export const idStrings = {
   readingMode: 'Mode Baca',
   installApp: 'Install Aplikasi',
   accessibility: 'Aksesibilitas',
+  highContrastMode: 'Mode Kontras Tinggi',
 
 
   // Welcome & Login
@@ -86,6 +91,21 @@ export const idStrings = {
   bookmarkInstructionIqro: "Tandai pelajaran yang ingin Anda ulangi di mode Belajar.",
   hijaiyah: "Hijaiyah",
   reset: "Reset",
+  materialNotFound: "Materi tidak ditemukan.",
+  backToIqroMenu: "Kembali ke Menu Iqro",
+  previousPage: "Halaman Sebelumnya",
+  nextPage: "Halaman Berikutnya",
+  previousItem: "Item Sebelumnya",
+  nextItem: "Item Selanjutnya",
+  activateVoiceCommands: "Aktifkan Perintah Suara",
+  deactivateVoiceCommands: "Nonaktifkan Perintah Suara",
+  listening: "Mendengarkan",
+  micPermissionDenied: "Izin mikrofon ditolak atau tidak tersedia.",
+  voiceError: "Error suara",
+  repeating: "Mengulang",
+  noNextPage: "Tidak ada halaman berikutnya.",
+  noPrevPage: "Tidak ada halaman sebelumnya.",
+
 
   // Murotal Page
   murotalPlayer: 'Pemutar Murotal',
