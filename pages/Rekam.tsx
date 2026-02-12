@@ -1,197 +1,166 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, StopCircle, Trash2, Download, Loader2 } from 'lucide-react';
-import { useTranslation } from '../contexts/LanguageContext';
-import { Surah, Ayah } from '../types';
-import { fetchAllSurahs, fetchSurah } from '../services/quranService';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Mic, Square, RefreshCcw, Send, ChevronLeft, Volume2 } from 'lucide-react';
+import { useAudioFeedback } from '../contexts/AudioFeedbackContext';
+import { sendToVocalStudio } from '../services/vocalStudioService';
+import { useUI } from '../contexts/UIContext';
+import { LoadingSpinner } from '../components/ui/Feedback';
 
-// pages/Rekam.tsx atau Mushaf.tsx
-import { useAudioFeedback } from '../contexts/AudioFeedbackContext'; // Dari file baru sebelumnya
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-
-const handleVoiceAnalysis = async (blob: Blob) => {
+const RekamAyat: React.FC = () => {
+  const { surahId, ayahId } = useParams();
+  const navigate = useNavigate();
   const { triggerTick, triggerSuccess } = useAudioFeedback();
+  const { zoom } = useUI();
   
-  // 1. Beri getaran saat mulai analisis
-  triggerTick(); 
-
-  const result = await checkRecitationQuality(blob, currentAyah);
-
-  if (result && result.score >= 80) {
-    triggerSuccess(); // Getaran pola sukses
-    // Tampilkan Ikon Centang (Color Blind Safe)
-    setFeedback({ status: 'success', icon: <CheckCircle className="text-emerald-500" /> });
-  } else {
-    // Tampilkan Ikon Silang (Color Blind Safe)
-    setFeedback({ status: 'error', icon: <XCircle className="text-red-500" /> });
-  }
-};
-
-const Rekam: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-  const { t } = useTranslation();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const animationFrameRef = useRef<number>();
 
-  const [surahs, setSurahs] = useState<Surah[]>([]);
-  const [surahAyahs, setSurahAyahs] = useState<Ayah[]>([]);
-  const [selectedSurah, setSelectedSurah] = useState<number>(1);
-  const [selectedAyah, setSelectedAyah] = useState<Ayah | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Visualizer Logic
+  const startVisualizer = (stream: MediaStream) => {
+    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const source = audioContextRef.current.createMediaStreamSource(stream);
+    const analyzer = audioContextRef.current.createAnalyser();
+    analyzer.fftSize = 256;
+    source.connect(analyzer);
 
-  useEffect(() => {
-    fetchAllSurahs().then(data => {
-        setSurahs(data);
-        setIsLoading(false);
-    });
-  }, []);
+    const bufferLength = analyzer.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
 
-  useEffect(() => {
-    if (surahs.length > 0) {
-        setIsLoading(true);
-        fetchSurah(selectedSurah).then(data => {
-            setSurahAyahs(data.ayahs);
-            setSelectedAyah(data.ayahs[0] || null);
-            setIsLoading(false);
-        });
-    }
-  }, [selectedSurah, surahs]);
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      animationFrameRef.current = requestAnimationFrame(draw);
+      analyzer.getByteFrequencyData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barWidth = (canvas.width / bufferLength) * 2.5;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = (dataArray[i] / 255) * canvas.height;
+        // Warna cerah agar kontras bagi lansia
+        ctx.fillStyle = `rgb(16, 185, 129)`; 
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+    };
+    draw();
+  };
 
   const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-      mediaRecorderRef.current.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        setAudioBlob(blob);
-        const url = URL.createObjectURL(blob);
-        setAudioURL(url);
-        audioChunksRef.current = [];
-      };
-      mediaRecorderRef.current.start();
-      setIsRecording(true);
-      setAudioURL(null);
-      setAudioBlob(null);
-    } catch (err) {
-      console.error("Error starting recording:", err);
-      alert("Tidak dapat memulai rekaman. Pastikan Anda telah memberikan izin mikrofon.");
-    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorderRef.current = new MediaRecorder(stream);
+    const chunks: Blob[] = [];
+
+    mediaRecorderRef.current.ondataavailable = (e) => chunks.push(e.data);
+    mediaRecorderRef.current.onstop = () => {
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      setAudioBlob(blob);
+      setAudioURL(URL.createObjectURL(blob));
+      cancelAnimationFrame(animationFrameRef.current!);
+    };
+
+    mediaRecorderRef.current.start();
+    setIsRecording(true);
+    triggerTick(); // Haptic feedback
+    startVisualizer(stream);
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      setIsRecording(false);
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+    triggerTick();
+  };
+
+  const submitSetoran = async () => {
+    if (!audioBlob) return;
+    setAnalyzing(true);
+    try {
+      const result = await sendToVocalStudio(audioBlob, "Target Ayat Text");
+      if (result.success) triggerSuccess();
+      // Navigasi ke hasil atau berikan feedback popup
+    } finally {
+      setAnalyzing(false);
     }
   };
 
-  const handleReset = () => {
-      setAudioURL(null);
-      setAudioBlob(null);
-  }
-
-  const handleDownload = () => {
-      if (audioURL && audioBlob) {
-          const a = document.createElement('a');
-          a.href = audioURL;
-          a.download = `bacaan_quran_${new Date().toISOString()}.wav`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-      }
-  }
-
   return (
-    <div className="space-y-6 text-center max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-emerald-dark dark:text-white">{t('recordYourReading')}</h1>
-      <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">{t('recordInstruction')}</p>
-      
-      <div className="bg-white dark:bg-dark-blue-card p-6 rounded-2xl shadow-md space-y-4">
-        <h2 className="text-lg font-bold">Pilih Ayat untuk Dilatih</h2>
-        <div className="grid grid-cols-2 gap-4">
-            <select 
-                value={selectedSurah}
-                onChange={e => setSelectedSurah(Number(e.target.value))}
-                className="p-3 bg-gray-100 dark:bg-dark-blue border border-gray-200 dark:border-gray-700 rounded-lg"
-                disabled={isLoading}
-            >
-                {surahs.map(s => <option key={s.number} value={s.number}>{s.number}. {s.englishName}</option>)}
-            </select>
-            <select
-                value={selectedAyah?.numberInSurah || ''}
-                onChange={e => setSelectedAyah(surahAyahs.find(a => a.numberInSurah === Number(e.target.value)) || null)}
-                className="p-3 bg-gray-100 dark:bg-dark-blue border border-gray-200 dark:border-gray-700 rounded-lg"
-                disabled={isLoading || surahAyahs.length === 0}
-            >
-                {surahAyahs.map(a => <option key={a.numberInSurah} value={a.numberInSurah}>Ayat {a.numberInSurah}</option>)}
-            </select>
+    <div className="max-w-2xl mx-auto p-6 space-y-8 text-center" style={{ transform: `scale(${zoom})` }}>
+      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-emerald-700 font-bold mb-4">
+        <ChevronLeft /> Kembali ke Mushaf
+      </button>
+
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-2xl border-2 border-emerald-100">
+        <h1 className="text-3xl font-black mb-2 text-slate-800 dark:text-white">Setoran Hafalan</h1>
+        <p className="text-slate-500 mb-8 font-medium italic">"Bacalah dengan tartil dan perlahan"</p>
+
+        {/* Visualizer Area */}
+        <div className="relative h-40 bg-slate-50 dark:bg-black rounded-2xl flex items-center justify-center overflow-hidden border-2 border-slate-100">
+          {!isRecording && !audioURL && (
+            <p className="text-slate-400 font-bold">Tekan Mic untuk Mulai</p>
+          )}
+          <canvas ref={canvasRef} className="w-full h-full" width={600} height={160} />
+          {isRecording && <div className="absolute top-4 left-4 flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full animate-ping" />
+            <span className="text-xs font-bold text-red-500 uppercase">Recording...</span>
+          </div>}
         </div>
-        {selectedAyah && <p className="font-arabic text-2xl text-right p-4 bg-gray-50 dark:bg-dark-blue rounded-lg">{selectedAyah.text}</p>}
-      </div>
 
-
-      <div className="bg-white dark:bg-dark-blue-card p-8 rounded-2xl shadow-md flex flex-col items-center justify-center space-y-6 min-h-[250px]">
-        {!isRecording && !audioURL && (
-          <button
-            onClick={startRecording}
-            className="w-24 h-24 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-transform transform hover:scale-110 active:scale-100"
-            aria-label="Mulai Merekam"
-            disabled={!selectedAyah}
-          >
-            <Mic size={48} />
-          </button>
-        )}
-        
-        {isRecording && (
-          <button
-            onClick={stopRecording}
-            className="w-24 h-24 bg-gray-700 hover:bg-gray-800 text-white rounded-full flex items-center justify-center transition-transform transform hover:scale-110 active:scale-100"
-            aria-label="Berhenti Merekam"
-          >
-            <StopCircle size={48} />
-          </button>
-        )}
-
-        {audioURL && (
-          <div className="w-full space-y-4 text-left">
-              <div>
-                  <h3 className="font-bold mb-2">Rekaman Anda</h3>
-                  <audio src={audioURL} controls className="w-full" />
-              </div>
-              {selectedAyah && (
-                  <div>
-                      <h3 className="font-bold mb-2">Murotal Asli (Pembanding)</h3>
-                      <audio 
-                          key={selectedAyah.number}
-                          src={selectedAyah.audio}
-                          controls
-                          className="w-full"
-                      />
-                  </div>
-              )}
-              <div className="flex justify-center gap-4 pt-4">
-                <button onClick={handleReset} className="p-3 bg-gray-200 dark:bg-gray-600 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500 transition" aria-label="Hapus Rekaman">
-                    <Trash2 className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-                </button>
-                <button onClick={handleDownload} className="p-3 bg-emerald-dark rounded-full hover:bg-opacity-90 transition" aria-label="Unduh Rekaman">
-                    <Download className="h-6 w-6 text-white" />
-                </button>
-              </div>
-          </div>
-        )}
-
-        <div className="h-8">
-            {isRecording && <p className="text-red-500 animate-pulse">Merekam...</p>}
-            {isLoading && <div className="flex items-center gap-2"><Loader2 className="animate-spin" /> <span>Memuat Ayat...</span></div>}
+        {/* Action Buttons (Extra Large for Seniors) */}
+        <div className="mt-10 flex flex-col items-center gap-6">
+          {!isRecording && !audioURL ? (
+            <button 
+              onClick={startRecording}
+              className="w-24 h-24 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-90 transition-all"
+              aria-label="Mulai Rekam Suara"
+            >
+              <Mic size={40} />
+            </button>
+          ) : isRecording ? (
+            <button 
+              onClick={stopRecording}
+              className="w-24 h-24 bg-red-600 text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-90 transition-all"
+              aria-label="Berhenti Rekam"
+            >
+              <Square size={40} fill="currentColor" />
+            </button>
+          ) : (
+            <div className="flex gap-4">
+              <button 
+                onClick={() => { setAudioURL(null); setAudioBlob(null); }}
+                className="flex items-center gap-2 bg-slate-200 px-6 py-4 rounded-2xl font-bold hover:bg-slate-300 transition-colors"
+              >
+                <RefreshCcw size={24} /> Ulangi
+              </button>
+              <button 
+                onClick={submitSetoran}
+                disabled={analyzing}
+                className="flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg"
+              >
+                {analyzing ? <LoadingSpinner /> : <><Send size={24} /> Kirim ke AI</>}
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {audioURL && (
+        <div className="bg-emerald-50 p-6 rounded-2xl flex items-center gap-4 border-2 border-emerald-200">
+          <Volume2 className="text-emerald-600" />
+          <audio src={audioURL} controls className="flex-1" />
+        </div>
+      )}
     </div>
   );
 };
 
-export default Rekam;
+export default RekamAyat;
