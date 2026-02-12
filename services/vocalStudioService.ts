@@ -1,3 +1,21 @@
+// project: iqroquran.vercel.app
+// file: services/vocalStudioService.ts
+
+export const sendToVocalStudio = async (blob: Blob, targetText: string) => {
+  const formData = new FormData();
+  formData.append('audio', blob);
+  formData.append('target_text', targetText);
+
+  const response = await fetch('https://ttspro.vercel.app/api/analyze-recitation', {
+    method: 'POST',
+    body: formData,
+    // Jangan set Content-Type header secara manual saat mengirim FormData
+  });
+
+  return await response.json();
+};
+
+
 // services/vocalStudioService.ts (New File)
 
 const ENGINE_URL = "https://ttspro.vercel.app/api/analyze-recitation";
