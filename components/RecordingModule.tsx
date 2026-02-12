@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Mic, Square, Play, Save, History, Loader2, AlertCircle, Headphones } from 'lucide-react';
 import { getGeminiInstance, encodeAudio, decodeAudio } from '../services/geminiService';
@@ -81,7 +82,8 @@ const RecordingModule: React.FC = () => {
 
   const stopLiveSession = () => {
     if (sessionRef.current) {
-      // In a real implementation, we would close properly
+      // FIX: Add session.close() as per guidelines to properly close the Live API session.
+      sessionRef.current.close();
       setIsRecording(false);
       setFeedback('Bacaan Anda telah direkam dan dianalisis.');
       

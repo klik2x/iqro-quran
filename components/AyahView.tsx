@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Surah, Ayah } from '../types';
 import { Play, Copy, Bookmark, Share2, Volume2, Loader2, Pause, X, Download } from 'lucide-react';
 import { useBookmarks } from '../contexts/BookmarkContext';
@@ -23,9 +23,12 @@ interface AyahViewProps {
 
 const AyahView: React.FC<AyahViewProps> = ({ ayah, surah, showLatin, showTranslation, onAudioStart }) => {
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
-  const { selectedEdition, editions } = useQuran();
+  const { selectedEdition, editions, playingAyah, setPlayingAyah } = useQuran();
   const [recitationAudio, setRecitationAudio] = useState<HTMLAudioElement | null>(null);
-  const [isPlayingRecitation, setIsPlayingRecitation] = useState(false);
+  
+  // Highlight state derived from context
+  const isPlayingNow = playingAyah?.surahNumber === surah.number && playingAyah?.ayahNumber === ayah.numberInSurah;
+  const isPlayingRecitation = isPlayingNow;
 
   const [isPlayingTranslation, setIsPlayingTranslation] = useState(false);
   const [isLoadingTranslation, setIsLoadingTranslation] = useState(false);
@@ -58,10 +61,7 @@ const AyahView: React.FC<AyahViewProps> = ({ ayah, surah, showLatin, showTransla
   const playRecitation = () => {
     if (recitationAudio && isPlayingRecitation) {
         recitationAudio.pause();
-        return;
-    }
-    if (recitationAudio && !isPlayingRecitation) {
-        recitationAudio.play().catch(console.error);
+        setPlayingAyah(null);
         return;
     }
 
@@ -73,9 +73,19 @@ const AyahView: React.FC<AyahViewProps> = ({ ayah, surah, showLatin, showTransla
         console.error(e);
         alert("Gagal memutar audio tilawah.");
     });
-    newAudio.onplay = () => setIsPlayingRecitation(true);
-    newAudio.onpause = () => setIsPlayingRecitation(false);
-    newAudio.onended = () => setIsPlayingRecitation(false);
+    
+    setPlayingAyah({
+        surahNumber: surah.number,
+        ayahNumber: ayah.numberInSurah,
+        audioUrl: ayah.audio
+    });
+
+    newAudio.onended = () => {
+        setPlayingAyah(null);
+    };
+    newAudio.onpause = () => {
+        setPlayingAyah(null);
+    };
   };
 
   const playTranslation = async () => {
@@ -91,7 +101,6 @@ const AyahView: React.FC<AyahViewProps> = ({ ayah, surah, showLatin, showTransla
         const edition = editions.find(e => e.identifier === selectedEdition);
         const languageName = edition ? edition.language : 'Indonesian';
         
-        // Use gemini-2.5-flash-preview-tts through generateSpeech
         const { sourceNode, controls } = await generateSpeech(ayah.translation, languageName);
         translationAudioController.current = sourceNode;
         setIsPlayingTranslation(true);
@@ -105,10 +114,9 @@ const AyahView: React.FC<AyahViewProps> = ({ ayah, surah, showLatin, showTransla
 
   return (
     <>
-    <div className="bg-white dark:bg-dark-blue-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 transition-all hover:shadow-md relative">
-        {/* Ayah Meta & Actions - Positioned at top for better access */}
+    <div className={`p-5 rounded-2xl shadow-sm border transition-all relative ${isPlayingNow ? 'bg-emerald-light/10 border-emerald-dark ring-2 ring-emerald-dark/20' : 'bg-white dark:bg-dark-blue-card border-gray-100 dark:border-gray-800 hover:shadow-md'}`}>
         <div className="flex justify-between items-start mb-4">
-            <span className="text-[10px] font-bold bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white px-3 py-1.5 rounded-full tracking-wider">
+            <span className={`text-[10px] font-bold px-3 py-1.5 rounded-full tracking-wider ${isPlayingNow ? 'bg-emerald-dark text-white' : 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white'}`}>
                 {surah.englishName} {ayah.numberInSurah}
             </span>
             <div className="flex items-center space-x-1 bg-gray-50/50 dark:bg-black/20 p-1 rounded-full border border-gray-100 dark:border-gray-700 shadow-inner">
@@ -126,7 +134,7 @@ const AyahView: React.FC<AyahViewProps> = ({ ayah, surah, showLatin, showTransla
         <div className="space-y-6">
             <p className="text-right font-arabic text-3xl md:text-4xl text-gray-800 dark:text-white leading-[2.2]" dir="rtl">
                 {ayah.text}
-                <span className="inline-flex items-center justify-center w-8 h-8 font-sans text-xs font-bold border-2 border-emerald-dark/40 dark:border-emerald-light/40 rounded-full mx-2 align-middle">{toArabicNumber(ayah.numberInSurah)}</span>
+                <span className={`inline-flex items-center justify-center w-8 h-8 font-sans text-xs font-bold border-2 rounded-full mx-2 align-middle ${isPlayingNow ? 'border-emerald-dark text-emerald-dark' : 'border-emerald-dark/40 dark:border-emerald-light/40'}`}>{toArabicNumber(ayah.numberInSurah)}</span>
             </p>
             {showLatin && (
                 <div className="p-3 bg-emerald-light/5 dark:bg-emerald-dark/10 rounded-xl border-l-4 border-emerald-dark">

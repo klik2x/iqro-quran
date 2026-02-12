@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BookOpen, Play, Award, HelpCircle, Bookmark, Trash2 } from 'lucide-react';
 import { iqroData } from '../data/iqroData';
@@ -14,9 +15,11 @@ type ViewMode = 'study' | 'practice' | 'tajwid' | 'quiz' | 'bookmarks';
 interface IqroModuleProps {
     t: any;
     levelData: typeof iqroData[0];
+    currentStudyPage: number; // New prop for external control of study page
+    setStudyPage: (page: number | ((prev: number) => number)) => void; // New prop for external control
 }
 
-const IqroModule: React.FC<IqroModuleProps> = ({ t, levelData }) => {
+const IqroModule: React.FC<IqroModuleProps> = ({ t, levelData, currentStudyPage, setStudyPage }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('study');
   const { bookmarks } = useIqroBookmarks();
   
@@ -38,7 +41,8 @@ const IqroModule: React.FC<IqroModuleProps> = ({ t, levelData }) => {
             </button>
         </div>
 
-        {viewMode === 'study' && <StudyView levelData={levelData} />}
+        {/* Pass down currentStudyPage and setStudyPage to StudyView */}
+        {viewMode === 'study' && <StudyView levelData={levelData} currentStudyPage={currentStudyPage} setStudyPage={setStudyPage} />}
         {viewMode === 'practice' && <PracticeView levelData={levelData} />}
         {viewMode === 'tajwid' && <TajwidView />}
         {viewMode === 'quiz' && <QuizView levelData={levelData} />}
