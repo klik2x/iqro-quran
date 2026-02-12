@@ -1,6 +1,13 @@
+
+
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-// Pastikan file quranApi.ts benar-benar mengekspor fungsi ini
-import { fetchTranslationEditions } from '../services/quranApi';
+import { fetchTranslationEditions } from '../services/quranService'; // FIX: Corrected import path
+
+interface PlayingAyah {
+  surahNumber: number;
+  ayahNumber: number;
+  audioUrl?: string;
+}
 
 interface QuranContextType {
   selectedEdition: string;
@@ -10,6 +17,8 @@ interface QuranContextType {
   setShowLatin: (val: boolean) => void;
   showTranslation: boolean;
   setShowTranslation: (val: boolean) => void;
+  playingAyah: PlayingAyah | null;
+  setPlayingAyah: (ayah: PlayingAyah | null) => void;
 }
 
 const QuranContext = createContext<QuranContextType | undefined>(undefined);
@@ -19,19 +28,15 @@ export const QuranProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [editions, setEditions] = useState<any[]>([]);
   const [showLatin, setShowLatin] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
+  const [playingAyah, setPlayingAyah] = useState<PlayingAyah | null>(null);
 
   useEffect(() => {
     const load = async () => {
       try {
-        // Tambahkan pengecekan apakah fungsi tersedia sebelum dipanggil
-        if (typeof fetchTranslationEditions === 'function') {
-          const data = await fetchTranslationEditions();
-          setEditions(Array.isArray(data) ? data : []);
-        } else {
-          console.warn('fetchTranslationEditions is not a function. Check your quranApi.ts');
-        }
+        const data = await fetchTranslationEditions();
+        setEditions(data);
       } catch (e) {
-        console.error('Failed to load editions:', e);
+        console.error(e);
       }
     };
     load();
@@ -45,7 +50,9 @@ export const QuranProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       showLatin, 
       setShowLatin, 
       showTranslation, 
-      setShowTranslation 
+      setShowTranslation,
+      playingAyah,
+      setPlayingAyah
     }}>
       {children}
     </QuranContext.Provider>
@@ -54,8 +61,6 @@ export const QuranProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
 export const useQuran = () => {
   const context = useContext(QuranContext);
-  if (!context) {
-    throw new Error('useQuran must be used within a QuranProvider');
-  }
+  if (!context) throw new Error('useQuran must be used within QuranProvider');
   return context;
 };
