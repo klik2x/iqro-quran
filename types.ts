@@ -1,9 +1,3 @@
-// types.ts (Update)
-export interface IqroItem {
-  char: string;
-  latin: string;
-  instruction?: string; // Tambahan: "Huruf Alif dikuti fathah dibaca A"
-}
 
 export interface Surah {
   number: number;
@@ -16,7 +10,10 @@ export interface Surah {
 
 export interface Ayah {
   number: number;
+  audio: string;
   text: string;
+  textLatin: string;
+  translation: string;
   numberInSurah: number;
   juz: number;
   manzil: number;
@@ -24,40 +21,24 @@ export interface Ayah {
   ruku: number;
   hizbQuarter: number;
   sajda: boolean;
-  audio: string;
-  translation: string;
-  textLatin: string;
-  surah?: Surah;
+  surah?: Surah; // Optional: To carry parent surah info
 }
 
 export interface SurahDetail extends Surah {
   ayahs: Ayah[];
 }
 
-export interface Translation {
-  number: number;
-  text: string;
-}
-
-export interface Tafsir {
-  number: number;
-  text: string;
-}
-
-export interface Qari {
+// Added Edition interface for dynamic edition selection
+export interface Edition {
   identifier: string;
+  language: string;
   name: string;
   englishName: string;
   format: string;
   type: string;
 }
 
-export interface HijaiyahLetter {
-  letter: string;
-  name: string;
-  sound: string;
-}
-
+// Interfaces for Iqro learning content
 export interface IqroItem {
   char: string;
   latin: string;
@@ -70,15 +51,33 @@ export interface IqroSection {
   guide?: string;
 }
 
+export interface TajwidRule {
+    rule: string;
+    explanation: string;
+    letters?: string;
+    examples?: { arabic: string; latin: string; highlight?: string; }[];
+    subRules?: {
+        name: string;
+        explanation: string;
+        examples: { arabic: string; latin: string; highlight?: string; }[];
+    }[];
+}
+
+export interface QuizQuestion {
+    char: string; // The Arabic character/word for the question
+    latin: string; // The correct Latin pronunciation
+    options: string[]; // Multiple choice options
+    correctAnswer: string; // The correct Latin answer
+}
+
 export interface IqroLevelData {
-  id: number;
+  level: number;
   title: string;
-  desc: string;
-  longDesc: string;
-  color: string;
-  items: IqroItem[];
-  tajwid?: TajwidRule[];
-  quiz?: QuizQuestion[];
+  description: string;
+  cover: string;
+  sections: IqroSection[];
+  tajwid?: TajwidRule[]; // Optional for Iqro levels
+  quiz?: QuizQuestion[]; // Optional for Iqro levels
 }
 
 export interface Doa {
@@ -91,24 +90,35 @@ export interface Doa {
   ayahNumber: number;
 }
 
-export interface AppState {
-  darkMode: boolean;
-  selectedSurah: number | null;
-  qari: string;
+// NEW INTERFACE: HijaiyahLetter
+export interface HijaiyahLetter {
+  letter: string;
+  name: string;
+  sound: string;
 }
 
-export interface TajwidRule {
-    id: string;
-    name: string;
-    explanation: string;
-    example: string;
-    exampleLatin: string;
+// NEW INTERFACE: Qari
+export interface Qari {
+  identifier: string;
+  name: string;
 }
 
-export interface QuizQuestion {
-    id: string;
-    question: string;
-    arabic?: string;
-    options: string[];
-    correctAnswer: number;
+// NEW INTERFACE: CertificateData
+export interface CertificateData {
+  userName: string;
+  levelTitle: string;
+  score: number; // For Setoran Berhadiah, or could be level completion for Iqro
+  badge?: 'gold' | 'silver' | 'bronze' | null;
+  date: string;
+  appLanguage: 'id' | 'en' | 'ar'; // For localization of certificate text
 }
+
+// NEW INTERFACE: VoiceTrigger
+export interface VoiceTrigger {
+  keyword: string;
+  languages: { [key: string]: string[] }; // { 'id': ['lanjut', 'terus'], 'en': ['next', 'continue'] }
+  action: 'next' | 'previous' | 'repeat' | 'stop' | 'start' | 'help';
+}
+
+// Removed unused AppState, HijaiyahLetter as they are defined in constants.tsx
+// or not directly used as state interfaces across the app main logic.

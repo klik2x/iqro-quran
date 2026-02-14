@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HijaiyahLetter, Doa } from './types';
 
@@ -162,7 +163,7 @@ export const DOA_LIST: Doa[] = [
     {
         id: '15',
         title: 'Doa Ampunan Orang Tua & Mukmin (Nabi Ibrahim عَلَيْهِ ٱلسَّلَامُ)',
-        arabic: 'رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ',
+        arabic: 'رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُوْمُ الْحِسَابُ',
         latin: "Rabbanaghfir li wa li-walidayya wa lil-mu'minina yauma yaqumul-hisab.",
         translation: 'Ya Tuhan kami, ampunilah aku dan kedua ibu bapakku dan semua orang yang beriman pada hari diadakan perhitungan (hari Kiamat).',
         source: 'QS. Ibrahim: 41',

@@ -1,37 +1,39 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
-import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility } from 'lucide-react';
+import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility, Award, Server } from 'lucide-react'; // Import Award and Server icon
 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 import { UIProvider, useUI } from './contexts/UIContext';
 import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
 import { PopupProvider } from './contexts/PopupContext';
-import { QuranProvider } from './contexts/QuranContext'; // Import QuranProvider
 
 import Dashboard from './pages/Dashboard';
 import Mushaf from './pages/Mushaf';
 import SurahDetail from './pages/SurahDetail';
 import JuzDetail from './pages/JuzDetail';
-import PageDetail from './pages/PageDetail';
 import Iqro from './pages/Iqro';
 import IqroDetail from './pages/IqroDetail';
-import Rekam from './pages/Rekam';
+import Rekam from './pages/Rekam'; // Rekam now uses RecordingModule internally
 import Murotal from './pages/Murotal';
 import Tafsir from './pages/Tafsir';
-import Doa from './pages/Doa';
+import DoaPage from './pages/Doa';
 import Bookmarks from './pages/Bookmarks';
 import ScrollButtons from './components/ui/ScrollButtons';
 import SettingsDropdown from './components/SettingsDropdown';
 import ReadingModeExitButton from './components/ui/ReadingModeExitButton';
 import Welcome from './pages/Welcome';
 import Login from './pages/Login';
+// FIX: Changed import paths for these pages to reflect new standalone files
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import FAQ from './pages/FAQ';
 import PopupEntry from './pages/PopupEntry';
 import FamilyPrayerPopup from './components/ui/FamilyPrayerPopup';
+import SetoranBerhadiah from './pages/SetoranBerhadiah'; // Import new SetoranBerhadiah page
+import CertificatePage from './pages/CertificatePage'; // NEW IMPORT
+import AdminStats from './pages/AdminStats'; // NEW IMPORT
 
 // Custom Emoji Icon component for 🗣️
 const SpeakingHeadIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -47,13 +49,11 @@ const App: React.FC = () => {
       <LanguageProvider>
         <UIProvider>
           <BookmarkProvider>
-            <QuranProvider> {/* Added QuranProvider here */}
-              <PopupProvider>
-                <HashRouter>
-                  <AppRoutes />
-                </HashRouter>
-              </PopupProvider>
-            </QuranProvider> {/* Closing QuranProvider */}
+            <PopupProvider>
+              <HashRouter>
+                <AppRoutes />
+              </HashRouter>
+            </PopupProvider>
           </BookmarkProvider>
         </UIProvider>
       </LanguageProvider>
@@ -102,19 +102,20 @@ const AppRoutes: React.FC = () => {
         <Route path="/mushaf" element={<Mushaf />} />
         <Route path="/surah/:number" element={<SurahDetail />} />
         <Route path="/juz/:number" element={<JuzDetail />} />
-        <Route path="/page/:number" element={<PageDetail />} />
         <Route path="/iqro" element={<Iqro />} />
         <Route path="/iqro/:levelNumber" element={<IqroDetail />} />
+        <Route path="/iqro/:levelNumber/certificate" element={<CertificatePage />} /> {/* NEW ROUTE */}
         <Route path="/murotal" element={<Murotal />} />
         <Route path="/tafsir" element={<Tafsir />} />
-        <Route path="/doa" element={<Doa />} />
+        <Route path="/doa" element={<DoaPage />} />
         <Route path="/rekam" element={<Rekam />} />
+        <Route path="/setoran-berhadiah" element={<SetoranBerhadiah />} /> {/* NEW ROUTE */}
         <Route path="/bookmarks" element={<Bookmarks />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/doa-keluarga" element={<PopupEntry />} />
-        <Route path="/admin-teer" element={<AdminStats />} />
+        <Route path="/admin/stats" element={<AdminStats />} /> {/* NEW HIDDEN ROUTE */}
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
@@ -128,7 +129,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => {
   const { theme } = useTheme();
-  const { isReadingMode, zoom, isHighContrast } = useUI(); // Get isHighContrast
+  const { isReadingMode, zoom } = useUI();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [showFamilyPrayerPopup, setShowFamilyPrayerPopup] = useState(false);
@@ -146,8 +147,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
   }, []);
   
   return (
-    // Apply high-contrast class conditionally
-    <div className={`${theme} font-sans ${isHighContrast ? 'high-contrast' : ''}`} style={{ zoom: zoom }}>
+    <div className={`${theme} font-sans`} style={{ zoom: zoom }}>
       <div className="bg-soft-white dark:bg-dark-blue text-gray-800 dark:text-gray-200 min-h-screen">
         <div className="flex">
           {!isReadingMode && <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />}
@@ -188,7 +188,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
     return (
         <header className="sticky top-0 bg-soft-white/80 dark:bg-dark-blue/80 backdrop-blur-sm z-40 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-4">
-                <button onClick={onMenuClick} className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Buka menu">
+                <button onClick={onMenuClick} className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Buka menu">
                     <Menu className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                 </button>
                  <div className="flex items-center gap-2">
@@ -199,14 +199,14 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
                 </div>
             </div>
             <div className="flex items-center gap-1">
-                <button className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Pengaturan Aksesibilitas" onClick={() => alert('Fitur aksesibilitas akan datang!')}>
+                <button className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Pengaturan Aksesibilitas" onClick={() => alert('Fitur aksesibilitas akan datang!')}>
                     <Accessibility className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                 </button>
-                <Link to="/" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Ke halaman utama">
+                <Link to="/" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Ke halaman utama">
                     <HomeIcon className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                 </Link>
                 <div className="relative">
-                    <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card" aria-label="Buka pengaturan">
+                    <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Buka pengaturan">
                         <Cog className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                     </button>
                     <SettingsDropdown isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
@@ -227,6 +227,7 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
         { path: '/tafsir', icon: BookOpen, label: t('tafsir') },
         { path: '/doa', icon: BookHeart, label: t('prayers') },
         { path: '/rekam', icon: Mic, label: t('record') },
+        { path: '/setoran-berhadiah', icon: Award, label: t('setoranBerhadiah') }, // NEW: Setoran Berhadiah
         { path: '/doa-keluarga', icon: Users, label: t('familyPrayer') },
     ];
 
@@ -248,7 +249,7 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
                     </svg>
                     <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO</h1>
                 </div>
-                <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2">
+                <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2 min-h-[44px] min-w-[44px]">
                     <X className="h-6 w-6" />
                 </button>
             </div>
@@ -256,7 +257,7 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
               <ul>
                   {navItems.map(item => (
                       <li key={item.path}>
-                          <Link to={item.path} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                          <Link to={item.path} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors min-h-[44px] ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
                               { item.label === t('learnIqro')
                                 ? <item.icon className="w-5 text-center text-xl" />
                                 : <item.icon className="h-5 w-5" />
@@ -271,12 +272,12 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
                   {staticItems.map(item => (
                       <li key={item.label}>
                         {item.type === 'link' ? (
-                            <a href={item.href} target={item.href.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer" className="flex items-center space-x-3 px-3 py-3 my-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <a href={item.href} target={item.href.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer" className="flex items-center space-x-3 px-3 py-3 my-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 min-h-[44px]">
                                <item.icon className="h-5 w-5" />
                                <span className="font-medium">{item.label}</span>
                             </a>
                         ) : (
-                          <Link to={item.path!} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                          <Link to={item.path!} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors min-h-[44px] ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
                               <item.icon className="h-5 w-5" />
                               <span className="font-medium">{item.label}</span>
                           </Link>
@@ -311,7 +312,7 @@ const BottomNav: React.FC = () => {
                     <Link 
                         to={item.path} 
                         key={item.path} 
-                        className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-all duration-200 ${location.pathname === item.path ? 'text-emerald-dark dark:text-gold-light' : 'text-gray-500 dark:text-gray-400'} ${item.path === '/mushaf' ? 'transform -translate-y-3' : ''}`}
+                        className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-all duration-200 min-h-[44px] ${location.pathname === item.path ? 'text-emerald-dark dark:text-gold-light' : 'text-gray-500 dark:text-gray-400'} ${item.path === '/mushaf' ? 'transform -translate-y-3' : ''}`}
                     >
                         <div className={`flex items-center justify-center rounded-full transition-all duration-200 ${item.path === '/mushaf' ? 'bg-emerald-dark dark:bg-gold-light p-4 -mt-6 shadow-lg' : 'p-2'}`}>
                           { item.label === 'Iqro'
