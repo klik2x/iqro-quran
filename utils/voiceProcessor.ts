@@ -1,267 +1,175 @@
 
-// utils/voiceProcessor.ts
+import { voiceTriggers } from '../data/voiceTriggers';
 
-// Memastikan jalur impor adalah relatif agar dapat diselesaikan oleh browser.
-// Impor ini sudah menggunakan jalur relatif yang benar.
-import { voiceTriggers, defaultVoiceLangMapping, preferredVoiceNames } from '../data/voiceTriggers';
-import { soundMapping } from './soundMapping';
-import { speak, stopSpeaking } from './browserSpeech'; // FIX: Mengimpor speak dan stopSpeaking dari browserSpeech.ts
-
-// Declare global types for Speech Recognition API if not implicitly available
-// This is a workaround if 'dom' library is not included or is an older version in tsconfig.json
-declare class SpeechRecognition extends EventTarget {
-  grammars: SpeechGrammarList;
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  maxAlternatives: number;
-  serviceURI: string;
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechchend: ((this: SpeechRecognition, ev: Event) | null; // FIX: Typo corrected
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  start(): void;
-  stop(): void;
-  abort(): void;
-}
-
-declare class SpeechRecognitionEvent extends Event {
-  readonly resultIndex: number;
-  readonly results: SpeechRecognitionResultList;
-  constructor(type: string, eventInitDict: SpeechRecognitionEventInit);
-}
-
-interface SpeechRecognitionEventInit extends EventInit {
-  resultIndex?: number;
-  results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionResultList {
-    readonly length: number;
-    item(index: number): SpeechRecognitionResult;
-    [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-    readonly isFinal: boolean;
-    readonly length: number;
-    item(index: number): SpeechRecognitionAlternative;
-    [index: number]: SpeechRecognitionAlternative;
-}
-
-interface SpeechRecognitionAlternative {
-    readonly transcript: string;
-    readonly confidence: number;
-}
-
-declare class SpeechRecognitionErrorEvent extends Event {
-  readonly error: SpeechRecognitionErrorCode;
-  readonly message: string;
-  constructor(type: string, eventInitDict: SpeechRecognitionErrorEventInit);
-}
-
-interface SpeechRecognitionErrorEventInit extends EventInit {
-  error: SpeechRecognitionErrorCode;
-  message?: string;
-}
-
-declare class SpeechGrammarList {
-    readonly length: number;
-    addFromString(string: string, weight?: number): void;
-    addFromURI(src: string, weight?: number): void;
-    item(index: number): SpeechGrammar;
-    [index: number]: SpeechGrammar;
-}
-
-declare class SpeechGrammar {
-    readonly src: string;
-    readonly weight: number;
-}
-
-type SpeechRecognitionErrorCode =
-    | "no-speech"
-    | "aborted"
-    | "audio-capture"
-    | "network"
-    | "not-allowed"
-    | "service-not-allowed"
-    | "bad-grammar"
-    | "language-not-supported";
-
-// Extend Window interface to include webkitSpeechRecognition
+// Extend the Window interface to include webkitSpeechRecognition for better type safety
 declare global {
   interface Window {
-    SpeechRecognition?: typeof SpeechRecognition;
-    webkitSpeechRecognition?: typeof SpeechRecognition;
-    SpeechGrammarList?: typeof SpeechGrammarList;
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechGrammarList: typeof SpeechGrammarList;
+    webkitSpeechGrammarList: typeof SpeechGrammarList;
   }
 }
 
-// Inisialisasi SpeechRecognition
-const WebSpeechRecognition: typeof SpeechRecognition | undefined = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition: SpeechRecognition | null = null;
-let isListeningStatus: boolean = false; // Status internal
-let currentLanguage: string = 'id'; // Default language
+// Global declarations for Web Speech API types to resolve 'Cannot find name' errors
+// These are typically provided by 'dom' lib in tsconfig, but added here for self-containment.
+declare var SpeechRecognition: {
+    prototype: SpeechRecognition;
+    new(): SpeechRecognition;
+};
 
-const setupRecognition = (langCode: string) => {
-  if (WebSpeechRecognition) {
-    recognition = new WebSpeechRecognition();
-    recognition.continuous = false; // Hanya satu kali pengenalan per start
-    recognition.interimResults = false; // Hanya hasil final
-    
-    // Gunakan bahasa yang dipetakan untuk pengenalan suara
-    const recognitionLang = defaultVoiceLangMapping[langCode] || 'id-ID';
-    recognition.lang = recognitionLang;
+declare var SpeechGrammarList: {
+    prototype: SpeechGrammarList;
+    new(): SpeechGrammarList;
+};
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript.toLowerCase().trim();
-      console.log('Recognized:', transcript);
-      processSpeech(transcript, langCode);
+declare var SpeechRecognitionErrorEvent: {
+    prototype: SpeechRecognitionErrorEvent;
+    new(type: string, eventInitDict?: SpeechRecognitionErrorEventInit): SpeechRecognitionErrorEvent;
+};
+
+export type VoiceCommandAction = 'next' | 'previous' | 'repeat' | 'stop' | 'start' | 'help' | null;
+
+interface VoiceProcessorOptions {
+  onCommand: (action: VoiceCommandAction, keyword: string) => void;
+  onListeningStart?: () => void;
+  onListeningEnd?: () => void;
+  onNoMatch?: (transcript: string) => void;
+  onError?: (event: SpeechRecognitionErrorEvent) => void;
+  lang?: string; // e.g., 'id-ID', 'en-US', 'ar-SA'
+}
+
+export class VoiceProcessor {
+  private recognition: SpeechRecognition | null = null;
+  private onCommand: (action: VoiceCommandAction, keyword: string) => void;
+  private onListeningStart?: () => void;
+  private onListeningEnd?: () => void;
+  private onNoMatch?: (transcript: string) => void;
+  private onError?: (event: SpeechRecognitionErrorEvent) => void;
+  private lang: string;
+  private isListening: boolean = false;
+
+  constructor(options: VoiceProcessorOptions) {
+    this.onCommand = options.onCommand;
+    this.onListeningStart = options.onListeningStart;
+    this.onListeningEnd = options.onListeningEnd;
+    this.onNoMatch = options.onNoMatch;
+    this.onError = options.onError;
+    this.lang = options.lang || 'id-ID'; // Default to Indonesian
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+
+    if (!SpeechRecognition) {
+      console.warn("Web Speech API SpeechRecognition not supported in this browser.");
+      return;
+    }
+
+    this.recognition = new SpeechRecognition();
+    this.recognition.continuous = false; // Only get one result per recognition instance
+    this.recognition.interimResults = false; // Only return final results
+    this.recognition.lang = this.lang;
+
+    // Optional: Add grammar for better recognition of specific keywords
+    if (SpeechGrammarList) {
+      const grammar = `#JSGF V1.0; grammar commands; public <command> = ${this.getGrammarList()};`;
+      const speechRecognitionList = new SpeechGrammarList();
+      speechRecognitionList.addFromString(grammar, 1);
+      this.recognition.grammars = speechRecognitionList;
+    }
+
+    this.recognition.onstart = () => {
+      this.isListening = true;
+      this.onListeningStart?.();
     };
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech Recognition Error:', event.error);
-      onRecognitionErrorCallbacks.forEach(cb => cb(event.error));
-      // Jika ada error dan kita masih seharusnya mendengarkan, coba restart
-      if (isListeningStatus) {
-        console.log('Restarting recognition after error...');
-        // Beri sedikit delay sebelum restart untuk menghindari loop cepat
-        setTimeout(() => {
-          recognition?.start();
-        }, 500); 
-      }
-    };
-
-    recognition.onend = () => {
-      // Jika masih seharusnya mendengarkan, restart secara otomatis
-      if (isListeningStatus) {
-        console.log('Recognition ended, restarting...');
-        recognition?.start();
+    this.recognition.onresult = (event) => {
+      const last = event.results.length - 1;
+      const transcript = event.results[last][0].transcript.toLowerCase().trim();
+      console.log('Voice recognized:', transcript);
+      
+      const matchedTrigger = this.findMatchingTrigger(transcript);
+      if (matchedTrigger) {
+        this.onCommand(matchedTrigger.action, transcript);
       } else {
-        // Jika sudah berhenti, reset status
-        onListeningStatusChangeCallbacks.forEach(cb => cb(false));
+        this.onNoMatch?.(transcript);
       }
     };
-  } else {
-    console.warn('Speech Recognition API not supported in this browser.');
-    onRecognitionErrorCallbacks.forEach(cb => cb('Speech Recognition API not supported.'));
+
+    this.recognition.onend = () => {
+      this.isListening = false;
+      this.onListeningEnd?.();
+      // If we want continuous listening, we could restart here, but for commands,
+      // it's often better to stop and re-enable manually.
+    };
+
+    this.recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event);
+      this.isListening = false;
+      this.onError?.(event);
+    };
   }
-};
 
-const onCommandCallbacks: Array<(command: string, recognizedText: string) => void> = [];
-const onListeningStatusChangeCallbacks: Array<(isListening: boolean) => void> = [];
-const onRecognitionErrorCallbacks: Array<(error: string) => void> = [];
+  private getGrammarList(): string {
+    const keywords: string[] = [];
+    voiceTriggers.forEach(trigger => {
+      const currentLangKeywords = trigger.languages[this.lang.split('-')[0]]; // Get keywords for current short lang code
+      if (currentLangKeywords) {
+        keywords.push(...currentLangKeywords);
+      }
+    });
+    return keywords.join(' | ');
+  }
 
-/**
- * Memproses teks yang dikenali untuk mencari perintah dan memicu callback.
- * @param text Teks yang dikenali oleh Speech Recognition.
- * @param lang Kode bahasa aktif.
- */
-const processSpeech = (text: string, lang: string) => {
-  // 1. Normalisasi teks menggunakan soundMapping
-  let normalizedText = text;
-  for (const [mispronunciation, canonical] of soundMapping.entries()) {
-    if (text.includes(mispronunciation)) {
-      normalizedText = normalizedText.replace(mispronunciation, canonical);
-      break; // Ambil yang pertama cocok
+  private findMatchingTrigger(transcript: string) {
+    const currentLangCode = this.lang.split('-')[0];
+    for (const trigger of voiceTriggers) {
+      const langKeywords = trigger.languages[currentLangCode];
+      if (langKeywords && langKeywords.some(keyword => transcript.includes(keyword.toLowerCase()))) {
+        return trigger;
+      }
     }
+    return null;
   }
 
-  // 2. Deteksi perintah dari voiceTriggers
-  for (const commandType in voiceTriggers) {
-    const triggers = voiceTriggers[commandType as keyof typeof voiceTriggers];
-    for (const trigger of triggers) {
-      if (normalizedText.includes(trigger.toLowerCase())) {
-        onCommandCallbacks.forEach(cb => cb(commandType, normalizedText));
-        return; // Hanya satu perintah per pengenalan
+  public startListening(): void {
+    if (this.recognition && !this.isListening) {
+      try {
+        this.recognition.start();
+        console.log("VoiceProcessor started listening...");
+      } catch (e) {
+        console.error("Error starting speech recognition:", e);
+        // FIX: Use SpeechRecognitionErrorEvent constructor with a valid error type
+        this.onError?.(new SpeechRecognitionErrorEvent('error', { error: 'aborted', message: e instanceof Error ? e.message : String(e) }));
       }
     }
   }
 
-  // Jika tidak ada perintah yang cocok, bisa memberikan feedback (opsional)
-  console.log(`No command found for: "${normalizedText}"`);
-  // FIX: Menggunakan fungsi speak dari browserSpeech.ts
-  // speak("Perintah tidak dikenal.", defaultVoiceLangMapping[lang]); // Contoh feedback audio
-};
-
-/**
- * Memulai pendengar perintah suara.
- * @param lang Kode bahasa untuk pengenalan (misal: 'id', 'en', 'ar').
- * @param onCommand Callback ketika perintah dikenali.
- * @param onListeningStatusChange Callback untuk perubahan status mendengarkan.
- * @param onRecognitionError Callback untuk error pengenalan.
- */
-export const startVoiceCommandListener = (
-  lang: string,
-  onCommand: (command: string, recognizedText: string) => void,
-  onListeningStatusChange: (isListening: boolean) => void,
-  onRecognitionError: (error: string) => void
-) => {
-  currentLanguage = lang; // Simpan bahasa aktif
-  if (!recognition) {
-    setupRecognition(lang);
-  }
-
-  onCommandCallbacks.push(onCommand);
-  onListeningStatusChangeCallbacks.push(onListeningStatusChange);
-  onRecognitionErrorCallbacks.push(onRecognitionError);
-
-  if (recognition && !isListeningStatus) {
-    try {
-      recognition.start();
-      isListeningStatus = true;
-      onListeningStatusChangeCallbacks.forEach(cb => cb(true));
-      console.log('Voice command listener started.');
-    } catch (e) {
-      console.error('Failed to start Speech Recognition:', e);
-      onRecognitionErrorCallbacks.forEach(cb => cb('Failed to start microphone.'));
-      isListeningStatus = false;
-      onListeningStatusChangeCallbacks.forEach(cb => cb(false));
+  public stopListening(): void {
+    if (this.recognition && this.isListening) {
+      this.recognition.stop();
+      console.log("VoiceProcessor stopped listening.");
     }
-  } else if (!recognition) {
-     onRecognitionErrorCallbacks.forEach(cb => cb('Speech Recognition API not available.'));
   }
-};
 
-/**
- * Menghentikan pendengar perintah suara.
- */
-export const stopVoiceCommandListener = () => {
-  if (recognition && isListeningStatus) {
-    recognition.stop();
-    isListeningStatus = false;
-    onListeningStatusChangeCallbacks.forEach(cb => cb(false));
-    onCommandCallbacks.length = 0; // Bersihkan semua callback
-    onListeningStatusChangeCallbacks.length = 0;
-    onRecognitionErrorCallbacks.length = 0;
-    console.log('Voice command listener stopped.');
+  public setLang(newLang: string): void {
+    if (this.lang !== newLang) {
+      this.lang = newLang;
+      if (this.recognition) {
+        this.recognition.lang = newLang;
+        // Reinitialize grammar if necessary
+        const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+        if (SpeechGrammarList) {
+          const grammar = `#JSGF V1.0; grammar commands; public <command> = ${this.getGrammarList()};`;
+          const speechRecognitionList = new SpeechGrammarList();
+          speechRecognitionList.addFromString(grammar, 1);
+          this.recognition.grammars = speechRecognitionList;
+        }
+      }
+    }
   }
-};
 
-/**
- * Mendapatkan status mendengarkan saat ini.
- * @returns true jika sedang mendengarkan, false jika tidak.
- */
-export const getIsListeningStatus = () => isListeningStatus;
-
-
-// utils/voiceProcessor.ts
-export const parseVoiceCommand = (transcript: string) => {
-  const config = {
-    emotion: 'neutral',
-    lang: 'id'
-  };
-
-  if (transcript.includes('ramah') || transcript.includes('senang')) config.emotion = 'cheerful';
-  if (transcript.includes('sedih') || transcript.includes('lembut')) config.emotion = 'soft';
-  if (transcript.includes('inggris')) config.emotion = 'en';
-
-  return config;
-};
+  public getIsListening(): boolean {
+    return this.isListening;
+  }
+}
