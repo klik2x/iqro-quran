@@ -8,6 +8,18 @@ const TajwidView: React.FC = () => {
     const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
     const audioController = useRef<AudioBufferSourceNode | null>(null);
+    const handlePlayTajwid = (item: any) => {
+  // Contoh: membacakan hukum tajwidnya dulu dalam bahasa Indonesia, 
+  // lalu contoh bunyinya dalam bahasa Arab
+  
+  // Langkah 1: Penjelasan (Bahasa Indonesia)
+  speakIqro(`Hukumnya adalah ${item.title}`, false);
+  
+  // Langkah 2: Contoh bunyi (Bahasa Arab) - beri jeda sedikit
+  setTimeout(() => {
+    speakIqro(item.arabicText, true); 
+  }, 2000);
+};
     
     const renderHighlighted = (text: string, highlight?: string) => {
         if (!highlight) return text;
