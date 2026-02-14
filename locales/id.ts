@@ -11,9 +11,12 @@ export const idStrings = {
   edit: 'Ubah',
   read: 'Baca',
   cancel: "Batal",
-  page: "Halaman",
-  previous: "Sebelumnya",
-  next: "Berikutnya",
+  Sebelumnya: "Sebelumnya",
+  Halaman: "Halaman",
+  Berikutnya: "Berikutnya",
+  Item: "Item",
+  'Previous Item': "Item Sebelumnya",
+  'Next Item': "Item Berikutnya",
 
   // Header & Sidebar
   dashboard: 'Dashboard',
@@ -28,7 +31,8 @@ export const idStrings = {
   privacyPolicy: 'Kebijakan Privasi',
   termsOfService: 'Ketentuan Layanan',
   faq: 'FAQ',
-  
+  setoranBerhadiah: 'Setoran Berhadiah', // NEW
+
   // Settings Dropdown
   language: 'Bahasa',
   translating: 'Menerjemahkan',
@@ -38,7 +42,6 @@ export const idStrings = {
   readingMode: 'Mode Baca',
   installApp: 'Install Aplikasi',
   accessibility: 'Aksesibilitas',
-  highContrastMode: 'Mode Kontras Tinggi',
 
 
   // Welcome & Login
@@ -91,20 +94,15 @@ export const idStrings = {
   bookmarkInstructionIqro: "Tandai pelajaran yang ingin Anda ulangi di mode Belajar.",
   hijaiyah: "Hijaiyah",
   reset: "Reset",
-  materialNotFound: "Materi tidak ditemukan.",
-  backToIqroMenu: "Kembali ke Menu Iqro",
-  previousPage: "Halaman Sebelumnya",
-  nextPage: "Halaman Berikutnya",
-  previousItem: "Item Sebelumnya",
-  nextItem: "Item Selanjutnya",
-  activateVoiceCommands: "Aktifkan Perintah Suara",
-  deactivateVoiceCommands: "Nonaktifkan Perintah Suara",
-  listening: "Mendengarkan",
-  micPermissionDenied: "Izin mikrofon ditolak atau tidak tersedia.",
-  voiceError: "Error suara",
-  repeating: "Mengulang",
-  noNextPage: "Tidak ada halaman berikutnya.",
-  noPrevPage: "Tidak ada halaman sebelumnya.",
+  'Hapus bookmark untuk': "Hapus bookmark untuk",
+  levelCompletedMessage: "Selamat! Anda telah menyelesaikan level ini!", // NEW
+  viewCertificate: "Lihat Sertifikat", // NEW
+  failedToGenerateCertificate: "Gagal membuat sertifikat. Silakan coba lagi.", // NEW
+  certificateInstruction: "Unduh sertifikat kelulusan Iqro Anda setelah berhasil menyelesaikan satu level.", // NEW
+  sertifikatKelulusanIqro: "Sertifikat Kelulusan Iqro", // NEW
+  badge: "Badge", // NEW
+  enterYourNameForCertificate: "Masukkan nama Anda untuk sertifikat", // NEW
+  yourName: "Nama Anda", // NEW
 
 
   // Murotal Page
@@ -118,9 +116,53 @@ export const idStrings = {
   // Doa Page
   doaTitle: 'Kumpulan Doa dalam Al-Qur\'an',
 
-  // Rekam Page
-  recordYourReading: 'Rekam Bacaan Anda',
-  recordInstruction: 'Gunakan fitur ini untuk melatih dan mendengarkan kembali bacaan Al-Qur\'an Anda. Klik tombol mikrofon untuk memulai.',
+  // Rekam Page (NEW ADDITIONS)
+  recordingStudio: 'Studio Rekaman',
+  recordInstructionAI: 'Gunakan AI untuk melatih dan mendapatkan analisis bacaan Al-Qur\'an Anda secara real-time. Klik tombol mikrofon untuk memulai.',
+  connectingToAI: 'Menghubungkan ke AI...',
+  startReadingQuran: 'Koneksi terhubung. Silakan mulai membaca Al-Qur\'an.',
+  aiGeneratingFeedback: 'AI sedang menganalisis dan memberikan masukan...',
+  failedToPlayAIAudio: 'Gagal memutar audio masukan dari AI.',
+  aiFeedbackComplete: 'Analisis AI selesai.',
+  connectionError: 'Terjadi kesalahan koneksi AI. Mencoba fallback ke perekam lokal.',
+  recordingAnalysisComplete: 'Rekaman dan analisis selesai.',
+  failedToAccessMic: 'Gagal mengakses mikrofon. Pastikan izin mikrofon diberikan.',
+  usingLocalRecorder: 'Gagal terhubung ke AI. Menggunakan perekam lokal.',
+  recordingCompleteLocal: 'Rekaman lokal selesai.',
+  localRecordingStarted: 'Perekaman lokal dimulai...',
+  stopRecording: 'Hentikan Rekaman',
+  startRecording: 'Mulai Rekam',
+  startRecordingLocal: 'Mulai Rekam (Lokal)',
+  listening: 'Mendengarkan...',
+  readyToRecord: 'Siap Merekam',
+  pressToStartRecording: 'Tekan tombol mikrofon untuk memulai perekaman.',
+  localRecording: 'Rekaman Lokal',
+  yourTranscription: 'Transkripsi Anda',
+  noLocalRecording: 'Tidak ada rekaman lokal.',
+  noTranscriptionYet: 'Belum ada transkripsi dari AI.',
+  pauseLocalRecording: 'Jeda Rekaman Lokal',
+  playLocalRecording: 'Putar Rekaman Lokal',
+  downloadLocalRecording: 'Unduh Rekaman Lokal',
+  resetLocalRecording: 'Reset Rekaman Lokal',
+  aiAnalysis: 'Analisis AI',
+  aiAnalysisPoint1: 'AI akan memberikan masukan real-time mengenai ketepatan tajwid, makhraj, dan kelancaran bacaan Anda.',
+  aiAnalysisPoint2: 'Dengarkan petunjuk AI untuk perbaikan dan tingkatkan kualitas bacaan Anda.',
+  recordingSystemInstruction: 'Anda adalah seorang guru Al-Qur\'an yang ramah dan sabar, memberikan bimbingan tajwid dan makhraj secara real-time untuk membantu pengguna meningkatkan bacaan mereka. Berikan masukan yang konstruktif dan dorongan positif.',
+  pauseModelAudio: 'Jeda Audio Model', // NEW
+  playModelAudio: 'Putar Audio Model', // NEW
+  listenToCorrectPronunciation: 'Dengarkan pelafalan yang benar dari AI.', // NEW
+
+  // Setoran Berhadiah Page (NEW ADDITIONS)
+  setoranBerhadiahTitle: 'Setoran Berhadiah',
+  setoranBerhadiahInstruction: 'Uji hafalan Al-Qur\'an Anda dengan AI dan dapatkan penilaian real-time serta badge penghargaan!',
+  selectAyah: 'Pilih Ayat',
+  selectASurah: 'Pilih Surah',
+  loadingAyahs: 'Memuat ayat-ayat...',
+  selectAyahForQuiz: 'Silakan pilih surah dan ayat untuk memulai kuis.',
+  startSetoran: 'Mulai Setoran',
+  analysisResult: 'Hasil Analisis',
+  downloadCertificate: 'Unduh Sertifikat',
+
 
   // Bookmarks Page
   bookmarkedAyahs: 'Bookmark Ayat',
@@ -155,4 +197,13 @@ export const idStrings = {
   terms1_p: 'Agar umat Islam dapat memperoleh akses yang mudah untuk memahami makna ayat Al-Qur\'an dengan baik dan benar, khususnya bagi masyarakat awam.',
   terms2_h: 'Penggunaan Wajar',
   terms2_p: 'Aplikasi ini disediakan untuk tujuan pembelajaran dan informasi keagamaan. Dilarang menyalahgunakan konten untuk tujuan komersial yang merugikan.',
+
+  // Admin Stats Page (NEW ADDITIONS)
+  adminStatsTitle: 'Statistik Penggunaan API', // NEW
+  adminStatsDisclaimer: 'Halaman ini menampilkan statistik penggunaan API yang disimulasikan untuk tujuan demonstrasi. Data real-time hanya tersedia melalui dasbor penyedia layanan backend.', // NEW
+  loadingStats: 'Memuat statistik API...', // NEW
+  totalRequests: 'Total Permintaan', // NEW
+  hourlyLimit: 'Batas Per Jam', // NEW
+  dailyLimit: 'Batas Harian', // NEW
+  lastChecked: 'Terakhir diperiksa', // NEW
 };
