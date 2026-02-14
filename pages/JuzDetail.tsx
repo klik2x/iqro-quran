@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -78,8 +79,10 @@ const JuzDetail: React.FC = () => {
     setPlayingTTS(ayahNum);
     try {
       const langName = availableTranslations.find(et => et.identifier === translationLang)?.language || 'Indonesian';
+      // FIX: Call .play() on the AudioPlayback object to get controls
       const playback = await generateSpeech(text, langName, 'Kore');
-      playback.controls.onended = () => setPlayingTTS(null);
+      const { controls } = playback.play();
+      controls.onended = () => setPlayingTTS(null);
     } catch (e) {
       console.error("TTS failed:", e);
       setPlayingTTS(null);

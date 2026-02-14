@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from '../contexts/LanguageContext'; // Import useTranslation
 
 interface LoginProps {
     onLogin: () => void;
@@ -7,6 +9,7 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const navigate = useNavigate();
+    const { t } = useTranslation(); // Use translation hook
 
     const handleGoogleLogin = () => {
         // Placeholder for actual Google Auth
@@ -41,7 +44,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                             <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.223 0-9.657-3.455-11.297-8.169l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path>
                             <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.011 35.131 44 30.029 44 24c0-1.341-.138-2.65-.389-3.917z"></path>
                         </svg>
-                        Masuk dengan Google
+                        {t('loginWithGoogle')}
                     </button>
 
                     <div className="relative">
@@ -50,7 +53,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                         </div>
                         <div className="relative flex justify-center text-sm">
                             <span className="px-2 bg-white dark:bg-dark-blue-card text-gray-500">
-                                atau
+                                {t('of')}
                             </span>
                         </div>
                     </div>
@@ -59,11 +62,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                         onClick={handleGuestLogin}
                         className="w-full bg-emerald-dark text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition"
                     >
-                        Lanjutkan sebagai Tamu
+                        {t('continueAsGuest')}
                     </button>
                 </div>
                 <p className="mt-6 text-xs text-gray-500 dark:text-gray-400">
-                    Dengan melanjutkan, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi kami.
+                    Dengan melanjutkan, Anda menyetujui <Link to="/terms" className="text-emerald-dark dark:text-emerald-light hover:underline">{t('termsOfService')}</Link> dan <Link to="/privacy" className="text-emerald-dark dark:text-emerald-light hover:underline">{t('privacyPolicy')}</Link> kami.
                 </p>
             </div>
         </div>

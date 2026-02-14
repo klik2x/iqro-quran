@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { iqroData } from '../data/iqroData';
@@ -22,7 +23,8 @@ const Iqro: React.FC = () => {
                       window.location.reload();
                     }
                   }}
-                  className="flex items-center gap-2 text-sm font-semibold text-red-600 bg-red-100 dark:bg-red-900/30 px-3 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 transition"
+                  className="flex items-center gap-2 text-sm font-semibold text-red-600 bg-red-100 dark:bg-red-900/30 px-3 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 transition min-h-[44px]"
+                  aria-label={t('resetProgress')}
                 >
                   <Trash2 size={16} />
                   <span>{t('reset')}</span>
@@ -38,9 +40,9 @@ const Iqro: React.FC = () => {
                         <Link 
                             to={`/iqro/${level.level}`} 
                             key={level.level} 
-                            className="flex items-center gap-4 p-4 bg-white dark:bg-dark-blue-card rounded-xl shadow-md border border-gray-200 dark:border-gray-700 hover:border-emerald-dark dark:hover:border-emerald-light transition-all transform hover:scale-[1.02]"
+                            className="flex items-center gap-4 p-4 bg-white dark:bg-dark-blue-card rounded-xl shadow-md border border-gray-200 dark:border-gray-700 hover:border-emerald-dark dark:hover:border-emerald-light transition-all transform hover:scale-[1.02] min-h-[100px]"
                         >
-                            <img src={level.cover} alt={level.title} className="w-16 h-16 rounded-lg object-cover" />
+                            <img src={level.cover} alt={level.title} className="w-16 h-16 rounded-lg object-cover min-w-[64px] min-h-[64px]" />
                             <div className="flex-1">
                                 <h2 className="font-bold text-lg text-emerald-dark dark:text-white">{level.title}</h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 clamp-2">{level.description}</p>

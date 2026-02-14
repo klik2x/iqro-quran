@@ -1,8 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../contexts/LanguageContext'; // Import useTranslation
 
 const Welcome: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
-    const texts = ["Assalamualaikum", "Warahmatullahi", "Wabarakatuh", "Ahlan wa Sahlan"];
+    const { t } = useTranslation(); // Use translation hook
+    const texts = [t('greeting'), "Warahmatullahi", "Wabarakatuh", "Ahlan wa Sahlan"]; // Use t for greeting
     const [currentText, setCurrentText] = useState("");
     const [textIndex, setTextIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
@@ -19,13 +22,13 @@ const Welcome: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
         const totalTypingDuration = (totalChars + totalNewlines) * typingSpeed + bufferTime;
 
         const navigateTimer = setTimeout(() => {
-            onFinish();
+            onFinish(); // Ensure onFinish is called
             navigate('/login');
         }, totalTypingDuration);
 
         return () => clearTimeout(navigateTimer);
-    }, [navigate, onFinish]);
-    
+    }, [navigate, onFinish, texts]); // Add texts to dependencies for useEffect
+
     useEffect(() => {
         if (textIndex >= texts.length) return;
 
