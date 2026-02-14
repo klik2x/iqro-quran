@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iqro Quran Digital - Belajar Al-Qur'an Modern</title>
+    
+    <link rel="icon" type="image/png" href="IQRO_Quran_logo.jpg">
+    
+    <meta name="keywords" content="belajar alquran, baca iqro, quran digital, learn quran, reading iqro, tajwid, murottal quran, belajar hijaiyah, quran online, tajwid digital, учить коран, lerne koran, apprendre le coran, aprender corán, aprender alcorão, 学习古兰经, コーランを学ぶ, 코란 배우기, تعلم القرآن, kuran öğren, korana ithuto, कुरान सीखें">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+
+        :root {
+            --primary-green: #15803d;
+            --primary-gold: #b45309;
+            --bg-light: #fdfdfb;
+            --bg-dark: #0f172a;
+            --text-box-light: #1e293b;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color 0.5s ease, color 0.5s ease;
+            background-color: var(--bg-light);
+        }
+
+        body.dark { background-color: var(--bg-dark); color: #f8fafc; }
+
+        .islamic-pattern {
+            background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
+            opacity: 0.05;
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+        }
+
+        .tech-box {
+            background-color: #f1f5f9;
+            color: var(--text-box-light);
+        }
+        .dark .tech-box {
+            background-color: rgba(30, 41, 59, 0.5);
+            color: #f1f5f9;
+        }
+
+        .btn-main {
+            padding: 14px 32px;
+            border-radius: 16px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 180px;
+        }
+
+        .btn-green { background-color: var(--primary-green); color: white; }
+        .btn-gold { background-color: var(--primary-gold); color: white; }
+
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            font-size: 2.2rem;
+            line-height: 1.8;
+            direction: rtl;
+        }
+
+        .nav-glass {
+            backdrop-filter: blur(12px);
+            background: rgba(253, 253, 251, 0.85);
+        }
+
+        .dark .nav-glass { background: rgba(15, 23, 42, 0.85); border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow-y: auto;
+            max-height: 300px;
+            width: 180px;
+            z-index: 100;
+        }
+        .dark .lang-dropdown { background: #1e293b; color: white; }
+        .show { display: block; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="islamic-pattern"></div>
+
+    <nav class="fixed w-full z-50 nav-glass py-4 px-6 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-book-quran text-green-700 text-2xl"></i>
+            <span class="font-bold text-lg tracking-tight">IQRO QURAN DIGITAL</span>
+        </div>
+        
+        <div class="flex items-center gap-3 relative">
+            <div class="relative">
+                <button onclick="toggleLang()" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-globe text-green-700"></i>
+                    <span id="current-lang-label" class="text-xs font-bold uppercase">ID</span>
+                </button>
+                <div id="langMenu" class="lang-dropdown">
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('id', 'ID')">🇮🇩 Indonesia</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('en', 'EN')">🇺🇸 English</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('ru', 'RU')">🇷🇺 Russian</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('de', 'DE')">🇩🇪 German</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('fr', 'FR')">🇫🇷 France</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('es', 'ES')">🇪🇸 Spanish</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('pt', 'PT')">🇵🇹 Portuguese</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('zh', 'ZH')">🇨🇳 Chinese</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('ja', 'JA')">🇯🇵 Japanese</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('ko', 'KO')">🇰🇷 Korean</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('ar', 'AR')">🇸🇦 Arabic</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('tr', 'TR')">🇹🇷 Turkish</button>
+                    <button class="w-full px-4 py-2 text-left text-xs hover:bg-gray-100 dark:hover:bg-slate-700" onclick="changeLang('hi', 'HI')">🇮🇳 Hindi</button>
+                </div>
+            </div>
+
+            <button onclick="toggleTheme()" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800">
+                <i class="fa-solid fa-moon text-amber-500" id="theme-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <header class="relative pt-32 pb-16 px-6 text-center z-10">
+        <div data-aos="fade-up">
+            <span data-lang="hero-badge" class="inline-block px-4 py-2 mb-6 text-[10px] font-bold tracking-[0.2em] text-green-700 uppercase bg-green-50 dark:bg-green-900/20 rounded-full border border-green-100 dark:border-green-800">
+                Pintu Gerbang Keindahan Al-Qur'an
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black mb-6 leading-tight">
+                <span data-lang="hero-title-1">Mulai Belajar Al-Qur'an</span> <br>
+                <span data-lang="hero-title-2" class="text-green-700">Hanya Dalam Genggaman</span>
+            </h1>
+            <p data-lang="hero-desc" class="max-w-xl mx-auto text-gray-500 dark:text-gray-400 mb-10 leading-relaxed text-sm">
+                Langkah awal menjadi Ahlul Qur’an dengan metode praktis, mudah dipahami, dan cocok untuk semua usia.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="https://iqroquran.vercel.app" class="btn-main btn-green" data-lang="btn-start">Mulai Belajar</a>
+                <a href="#fitur" class="btn-main btn-gold" data-lang="btn-materi">Lihat Fitur</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-3xl mx-auto px-6 mb-20 z-10 relative">
+        <div data-aos="zoom-in" class="bg-green-800 text-white rounded-[32px] p-8 text-center shadow-2xl relative overflow-hidden">
+            <div class="islamic-pattern opacity-10"></div>
+            <div class="relative z-10">
+                <p class="arabic-text mb-4">رَبِّ زِدْنِى عِلْمًا</p>
+                <p data-lang="doa-text" class="text-lg font-medium italic text-green-100">"Ya Allah, tambahkanlah kepadaku ilmu pengetahuan."</p>
+            </div>
+        </div>
+    </section>
+
+    <main id="fitur" class="max-w-6xl mx-auto px-6 space-y-16 pb-20 z-10 relative">
+        <section>
+            <h2 data-lang="fitur-header" class="text-2xl font-black mb-10 text-center">Fitur Ekosistem Digital</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div data-aos="fade-up" class="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <h3 data-lang="f1-t" class="font-bold mb-2 text-green-700">Metode Iqro 1-6</h3>
+                    <p data-lang="f1-d" class="text-xs text-gray-500 dark:text-gray-400">Belajar Hijaiyah dari dasar sumber buku K.H. As'ad Humam dengan Voice Over TTS.</p>
+                </div>
+                <div data-aos="fade-up" class="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <h3 data-lang="f2-t" class="font-bold mb-2 text-green-700">Mushaf & Tafsir</h3>
+                    <p data-lang="f2-d" class="text-xs text-gray-500 dark:text-gray-400">Tampilan per Surah/Juz, bacaan latin, terjemahan dunia, dan audio per ayat.</p>
+                </div>
+                <div data-aos="fade-up" class="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <h3 data-lang="f3-t" class="font-bold mb-2 text-green-700">Murottal 30 Juz</h3>
+                    <p data-lang="f3-d" class="text-xs text-gray-500 dark:text-gray-400">Dengarkan lantunan suci dari Qori ternama dunia untuk menemani tadabbur.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tech-box rounded-[40px] p-8 md:p-12 grid md:grid-cols-2 gap-10 items-center shadow-lg">
+            <div data-aos="fade-right">
+                <h3 data-lang="tech-h" class="text-xl font-bold mb-6">Teknologi & Aksesibilitas</h3>
+                <ul class="space-y-3 text-sm font-semibold">
+                    <li><i class="fa-solid fa-circle-check text-green-600 mr-2"></i> <span data-lang="t1">Dukungan Semua Perangkat (PWA)</span></li>
+                    <li><i class="fa-solid fa-circle-check text-green-600 mr-2"></i> <span data-lang="t2">Mode Baca Fokus & Terang/Gelap</span></li>
+                    <li><i class="fa-solid fa-circle-check text-green-600 mr-2"></i> <span data-lang="t3">Fitur Rekam Bacaan Sendiri</span></li>
+                    <li><i class="fa-solid fa-circle-check text-green-600 mr-2"></i> <span data-lang="t4">Gunakan Secara Offline</span></li>
+                    <li><i class="fa-solid fa-circle-check text-green-600 mr-2"></i> <span data-lang="t5">Perbesar Teks Arab & Latin</span></li>
+                </ul>
+            </div>
+            <div data-aos="fade-left" class="bg-white/50 dark:bg-slate-900/40 p-6 rounded-3xl border-l-4 border-amber-600">
+                <p data-lang="note-text" class="text-sm italic leading-relaxed font-bold">
+                    "Aplikasi ini adalah sarana pembelajaran. Pendekatan terbaik tetaplah Tallaqi (berhadapan langsung dengan guru)."
+                </p>
+            </div>
+        </section>
+
+        <section data-aos="fade-up" class="text-center py-10">
+            <p class="arabic-text text-green-700 dark:text-green-400 mb-6">خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ</p>
+            <p data-lang="hadist-text" class="text-lg font-serif italic mb-10 font-bold">"Sebaik-baik kalian adalah yang belajar Al-Qur’an dan mengajarkannya."</p>
+            <a href="https://iqroquran.vercel.app" class="btn-main btn-green !rounded-full shadow-xl" data-lang="btn-final">RAIH KEUTAMAAN SEKARANG</a>
+        </section>
+    </main>
+
+    <footer class="py-12 text-center z-10 relative border-t border-gray-100 dark:border-gray-800">
+        <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-2">&copy; 2026 IQRO QURAN DIGITAL</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">by <span class="text-green-700">Te_eR™ Inovative</span></p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        const translations = {
+            id: {
+                "hero-badge": "Pintu Gerbang Keindahan Al-Qur'an",
+                "hero-title-1": "Mulai Belajar Al-Qur'an",
+                "hero-title-2": "Hanya Dalam Genggaman",
+                "hero-desc": "Langkah awal menjadi Ahlul Qur’an dengan metode praktis, mudah dipahami, dan cocok untuk semua usia.",
+                "btn-start": "Mulai Belajar",
+                "btn-materi": "Lihat Fitur",
+                "doa-text": '"Ya Allah, tambahkanlah kepadaku ilmu pengetahuan."',
+                "fitur-header": "Fitur Ekosistem Digital",
+                "f1-t": "Metode Iqro 1-6",
+                "f1-d": "Belajar Hijaiyah dari dasar buku K.H. As'ad Humam dengan Voice Over TTS.",
+                "f2-t": "Mushaf & Tafsir",
+                "f2-d": "Tampilan per Surah/Juz, bacaan latin, terjemahan dunia, dan audio per ayat.",
+                "f3-t": "Murottal 30 Juz",
+                "f3-d": "Dengarkan lantunan suci dari Qori ternama dunia untuk menemani tadabbur.",
+                "tech-h": "Teknologi & Aksesibilitas",
+                "t1": "Dukungan Semua Perangkat (PWA)",
+                "t2": "Mode Baca Fokus & Terang/Gelap",
+                "t3": "Fitur Rekam Bacaan Sendiri",
+                "t4": "Gunakan Secara Offline",
+                "t5": "Perbesar Teks Arab & Latin",
+                "note-text": '"Aplikasi ini adalah sarana pembelajaran. Pendekatan terbaik tetaplah Tallaqi (berhadapan langsung dengan guru)."',
+                "hadist-text": '"Sebaik-baik kalian adalah yang belajar Al-Qur’an dan mengajarkannya."',
+                "btn-final": "RAIH KEUTAMAAN SEKARANG"
+            },
+            en: {
+                "hero-badge": "Gateway to the Beauty of the Quran",
+                "hero-title-1": "Start Learning Quran",
+                "hero-title-2": "In Your Hand",
+                "hero-desc": "First step to becoming Ahlul Quran with practical methods for all ages.",
+                "btn-start": "Start Learning",
+                "btn-materi": "View Features",
+                "doa-text": '"O Allah, increase me in knowledge."',
+                "fitur-header": "Digital Features",
+                "f1-t": "Iqro 1-6 Method",
+                "f1-d": "Learn Hijaiyah with interactive TTS Voice Over.",
+                "f2-t": "Mushaf & Tafsir",
+                "f2-d": "Per Surah/Juz view with worldwide translations.",
+                "f3-t": "Murottal 30 Juz",
+                "f3-d": "Listen to holy recitations from world-renowned Qoris.",
+                "tech-h": "Tech & Accessibility",
+                "t1": "All Device Support (PWA)",
+                "t2": "Focus Mode & Light/Dark Mode",
+                "t3": "Voice Recording Feature",
+                "t4": "Available Offline",
+                "t5": "Enlarge Arabic & Latin Text",
+                "note-text": '"This app is a tool. Face-to-face learning (Tallaqi) remains best."',
+                "hadist-text": '"The best of you are those who learn the Quran and teach it."',
+                "btn-final": "GET VIRTUE NOW"
+            },
+            ru: {
+                "hero-badge": "Врата к красоте Корана",
+                "hero-title-1": "Начни учить Коран",
+                "hero-title-2": "В твоих руках",
+                "hero-desc": "Первый шаг к обучению Корану.",
+                "btn-start": "Начать", "btn-materi": "Функции",
+                "doa-text": '"О Аллах, прибавь мне знаний."',
+                "fitur-header": "Цифровые функции",
+                "f1-t": "Метод Икро 1-6", "f1-d": "Изучение хиджаии с озвучкой TTS.",
+                "f2-t": "Мусхаф и Тафсир", "f2-d": "Мировые переводы.",
+                "f3-t": "Муротталь 30 джузов", "f3-d": "Известные чтецы мира.",
+                "tech-h": "Технологии", "t1": "Все устройства (PWA)",
+                "t2": "Режим фокуса", "t3": "Запись голоса",
+                "t4": "Офлайн доступ", "t5": "Увеличение текста",
+                "note-text": '"Очное обучение остается лучшим."',
+                "hadist-text": '"Лучший из вас тот, кто учит Коран."',
+                "btn-final": "ПОЛУЧИТЬ БЛАГОДАТЬ"
+            },
+            de: {
+                "hero-badge": "Tor zur Schönheit des Korans",
+                "hero-title-1": "Koran lernen beginnen",
+                "hero-title-2": "In deiner Hand",
+                "hero-desc": "Der erste Schritt zum Koran-Lernen.",
+                "btn-start": "Starten", "btn-materi": "Funktionen",
+                "doa-text": '"O Allah, mehre mein Wissen."',
+                "fitur-header": "Funktionen",
+                "f1-t": "Iqro 1-6 Methode", "f1-d": "Hijaiyah lernen mit TTS.",
+                "f2-t": "Mushaf & Tafsir", "f2-d": "Weltweite Übersetzungen.",
+                "f3-t": "Murottal 30 Juz", "f3-d": "Bekannte Rezitatoren.",
+                "tech-h": "Technik", "t1": "Alle Geräte (PWA)",
+                "t2": "Fokusmodus", "t3": "Sprachaufnahme",
+                "t4": "Offline-Nutzung", "t5": "Text vergrößern",
+                "note-text": '"Persönliches Lernen ist am besten."',
+                "hadist-text": '"Der Beste lernt den Koran."',
+                "btn-final": "JETZT TUGEND ERHALTEN"
+            },
+            fr: {
+                "hero-badge": "Porte vers le Coran",
+                "hero-title-1": "Apprendre le Coran",
+                "hero-title-2": "Dans votre main",
+                "hero-desc": "Première étape pour apprendre.",
+                "btn-start": "Commencer", "btn-materi": "Caractéristiques",
+                "doa-text": '"Ô Allah, augmente mes connaissances."',
+                "fitur-header": "Caractéristiques",
+                "f1-t": "Méthode Iqro 1-6", "f1-d": "Apprendre avec TTS.",
+                "f2-t": "Mushaf & Tafsir", "f2-d": "Traductions mondiales.",
+                "f3-t": "Murottal 30 Juz", "f3-d": "Récitateurs célèbres.",
+                "tech-h": "Technologie", "t1": "Tous appareils (PWA)",
+                "t2": "Mode focus", "t3": "Enregistrement vocal",
+                "t4": "Usage hors ligne", "t5": "Agrandir le texte",
+                "note-text": '"Le face-à-face est préférable."',
+                "hadist-text": '"Le meilleur apprend le Coran."',
+                "btn-final": "OBTENIR LA VERTU"
+            },
+            es: {
+                "hero-badge": "Puerta al Corán",
+                "hero-title-1": "Aprender el Corán",
+                "hero-title-2": "En tu mano",
+                "hero-desc": "Primer paso para aprender.",
+                "btn-start": "Empezar", "btn-materi": "Funciones",
+                "doa-text": '"Oh Allah, aumenta mis conocimientos."',
+                "fitur-header": "Funciones",
+                "f1-t": "Método Iqro 1-6", "f1-d": "Aprender con TTS.",
+                "f2-t": "Mushaf y Tafsir", "f2-d": "Traducciones mundiales.",
+                "f3-t": "Murottal 30 Juz", "f3-d": "Recitadores famosos.",
+                "tech-h": "Tecnología", "t1": "Todos los dispositivos",
+                "t2": "Modo enfoque", "t3": "Grabación de voz",
+                "t4": "Uso offline", "t5": "Agrandar texto",
+                "note-text": '"El aprendizaje presencial es mejor."',
+                "hadist-text": '"El mejor aprende el Corán."',
+                "btn-final": "OBTÉN LA VIRTUD"
+            },
+            pt: {
+                "hero-badge": "Portal para o Alcorão",
+                "hero-title-1": "Aprender o Alcorão",
+                "hero-title-2": "Na sua mão",
+                "hero-desc": "Primeiro passo para aprender.",
+                "btn-start": "Começar", "btn-materi": "Recursos",
+                "doa-text": '"Ó Allah, aumenta o meu conhecimento."',
+                "fitur-header": "Recursos",
+                "f1-t": "Método Iqro 1-6", "f1-d": "Aprender com TTS.",
+                "f2-t": "Mushaf e Tafsir", "f2-d": "Traduções mundiais.",
+                "f3-t": "Murottal 30 Juz", "f3-d": "Recitadores famosos.",
+                "tech-h": "Tecnologia", "t1": "Todos os dispositivos",
+                "t2": "Modo foco", "t3": "Gravação de voz",
+                "t4": "Uso offline", "t5": "Aumentar texto",
+                "note-text": '"O face-a-face é melhor."',
+                "hadist-text": '"O melhor aprende o Alcorão."',
+                "btn-final": "OBTER VIRTUDE"
+            },
+            zh: {
+                "hero-badge": "通往古兰经之门",
+                "hero-title-1": "开始学习古兰经",
+                "hero-title-2": "尽在掌握",
+                "hero-desc": "学习的第一步。",
+                "btn-start": "开始学习", "btn-materi": "功能",
+                "doa-text": '"求主增加我的知识。"',
+                "fitur-header": "数字功能",
+                "f1-t": "Iqro 方法 1-6", "f1-d": "语音辅助学习。",
+                "f2-t": "古兰经与注释", "f2-d": "全球翻译。",
+                "f3-t": "30卷诵读", "f3-d": "著名诵读。",
+                "tech-h": "技术", "t1": "支持所有设备",
+                "t2": "专注模式", "t3": "录音功能",
+                "t4": "离线使用", "t5": "文字放大",
+                "note-text": '"面对面学习效果最佳。"',
+                "hadist-text": '"最好的人学习古兰经。"',
+                "btn-final": "现在获得功德"
+            },
+            ja: {
+                "hero-badge": "コーラン学習への門",
+                "hero-title-1": "学習を始める",
+                "hero-title-2": "あなたの手の中に",
+                "hero-desc": "最初の一歩。",
+                "btn-start": "開始する", "btn-materi": "機能",
+                "doa-text": '"知識を増やしてください。"',
+                "fitur-header": "デジタル機能",
+                "f1-t": "イクロ1-6", "f1-d": "音声ガイドで学ぶ。",
+                "f2-t": "ムスハフ", "f2-d": "多言語翻訳。",
+                "f3-t": "30ジュズ", "f3-d": "有名な朗誦。",
+                "tech-h": "技術", "t1": "全端末対応",
+                "t2": "集中モード", "t3": "録音機能",
+                "t4": "オフライン可能", "t5": "文字拡大",
+                "note-text": '"対面教育が最良です。"',
+                "hadist-text": '"最良の者はコーランを学ぶ。"',
+                "btn-final": "今すぐ徳を積む"
+            },
+            ko: {
+                "hero-badge": "코란 학습의 관문",
+                "hero-title-1": "학습 시작",
+                "hero-title-2": "손안에서",
+                "hero-desc": "첫 걸음.",
+                "btn-start": "시작하기", "btn-materi": "기능",
+                "doa-text": '"지식을 더해주소서."',
+                "fitur-header": "디지털 기능",
+                "f1-t": "이크로 1-6", "f1-d": "음성 지원 학습.",
+                "f2-t": "무스하프", "f2-d": "다국어 번역.",
+                "f3-t": "30주즈", "f3-d": "유명 낭송.",
+                "tech-h": "기술", "t1": "모든 기기 지원",
+                "t2": "집중 모드", "t3": "녹음 기능",
+                "t4": "오프라인 가능", "t5": "텍스트 확대",
+                "note-text": '"대면 학습이 최선입니다."',
+                "hadist-text": '"최고의 사람은 코란을 배운다."',
+                "btn-final": "지금 공덕을 쌓으세요"
+            },
+            ar: {
+                "hero-badge": "بوابة لجمال القرآن",
+                "hero-title-1": "ابدأ تعلم القرآن",
+                "hero-title-2": "في يدك",
+                "hero-desc": "الخطوة الأولى للتعلم.",
+                "btn-start": "ابدأ الآن", "btn-materi": "الميزات",
+                "doa-text": '"اللهم زدني علما"',
+                "fitur-header": "الميزات الرقمية",
+                "f1-t": "طريقة اقرأ ١-٦", "f1-d": "تعلم مع الصوت.",
+                "f2-t": "المصحف والتفسير", "f2-d": "ترجمات عالمية.",
+                "f3-t": "مرتل ٣٠ جزء", "f3-d": "تلاوات مشهورة.",
+                "tech-h": "التكنولوجيا", "t1": "كل الأجهزة",
+                "t2": "وضع التركيز", "t3": "تسجيل الصوت",
+                "t4": "بدون إنترنت", "t5": "تكبير النص",
+                "note-text": '"التلقي المباشر يبقى الأفضل."',
+                "hadist-text": '"خيركم من تعلم القرآن وعلمه"',
+                "btn-final": "احصل على الفضيلة الآن"
+            },
+            tr: {
+                "hero-badge": "Kur'an'a Açılan Kapı",
+                "hero-title-1": "Öğrenmeye Başla",
+                "hero-title-2": "Avucunda",
+                "hero-desc": "İlk adım.",
+                "btn-start": "Başla", "btn-materi": "Özellikler",
+                "doa-text": '"Allah\'ım, ilmimi artır."',
+                "fitur-header": "Dijital Özellikler",
+                "f1-t": "İqro 1-6 Metodu", "f1-d": "Sesli öğrenin.",
+                "f2-t": "Mushaf ve Tefsir", "f2-d": "Dünya dillerinde çeviri.",
+                "f3-t": "30 Cüz", "f3-d": "Ünlü kailer.",
+                "tech-h": "Teknoloji", "t1": "Tüm Cihazlar",
+                "t2": "Odak Modu", "t3": "Ses Kaydı",
+                "t4": "Çevrimdışı", "t5": "Metni Büyüt",
+                "note-text": '"Yüz yüze eğitim en iyisidir."',
+                "hadist-text": '"En hayırlınız Kur\'an\'ı öğrenendir."',
+                "btn-final": "ŞİMDİ FAZİLETE ERİŞ"
+            },
+            hi: {
+                "hero-badge": "कुरान सीखने का द्वार",
+                "hero-title-1": "सीखना शुरू करें",
+                "hero-title-2": "आपके हाथ में",
+                "hero-desc": "पहला कदम।",
+                "btn-start": "शुरू करें", "btn-materi": "विशेषताएं",
+                "doa-text": '"ज्ञान में वृद्धि कर।"',
+                "fitur-header": "डिजिटल विशेषताएं",
+                "f1-t": "इक्रो 1-6 पद्धति", "f1-d": "ऑडियो सहायता से सीखें।",
+                "f2-t": "मुशफ और तफ़सीर", "f2-d": "विश्वव्यापी अनुवाद।",
+                "f3-t": "30 पारा मुशफ", "f3-d": "प्रसिद्ध कारी।",
+                "tech-h": "तकनीक", "t1": "सभी डिवाइस",
+                "t2": "फोकस मोड", "t3": "वॉयस रिकॉर्डिंग",
+                "t4": "ऑफलाइन", "t5": "टेक्स्ट बड़ा करें",
+                "note-text": '"आमने-सामने सीखना सबसे अच्छा है।"',
+                "hadist-text": '"तुममें से सबसे अच्छा कुरान सीखता है। "',
+                "btn-final": "अभी पुण्य प्राप्त करें"
+            },
+            af: {
+                "hero-badge": "Poort na die Koran",
+                "hero-title-1": "Begin Koran leer",
+                "hero-title-2": "In jou hand",
+                "hero-desc": "Eerste stap.",
+                "btn-start": "Begin nou", "btn-materi": "Kenmerke",
+                "doa-text": '"O Allah, vermeerder my kennis."',
+                "fitur-header": "Digitale Kenmerke",
+                "f1-t": "Iqro 1-6", "f1-d": "Leer met klank.",
+                "f2-t": "Mushaf & Tafsir", "f2-d": "Vertalings.",
+                "f3-t": "Murottal 30 Juz", "f3-d": "Beroemde Qoris.",
+                "tech-h": "Tegnologie", "t1": "Alle toestelle",
+                "t2": "Fokusmodus", "t3": "Stemopname",
+                "t4": "Vanlyn", "t5": "Vergroot teks",
+                "note-text": '"Persoonlike leer is beste."',
+                "hadist-text": '"Die beste leer die Koran."',
+                "btn-final": "KRY NOU SEËN"
+            }
+        };
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            icon.className = document.body.classList.contains('dark') ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-amber-500';
+        }
+
+        function toggleLang() {
+            document.getElementById('langMenu').classList.toggle('show');
+        }
+
+        function changeLang(lang, label) {
+            document.getElementById('current-lang-label').innerText = label;
+            document.getElementById('langMenu').classList.remove('show');
+            const content = translations[lang] || translations['en'];
+            for (let key in content) {
+                const elements = document.querySelectorAll(`[data-lang="${key}"]`);
+                elements.forEach(el => {
+                    el.innerText = content[key];
+                });
+            }
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.relative')) {
+                document.getElementById('langMenu').classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
