@@ -8,7 +8,25 @@ import { useAudioFeedback } from '../../hooks/useAudioFeedback'; // Opsional unt
 const TajwidView: React.FC = () => {
     const { t, currentLanguage } = useTranslation();
     const [selectedRule, setSelectedRule] = useState(tajwidRules[0]);
-    
+
+    const handlePlayVoice = (rule: TajwidRule) => {
+  // 1. Hentikan suara yang sedang berjalan
+  window.speechSynthesis.cancel();
+
+  // 2. Bacakan Penjelasan (Bahasa Indonesia/sesuai sistem)
+  const instruction = `${rule.name}. ${rule.description}`;
+  
+  // Memanggil fungsi speak dari browserSpeech.ts
+  speak(instruction, currentLanguage, undefined, () => {
+    // 3. Setelah penjelasan selesai, bacakan teks Arab dengan lang 'ar'
+    if (rule.exampleAudioText) {
+      setTimeout(() => {
+        // 'ar' memicu Browser menggunakan engine suara Arab
+        speak(rule.exampleAudioText, 'ar');
+      }, 800);
+    }
+  });
+};
     // Fungsi untuk membacakan penjelasan tajwid
     const playTajwidInstruction = (rule: any) => {
         if (!rule) return;
