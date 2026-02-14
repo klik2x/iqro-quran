@@ -1,12 +1,6 @@
-
 import { GoogleGenAI, Modality } from "@google/genai";
-import { speak, stopSpeaking, getVoices } from '../utils/browserSpeech'; // Import browser speech utilities
-import { preferredVoiceNames, defaultVoiceLangMapping } from '../data/voiceTriggers';
-// FIX: Import 'languages' array from LanguageContext
-import { languages } from '../contexts/LanguageContext';
 
 // Audio Decoding Functions (as per guidelines)
-// Renamed to decodeAudio and exported to fix missing export in RecordingModule
 export function decodeAudio(base64: string): Uint8Array {
   const binaryString = atob(base64);
   const len = binaryString.length;
@@ -17,7 +11,6 @@ export function decodeAudio(base64: string): Uint8Array {
   return bytes;
 }
 
-// Added and exported encode function as per guidelines for Live API/RecordingModule
 export function encodeAudio(bytes: Uint8Array): string {
   let binary = '';
   const len = bytes.byteLength;
@@ -33,10 +26,6 @@ export async function decodeAudioData(
   sampleRate: number,
   numChannels: number,
 ): Promise<AudioBuffer> {
-  // Check for empty data before attempting to decode.
-  if (data.byteLength === 0) {
-    throw new Error("Cannot decode empty audio data.");
-  }
   const dataInt16 = new Int16Array(data.buffer);
   const frameCount = dataInt16.length / numChannels;
   const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
@@ -50,56 +39,75 @@ export async function decodeAudioData(
   return buffer;
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+// Ensure global 'ai' instance is only for static calls, getGeminiInstance for dynamic key/context
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-// Added helper to get Gemini instance for Live API as used in RecordingModule
-export const getGeminiInstance = () => new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+export const getGeminiInstance = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 const outputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
 
-export interface AudioPlayback {
-    // play function now returns an object with sourceNode (optional) and controls
-    play: () => {
-        sourceNode: AudioBufferSourceNode | undefined; // sourceNode is undefined for browser speech fallback
-        controls: { onended: (() => void) | null }
-    };
-    sourceNode?: AudioBufferSourceNode; // Can be undefined for browser speech
+// NEW INTERFACE: AudioPlaybackControls represents the immediate result of starting playback
+export interface AudioPlaybackControls {
+    sourceNode: AudioBufferSourceNode | null; // Can be null for Web Speech API
     controls: { onended: (() => void) | null };
 }
 
-// Updated generateSpeech to support voice selection and fallback to browser TTS
+// NEW INTERFACE: AudioPlayback represents an object that can initiate playback
+export interface AudioPlayback {
+    play: () => AudioPlaybackControls;
+}
+
+// Web Speech API fallback function with voice selection
+const webSpeechSpeak = (text: string, lang: string = 'id-ID'): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (!('speechSynthesis' in window)) {
+      console.warn("Web Speech API not supported in this browser.");
+      reject(new Error("Web Speech API not supported."));
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang; 
+    utterance.volume = 1; // 0 to 1
+    utterance.rate = 1; // 0.1 to 10
+    utterance.pitch = 1; // 0 to 2
+    
+    const voices = window.speechSynthesis.getVoices();
+    const desiredVoice = voices.find(
+      (voice) => voice.lang.startsWith(lang.substring(0, 2)) && voice.localService
+    ) || voices.find((voice) => voice.lang.startsWith(lang.substring(0,2))); // Fallback to language prefix
+
+    if (desiredVoice) {
+      utterance.voice = desiredVoice;
+    } else {
+      console.warn(`No suitable Web Speech API voice found for ${lang}, using default.`);
+    }
+
+    utterance.onend = () => {
+        resolve();
+    };
+    utterance.onerror = (event) => {
+        console.error("Web Speech API error:", event);
+        reject(event.error);
+    };
+    window.speechSynthesis.speak(utterance);
+  });
+};
+
+// Updated generateSpeech to support voice selection and Web Speech API fallback
 export const generateSpeech = async (
   text: string, 
-  languageName: string = "Indonesian",
-  voice: string = "Kore" // This is a Gemini voice name
+  languageHint: string = "Indonesian",
+  voice: string = "Kore", // Gemini voice
+  latinText?: string // Optional for Iqro: to speak after Arabic
 ): Promise<AudioPlayback> => {
-  stopSpeaking(); // Ensure browser speech is stopped before starting new playback
-
   const controls = { onended: null as (() => void) | null };
-  
-  const fallbackToBrowserSpeech = async (error: any) => {
-    console.warn(`Gemini TTS failed (${error?.message || 'unknown error'}), falling back to browser speech for: "${text}"`);
-    // Ensure language code mapping is correct
-    const langCode = languages.find(l => l.name === languageName)?.code || 'id';
-    const browserLang = defaultVoiceLangMapping[langCode] || 'id-ID';
-
-    const playBrowserSpeech = () => {
-        // Calls the updated speak function from browserSpeech.ts with the onEndCallback
-        speak(text, browserLang, undefined, () => {
-            if (controls.onended) controls.onended();
-        });
-        return { sourceNode: undefined, controls };
-    };
-
-    return { 
-        play: playBrowserSpeech,
-        controls 
-    };
-  };
+  const fallbackLangCode = languageHint.toLowerCase().includes('indonesian') ? 'id-ID' : 'en-US';
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-tts",
+    // Try Gemini TTS first
+    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const response = await aiInstance.models.generateContent({
+      model: "gemini-2.5-flash-native-audio-preview-12-2025",
       contents: [{ parts: [{ text: text }] }],
       config: {
         responseModalities: [Modality.AUDIO],
@@ -113,52 +121,63 @@ export const generateSpeech = async (
 
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!base64Audio) {
-      throw new Error("No audio data received from Gemini API.");
-    }
-    // Check if base64Audio is empty or malformed
-    if (typeof base64Audio !== 'string' || base64Audio.length === 0) {
-        throw new Error("Received empty or invalid base64 audio data from Gemini API.");
+      throw new Error("No audio data received from API.");
     }
 
     const audioBytes = decodeAudio(base64Audio);
-    
-    // Check if audioBytes is empty
-    if (audioBytes.byteLength === 0) {
-        throw new Error("Decoded audio bytes are empty. Malformed base64?");
-    }
-
     const audioBuffer = await decodeAudioData(audioBytes, outputAudioContext, 24000, 1);
-    
-    const play = () => {
+
+    // FIX: playFn now returns AudioPlaybackControls
+    const playFn = (): AudioPlaybackControls => {
         const source = outputAudioContext.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(outputAudioContext.destination);
-        source.onended = () => {
+        source.onended = async () => {
+            if (latinText) {
+                // If Latin text exists, play it after the Arabic/primary text
+                try {
+                    await webSpeechSpeak(latinText, fallbackLangCode);
+                } catch (e) {
+                    console.error("Failed to speak Latin text with Web Speech API:", e);
+                }
+            }
             if (controls.onended) controls.onended();
         };
         source.start();
         return { sourceNode: source, controls };
     };
 
-    // ONLY return the play function, DO NOT auto-play here.
-    return { play, controls };
+    // FIX: Only return the play function
+    return { play: playFn };
 
-  } catch (error: any) {
-    console.error("Error in generateSpeech service with Gemini:", error);
-    // Fallback to browser speech on error
-    return fallbackToBrowserSpeech(error);
+  } catch (error) {
+    console.warn("Gemini TTS failed, falling back to Web Speech API:", error);
+    // Fallback to Web Speech API
+    // FIX: playFn now returns AudioPlaybackControls
+    const playFn = (): AudioPlaybackControls => {
+      webSpeechSpeak(text, fallbackLangCode)
+        .then(async () => {
+            if (latinText) {
+                try {
+                    await webSpeechSpeak(latinText, fallbackLangCode);
+                } catch (e) {
+                    console.error("Web Speech API Latin fallback failed:", e);
+                }
+            }
+        })
+        .then(() => { if (controls.onended) controls.onended(); })
+        .catch(e => console.error("Web Speech API fallback failed:", e));
+      return { sourceNode: null, controls };
+    };
+    // FIX: Only return the play function
+    return { play: playFn };
   }
 };
 
-// Added speakText as a wrapper for generateSpeech to fix error in IqroModule
-// This function will also benefit from the fallback logic in generateSpeech
-export const speakText = async (text: string, voice: string = "Kore") => {
-  try {
-    const { play } = await generateSpeech(text, "Indonesian", voice);
-    play(); // Explicitly call play() here
-  } catch (error) {
-    console.error("speakText error:", error);
-  }
+// Added speakText as a wrapper for generateSpeech
+// FIX: speakText now directly returns the AudioPlayback object from generateSpeech
+export const speakText = async (text: string, voice: string = "Kore", languageHint: string = "Indonesian", latinText?: string): Promise<AudioPlayback> => {
+  return generateSpeech(text, languageHint, voice, latinText);
 };
 
 export const translateTexts = async (
@@ -168,10 +187,11 @@ export const translateTexts = async (
   try {
     const prompt = `Translate the JSON object values from Indonesian to ${targetLanguage}. Maintain the JSON structure and keys exactly. Only translate the string values. Here is the JSON object: ${JSON.stringify(texts)}`;
     
-    const response = await ai.models.generateContent({
+    // FIX: Initialize GoogleGenAI instance inside the function to ensure API key is fresh
+    const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const response = await aiInstance.models.generateContent({
       model: 'gemini-3-flash-preview',
-      // FIX: Use {text: prompt} for contents as per guidelines
-      contents: [{text: prompt}],
+      contents: prompt,
       config: {
         responseMimeType: "application/json",
       },
