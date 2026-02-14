@@ -25,21 +25,23 @@ export const languages = [
     { code: 'fil', name: 'Filipino' },
     { code: 'ur', name: 'Urdu (اردو)' },
     { code: 'th', name: 'Thai (ไทย)' },
-    { code: 'vi', name: 'Vietnamese (Tiếng Việt)' },
+    { code: 'vi', 'name': 'Vietnamese (Tiếng Việt)' },
     { code: 'fa', name: 'Persian (فارسی)' },
     { code: 'ku', name: 'Kurdish (Kurdî)' },
     { code: 'uz', name: 'Uzbek (Oʻzbekcha)' },
 ];
 
 type LanguageCode = typeof languages[number]['code'];
-type Translations = Record<keyof typeof idStrings, string>;
+// Define TranslationKeys here, where idStrings is used
+export type TranslationKeys = keyof typeof idStrings;
+type Translations = Record<TranslationKeys, string>;
 
 interface LanguageContextType {
   currentLanguage: LanguageCode;
   translations: Translations;
   changeLanguage: (langCode: LanguageCode) => void;
   isLoading: boolean;
-  t: (key: keyof typeof idStrings) => string;
+  t: (key: TranslationKeys) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -80,7 +82,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, [currentLanguage, translationCache]);
   
-  const t = useCallback((key: keyof typeof idStrings): string => {
+  const t = useCallback((key: TranslationKeys): string => {
       return translations[key] || idStrings[key];
   }, [translations]);
 
