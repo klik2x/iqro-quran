@@ -22,7 +22,6 @@ const BookmarksView: React.FC<BookmarksViewProps> = ({ onNavigate }) => {
     }
 
     // Group bookmarks by level
-    // FIX: Explicitly typed the accumulator (`acc`) to ensure TypeScript correctly infers the type of `groupedBookmarks`. This resolves the error where `items` in the subsequent `.map()` call was incorrectly typed as `unknown`.
     const groupedBookmarks = bookmarks.reduce((acc: Record<number, IqroBookmark[]>, item) => {
         (acc[item.level] = acc[item.level] || []).push(item);
         return acc;
@@ -40,7 +39,6 @@ const BookmarksView: React.FC<BookmarksViewProps> = ({ onNavigate }) => {
                        {t('iqroLevel')} {level}
                     </h3>
                     <div className="space-y-2">
-                        {/* FIX: Cast `items` to `IqroBookmark[]` as `Object.entries` can have poor type inference for values. */}
                         {(items as IqroBookmark[]).map(item => (
                             <div key={item.id} className="bg-gray-50 dark:bg-dark-blue p-3 rounded-lg flex justify-between items-center group">
                                 <div onClick={() => onNavigate(item.level)} className="cursor-pointer flex-grow">
@@ -53,7 +51,7 @@ const BookmarksView: React.FC<BookmarksViewProps> = ({ onNavigate }) => {
                                 <button 
                                     onClick={() => toggleBookmark(item)} 
                                     className="p-2 text-gray-400 group-hover:text-red-500 transition-colors rounded-full"
-                                    aria-label={`Hapus bookmark untuk ${item.latin}`}
+                                    aria-label={t('Hapus bookmark untuk') + ` ${item.latin}`}
                                 >
                                     <BookmarkMinus size={18} />
                                 </button>
