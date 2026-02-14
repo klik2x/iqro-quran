@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -84,8 +85,10 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
     setPlayingTTS(ayahNum);
     try {
       const langHint = availableTranslations.find(et => et.identifier === translationLang)?.language || 'Indonesian';
-      const playback = await generateSpeech(text, langHint);
-      playback.controls.onended = () => setPlayingTTS(null);
+      // FIX: Call .play() on the AudioPlayback object to get controls
+      const playback = await generateSpeech(text, langHint, 'Kore');
+      const { controls } = playback.play();
+      controls.onended = () => setPlayingTTS(null);
     } catch (e) {
       setPlayingTTS(null);
     }
@@ -136,14 +139,14 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
       <div className="bg-white dark:bg-dark-blue-card rounded-3xl p-6 mb-8 shadow-md border border-slate-100 dark:border-slate-800 text-center relative overflow-hidden">
         <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
           {surahNum > 1 && (
-            <button onClick={() => navigate(`/surah/${surahNum - 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm" aria-label="Surah Sebelumnya">
+            <button onClick={() => navigate(`/surah/${surahNum - 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm min-h-[44px] min-w-[44px]" aria-label="Surah Sebelumnya">
               <ChevronLeft size={28} />
             </button>
           )}
         </div>
         <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
           {surahNum < 114 && (
-            <button onClick={() => navigate(`/surah/${surahNum + 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm" aria-label="Surah Berikutnya">
+            <button onClick={() => navigate(`/surah/${surahNum + 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm min-h-[44px] min-w-[44px]" aria-label="Surah Berikutnya">
               <ChevronRight size={28} />
             </button>
           )}
@@ -160,13 +163,15 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
       <div className="sticky top-20 bg-white/90 dark:bg-dark-blue-card/90 backdrop-blur-md z-30 p-3 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-center gap-3 mb-10">
         <button 
           onClick={() => setShowLatin(!showLatin)}
-          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all min-h-[44px] ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+          aria-label={showLatin ? "Sembunyikan Latin" : "Tampilkan Latin"}
         >
           Latin: {showLatin ? 'ON' : 'OFF'}
         </button>
         <button 
           onClick={() => setShowTranslation(!showTranslation)}
-          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all ${showTranslation ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all min-h-[44px] ${showTranslation ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+          aria-label={showTranslation ? "Sembunyikan Terjemahan" : "Tampilkan Terjemahan"}
         >
           Terjemahan: {showTranslation ? 'ON' : 'OFF'}
         </button>
@@ -177,7 +182,7 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
              <select 
                 value={translationLang}
                 onChange={(e) => setTranslationLang(e.target.value)}
-                className="bg-transparent text-[11px] font-bold outline-none cursor-pointer max-w-[120px]"
+                className="bg-transparent text-[11px] font-bold outline-none cursor-pointer max-w-[120px] min-h-[44px] px-2 py-1"
                 aria-label="Pilih Bahasa Terjemahan"
               >
                 {availableTranslations.map(et => (
@@ -190,9 +195,9 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
         <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
 
         <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
-          <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Perkecil Font"><ZoomOut size={14}/></button>
+          <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors min-h-[44px] min-w-[44px]" aria-label="Perkecil Font"><ZoomOut size={14}/></button>
           <span className="text-[10px] font-black w-6 text-center">{fontSize}</span>
-          <button onClick={() => setFontSize(Math.min(100, fontSize + 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Perbesar Font"><ZoomIn size={14}/></button>
+          <button onClick={() => setFontSize(Math.min(100, fontSize + 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors min-h-[44px] min-w-[44px]" aria-label="Perbesar Font"><ZoomIn size={14}/></button>
         </div>
       </div>
 
@@ -254,7 +259,7 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
                 <div className="flex items-center justify-end gap-2 mt-2">
                   <button 
                     onClick={() => handleTTS(translationText, ayah.number)}
-                    className={`p-2.5 rounded-xl transition-all shadow-sm ${playingTTS === ayah.number ? 'bg-purple-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-purple-500'}`}
+                    className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${playingTTS === ayah.number ? 'bg-purple-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-purple-500'}`}
                     title="Dengarkan Terjemahan (AI TTS)"
                     aria-label="Dengarkan Terjemahan"
                   >
@@ -262,21 +267,21 @@ const SurahReader: React.FC<ReaderProps> = ({ appLang, t }) => {
                   </button>
                   <button 
                     onClick={() => handlePlayAyah(ayah.number)}
-                    className={`p-2.5 rounded-xl transition-all shadow-sm ${playingAyah === ayah.number ? 'bg-emerald-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500'}`}
+                    className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${playingAyah === ayah.number ? 'bg-emerald-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500'}`}
                     aria-label="Putar Murottal Ayat"
                   >
                     <Play size={18} fill={playingAyah === ayah.number ? "white" : "none"} />
                   </button>
                   <button 
                     onClick={() => copyAyah(ayah, formattedTranslation)}
-                    className={`p-2.5 rounded-xl transition-all shadow-sm ${copiedId === ayah.number ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
+                    className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${copiedId === ayah.number ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
                     aria-label="Salin Ayat"
                   >
                     {copiedId === ayah.number ? <Check size={18} /> : <Copy size={18} />}
                   </button>
                   <button 
                     onClick={() => handleNativeShare(ayah, formattedTranslation)}
-                    className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                    className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm min-h-[44px] min-w-[44px]"
                     aria-label="Bagikan Ayat"
                   >
                     <Share2 size={18} />

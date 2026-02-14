@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { Search, Share2, Copy, Check, Eye, EyeOff, Languages, Play, Volume2 } from 'lucide-react';
 import { DOA_LIST } from '../constants';
@@ -51,7 +53,7 @@ const DoaModule: React.FC<{t: any}> = ({ t }) => {
           <input 
             type="text" 
             placeholder="Cari doa..."
-            className="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full focus:ring-2 focus:ring-emerald-500 outline-none w-full md:w-64 font-bold text-sm"
+            className="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full focus:ring-2 focus:ring-emerald-500 outline-none w-full md:w-64 font-bold text-sm min-h-[44px]"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -61,13 +63,15 @@ const DoaModule: React.FC<{t: any}> = ({ t }) => {
       <div className="flex flex-wrap items-center gap-3 p-4 bg-white dark:bg-dark-blue-card rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
         <button 
           onClick={() => setShowTranslation(!showTranslation)}
-          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all flex items-center gap-2 ${showTranslation ? 'bg-emerald-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-500'}`}
+          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all flex items-center gap-2 min-h-[44px] ${showTranslation ? 'bg-emerald-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-500'}`}
+          aria-label={showTranslation ? "Sembunyikan Terjemahan" : "Tampilkan Terjemahan"}
         >
           {showTranslation ? <Eye size={14}/> : <EyeOff size={14}/>} Terjemahan
         </button>
         <button 
           onClick={() => setShowLatin(!showLatin)}
-          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all flex items-center gap-2 ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-500'}`}
+          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all flex items-center gap-2 min-h-[44px] ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-500'}`}
+          aria-label={showLatin ? "Sembunyikan Latin" : "Tampilkan Latin"}
         >
           {showLatin ? <Eye size={14}/> : <EyeOff size={14}/>} Latin
         </button>
@@ -78,7 +82,8 @@ const DoaModule: React.FC<{t: any}> = ({ t }) => {
             <select 
               value={translationLang}
               onChange={(e) => setTranslationLang(e.target.value)}
-              className="bg-transparent text-[11px] font-bold outline-none cursor-pointer"
+              className="bg-transparent text-[11px] font-bold outline-none cursor-pointer min-h-[44px] px-2 py-1"
+              aria-label="Pilih Bahasa Terjemahan"
             >
               {availableTranslations.map(et => (
                 <option key={et.identifier} value={et.identifier}>{et.name}</option>
@@ -101,17 +106,20 @@ const DoaModule: React.FC<{t: any}> = ({ t }) => {
             <div className="absolute bottom-4 right-4 flex items-center gap-2">
               <button 
                 onClick={() => { setPlayingId(doa.id); setTimeout(() => setPlayingId(null), 3000); }}
-                className={`p-2.5 rounded-xl transition-all shadow-sm ${playingId === doa.id ? 'bg-emerald-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500'}`}
+                className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${playingId === doa.id ? 'bg-emerald-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500'}`}
+                aria-label={`Putar doa ${doa.title}`}
               >
                 <Play size={16} fill={playingId === doa.id ? "white" : "none"} />
               </button>
               <button 
                 onClick={() => handleCopy(doa)}
-                className={`p-2.5 rounded-xl transition-all shadow-sm ${copiedId === doa.id ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
+                className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${copiedId === doa.id ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
+                aria-label={`Salin doa ${doa.title}`}
               >
                 {copiedId === doa.id ? <Check size={16} /> : <Copy size={16} />}
               </button>
-              <button onClick={() => handleNativeShare(doa)} className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition shadow-sm">
+              <button onClick={() => handleNativeShare(doa)} className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition shadow-sm min-h-[44px] min-w-[44px]"
+              aria-label={`Bagikan doa ${doa.title}`}>
                 <Share2 size={16} />
               </button>
             </div>

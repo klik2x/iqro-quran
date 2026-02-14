@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Loader2, Info } from 'lucide-react';
@@ -35,7 +36,7 @@ const TafsirModule: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto pb-48 px-4">
       <div className="sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-10 p-8 border-b-2 border-slate-100 dark:border-slate-800 flex items-center gap-6 mb-12 rounded-b-[2.5rem] shadow-xl">
-        <button onClick={() => navigate(-1)} className="p-4 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white rounded-2xl transition-all shadow-md group">
+        <button onClick={() => navigate(-1)} className="p-4 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white rounded-2xl transition-all shadow-md group min-h-[44px] min-w-[44px]" aria-label="Kembali">
           <ArrowLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
         </button>
         <div>
@@ -45,7 +46,7 @@ const TafsirModule: React.FC = () => {
       </div>
 
       <div className="bg-blue-50/50 dark:bg-blue-900/10 border-2 border-blue-100 dark:border-blue-900/30 p-8 rounded-[2.5rem] mb-12 flex gap-5 text-blue-900 dark:text-blue-300 shadow-inner">
-        <div className="w-12 h-12 bg-white dark:bg-blue-900/50 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-blue-100 dark:border-blue-800">
+        <div className="w-12 h-12 bg-white dark:bg-blue-900/50 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-blue-100 dark:border-blue-800 min-h-[44px] min-w-[44px]">
           <Info size={24} className="text-blue-600" />
         </div>
         <p className="text-base font-bold leading-relaxed">Tafsir memberikan penjelasan mendalam tentang makna setiap ayat Al-Quran berdasarkan pemahaman para ulama ahli tafsir untuk mempermudah pemahaman kita.</p>
@@ -55,7 +56,7 @@ const TafsirModule: React.FC = () => {
         {data.ayahs.map((ayah: any) => (
           <div key={ayah.number} className="bg-white dark:bg-slate-900 p-8 md:p-10 rounded-[3rem] shadow-xl border-2 border-slate-50 dark:border-slate-800 group hover:border-emerald-500 transition-all duration-500">
              <div className="flex items-center gap-3 mb-8">
-                <span className="bg-emerald-600 text-white text-xs font-black px-4 py-2 rounded-xl shadow-lg shadow-emerald-600/20 uppercase tracking-widest">AYAT {ayah.numberInSurah}</span>
+                <span className="bg-emerald-600 text-white text-xs font-black px-4 py-2 rounded-xl shadow-lg shadow-emerald-600/20 uppercase tracking-widest min-h-[44px] flex items-center">AYAT {ayah.numberInSurah}</span>
              </div>
              {/* Rule 9: Honorifics applied here */}
              <p className="text-slate-900 dark:text-slate-100 leading-relaxed text-2xl font-bold tracking-tight">

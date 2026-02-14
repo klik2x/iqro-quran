@@ -1,8 +1,9 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Music, Loader2, ListMusic } from 'lucide-react';
 import { QARIS } from '../constants';
-// FIX: Corrected import from `fetchSurahs` to `fetchAllSurahs` as exported from quranService.
-import { fetchAllSurahs } from '../services/quranService';
+import { fetchAllSurahs } from '../services/quranService'; // FIX: Corrected import
 import { Surah } from '../types';
 
 const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
@@ -13,7 +14,6 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // FIX: Used the correctly imported function `fetchAllSurahs`.
     fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
@@ -51,7 +51,7 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
                 <select 
                   value={selectedQari}
                   onChange={(e) => setSelectedQari(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-emerald-500/10 font-black text-slate-950 dark:text-white shadow-inner transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-emerald-500/10 font-black text-slate-950 dark:text-white shadow-inner transition-all min-h-[44px]"
                 >
                   {QARIS.map(q => <option key={q.identifier} value={q.identifier}>{q.name}</option>)}
                 </select>
@@ -62,7 +62,7 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
                 <select 
                   value={selectedSurah}
                   onChange={(e) => setSelectedSurah(parseInt(e.target.value))}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-emerald-500/10 font-black text-slate-950 dark:text-white shadow-inner transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-emerald-500/10 font-black text-slate-950 dark:text-white shadow-inner transition-all min-h-[44px]"
                 >
                   {surahs.map(s => <option key={s.number} value={s.number}>{s.number}. {s.englishName}</option>)}
                 </select>
@@ -71,16 +71,16 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
 
             <div className="pt-8 flex flex-col items-center gap-8">
                <div className="flex items-center justify-center gap-10">
-                  <button className="p-4 text-slate-400 dark:text-slate-600 hover:text-emerald-600 transition-all hover:scale-110 active:scale-90">
+                  <button className="p-4 text-slate-400 dark:text-slate-600 hover:text-emerald-600 transition-all hover:scale-110 active:scale-90 min-h-[44px] min-w-[44px]">
                     <SkipBack size={32} />
                   </button>
                   <button 
                     onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-24 h-24 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-[0_20px_50px_rgba(16,185,129,0.4)] transition-all hover:scale-110 active:scale-90 group"
+                    className="w-24 h-24 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-[0_20px_50px_rgba(16,185,129,0.4)] transition-all hover:scale-110 active:scale-90 min-h-[44px] min-w-[44px] group"
                   >
                     {isPlaying ? <Pause size={48} fill="currentColor" /> : <Play size={48} fill="currentColor" className="ml-2 group-hover:scale-110 transition-transform" />}
                   </button>
-                  <button className="p-4 text-slate-400 dark:text-slate-600 hover:text-emerald-600 transition-all hover:scale-110 active:scale-90">
+                  <button className="p-4 text-slate-400 dark:text-slate-600 hover:text-emerald-600 transition-all hover:scale-110 active:scale-90 min-h-[44px] min-w-[44px]">
                     <SkipForward size={32} />
                   </button>
                </div>
@@ -120,7 +120,7 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
                <button 
                  key={num}
                  onClick={() => setSelectedSurah(num)}
-                 className={`flex items-center justify-between p-5 bg-white dark:bg-slate-800 rounded-2xl transition-all group active:scale-95 border-2 ${selectedSurah === num ? 'border-emerald-500 shadow-xl' : 'border-transparent shadow-md hover:border-emerald-200 dark:hover:border-emerald-900'}`}
+                 className={`flex items-center justify-between p-5 bg-white dark:bg-slate-800 rounded-2xl transition-all group active:scale-95 border-2 ${selectedSurah === num ? 'border-emerald-500 shadow-xl' : 'border-transparent shadow-md hover:border-emerald-200 dark:hover:border-emerald-900'} min-h-[70px]`}
                >
                  <div className="flex flex-col items-start">
                     <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Surah {num}</span>
@@ -128,7 +128,7 @@ const AudioPlayer: React.FC<{t: any}> = ({ t }) => {
                       {surahs.find(s => s.number === num)?.englishName || `Surah ${num}`}
                     </span>
                  </div>
-                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${selectedSurah === num ? 'bg-emerald-600 text-white' : 'bg-slate-50 dark:bg-slate-900 text-emerald-600 group-hover:bg-emerald-100'}`}>
+                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all min-w-[44px] min-h-[44px] ${selectedSurah === num ? 'bg-emerald-600 text-white' : 'bg-slate-50 dark:bg-slate-900 text-emerald-600 group-hover:bg-emerald-100'}`}>
                     <Play size={20} fill={selectedSurah === num ? "white" : "none"} />
                  </div>
                </button>

@@ -1,11 +1,9 @@
 
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Loader2, List, Layers, ChevronRight } from 'lucide-react';
 import { Surah } from '../types';
-// FIX: Corrected import from `fetchSurahs` to `fetchAllSurahs` as exported from quranService.
-import { fetchAllSurahs } from '../services/quranService';
+import { fetchAllSurahs } from '../services/quranService'; // FIX: Corrected import
 
 const SurahList: React.FC<{t: any}> = ({ t }) => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
@@ -15,7 +13,6 @@ const SurahList: React.FC<{t: any}> = ({ t }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // FIX: Used the correctly imported function `fetchAllSurahs`.
     fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
 
@@ -59,13 +56,13 @@ const SurahList: React.FC<{t: any}> = ({ t }) => {
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700">
            <button 
              onClick={() => setViewMode('surah')}
-             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-black transition-all ${viewMode === 'surah' ? 'bg-emerald-dark text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-black transition-all ${viewMode === 'surah' ? 'bg-emerald-dark text-white shadow-md' : 'text-slate-500 hover:text-slate-700'} min-h-[44px]`}
            >
               <List size={18}/> Surah
            </button>
            <button 
              onClick={() => setViewMode('juz')}
-             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-black transition-all ${viewMode === 'juz' ? 'bg-emerald-dark text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-black transition-all ${viewMode === 'juz' ? 'bg-emerald-dark text-white shadow-md' : 'text-slate-500 hover:text-slate-700'} min-h-[44px]`}
            >
               <Layers size={18}/> Juz
            </button>
@@ -79,9 +76,9 @@ const SurahList: React.FC<{t: any}> = ({ t }) => {
               <button 
                 key={surah.number}
                 onClick={() => navigate(`/surah/${surah.number}`)}
-                className="flex items-center gap-4 p-4 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500 transition-all text-left shadow-sm group"
+                className="flex items-center gap-4 p-4 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500 transition-all text-left shadow-sm group min-h-[88px]"
               >
-                <div className="w-10 h-10 bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white rounded-xl flex items-center justify-center font-bold shrink-0">
+                <div className="w-10 h-10 bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white rounded-xl flex items-center justify-center font-bold shrink-0 min-w-[44px] min-h-[44px]">
                   {surah.number}
                 </div>
                 <div className="flex-1 overflow-hidden">
@@ -99,7 +96,8 @@ const SurahList: React.FC<{t: any}> = ({ t }) => {
              {Array.from({length: 30}, (_, i) => i + 1).map(juz => (
                <button 
                  key={juz}
-                 className="p-6 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 text-center hover:border-emerald-500 transition-all shadow-sm active:scale-95"
+                 onClick={() => navigate(`/juz/${juz}`)}
+                 className="p-6 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 text-center hover:border-emerald-500 transition-all shadow-sm active:scale-95 min-h-[88px]"
                >
                   <p className="text-[10px] text-slate-400 uppercase font-bold mb-1">Juz</p>
                   <span className="text-2xl font-bold text-emerald-dark dark:text-white">{juz}</span>

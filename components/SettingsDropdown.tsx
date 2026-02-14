@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUI } from '../contexts/UIContext';
 import { useTranslation, languages } from '../contexts/LanguageContext';
-import { Sun, Moon, ZoomIn, ZoomOut, Book, Languages, Download, X, LogOut, Contrast } from 'lucide-react';
+import { Sun, Moon, ZoomIn, ZoomOut, Book, Languages, Download, X, LogOut } from 'lucide-react';
 
 interface SettingsDropdownProps {
     isOpen: boolean;
@@ -14,7 +14,7 @@ interface SettingsDropdownProps {
 
 const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
     const { theme, toggleTheme } = useTheme();
-    const { increaseZoom, decreaseZoom, toggleReadingMode, isReadingMode, isHighContrast, toggleHighContrast } = useUI();
+    const { increaseZoom, decreaseZoom, toggleReadingMode, isReadingMode } = useUI();
     const { changeLanguage, currentLanguage, isLoading, t } = useTranslation();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [installPrompt, setInstallPrompt] = useState<any>(null);
@@ -104,26 +104,20 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ isOpen, onClose, is
                     <div className="flex justify-between items-center p-2 rounded-lg">
                         <span className="font-medium text-sm">{t('zoom')}</span>
                         <div className="flex items-center gap-2">
-                            <button onClick={decreaseZoom} className="p-1.5 rounded-full bg-gray-200 dark:bg-dark-blue hover:bg-gray-300 dark:hover:bg-gray-700" aria-label="Perkecil Tampilan"><ZoomOut size={18}/></button>
-                            <button onClick={increaseZoom} className="p-1.5 rounded-full bg-gray-200 dark:bg-dark-blue hover:bg-gray-300 dark:hover:bg-gray-700" aria-label="Perbesar Tampilan"><ZoomIn size={18}/></button>
+                            <button onClick={decreaseZoom} className="p-1.5 rounded-full bg-gray-200 dark:bg-dark-blue hover:bg-gray-300 dark:hover:bg-gray-700"><ZoomOut size={18}/></button>
+                            <button onClick={increaseZoom} className="p-1.5 rounded-full bg-gray-200 dark:bg-dark-blue hover:bg-gray-300 dark:hover:bg-gray-700"><ZoomIn size={18}/></button>
                         </div>
                     </div>
                     <div className="flex justify-between items-center p-2 rounded-lg">
                         <span className="font-medium text-sm">{t('theme')}</span>
-                        <button onClick={toggleTheme} className="p-1.5 rounded-full bg-gray-200 dark:bg-dark-blue hover:bg-gray-300 dark:hover:bg-gray-700" aria-label="Ganti Tema">
+                        <button onClick={toggleTheme} className="p-1.5 rounded-full bg-gray-200 dark:bg-dark-blue hover:bg-gray-300 dark:hover:bg-gray-700">
                             {theme === 'dark' ? <Sun size={18} className="text-gold-light" /> : <Moon size={18} className="text-emerald-dark" />}
                         </button>
                     </div>
                      <div className="flex justify-between items-center p-2 rounded-lg">
                         <span className="font-medium text-sm">{t('readingMode')}</span>
-                        <button onClick={toggleReadingMode} className={`p-1.5 rounded-full transition-colors ${isReadingMode ? 'bg-emerald-dark' : 'bg-gray-200 dark:bg-dark-blue'}`} aria-label="Aktifkan/Nonaktifkan Mode Baca">
+                        <button onClick={toggleReadingMode} className={`p-1.5 rounded-full transition-colors ${isReadingMode ? 'bg-emerald-dark' : 'bg-gray-200 dark:bg-dark-blue'}`}>
                            <Book size={18} className={isReadingMode ? 'text-white' : ''}/>
-                        </button>
-                    </div>
-                    <div className="flex justify-between items-center p-2 rounded-lg">
-                        <span className="font-medium text-sm">{t('highContrastMode')}</span>
-                        <button onClick={toggleHighContrast} className={`p-1.5 rounded-full transition-colors ${isHighContrast ? 'bg-hc-accent text-hc-button-text' : 'bg-gray-200 dark:bg-dark-blue'}`} aria-label="Aktifkan/Nonaktifkan Mode Kontras Tinggi">
-                           <Contrast size={18} className={isHighContrast ? 'text-hc-button-text' : ''}/>
                         </button>
                     </div>
                 </div>

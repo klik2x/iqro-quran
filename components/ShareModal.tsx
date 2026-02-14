@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { X, Download, Copy, Check, Share2, ZoomIn, ZoomOut, Loader2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
@@ -70,7 +71,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
       <div className="bg-white dark:bg-dark-blue-card rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <h3 className="font-bold text-xl text-emerald-dark dark:text-white">Bagikan Ayat</h3>
-          <button onClick={onClose} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
+          <button onClick={onClose} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl min-h-[44px] min-w-[44px]">
             <X size={20} />
           </button>
         </div>
@@ -92,20 +93,20 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
             <div className="flex items-center justify-between">
               <div className="flex gap-3">
                 {(Object.keys(themes) as Array<keyof typeof themes>).map((t) => (
-                  <button key={t} onClick={() => setTheme(t)} className={`w-8 h-8 rounded-full border-2 transition-all ${theme === t ? 'border-emerald-500 scale-110' : 'border-transparent'} ${themes[t].split(' ')[0]}`}/>
+                  <button key={t} onClick={() => setTheme(t)} className={`w-8 h-8 rounded-full border-2 transition-all ${theme === t ? 'border-emerald-500 scale-110' : 'border-transparent'} ${themes[t].split(' ')[0]} min-h-[44px] min-w-[44px]`} aria-label={`Pilih tema ${t}`}/>
                 ))}
               </div>
               <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-                 <button onClick={() => setImgFontSize(Math.max(20, imgFontSize - 4))} className="p-1.5 rounded-lg"><ZoomOut size={14}/></button>
+                 <button onClick={() => setImgFontSize(Math.max(20, imgFontSize - 4))} className="p-1.5 rounded-lg min-h-[44px] min-w-[44px]" aria-label="Perkecil Font"><ZoomOut size={14}/></button>
                  <span className="w-6 text-center font-black text-xs">{imgFontSize}</span>
-                 <button onClick={() => setImgFontSize(Math.min(60, imgFontSize + 4))} className="p-1.5 rounded-lg"><ZoomIn size={14}/></button>
+                 <button onClick={() => setImgFontSize(Math.min(60, imgFontSize + 4))} className="p-1.5 rounded-lg min-h-[44px] min-w-[44px]" aria-label="Perbesar Font"><ZoomIn size={14}/></button>
               </div>
             </div>
             <div className="flex gap-2">
-              <button onClick={handleDownload} disabled={isSaving} className="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-md disabled:opacity-50 text-sm">
+              <button onClick={handleDownload} disabled={isSaving} className="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-md disabled:opacity-50 text-sm min-h-[44px]">
                 {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Download size={18} />} Simpan
               </button>
-              <button onClick={handleNativeShare} className="flex-1 bg-gold-dark text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-md text-sm">
+              <button onClick={handleNativeShare} className="flex-1 bg-gold-dark text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-md text-sm min-h-[44px]">
                 <Share2 size={18} /> Bagikan
               </button>
             </div>

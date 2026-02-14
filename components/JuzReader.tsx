@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Play, Bookmark, Share2, BookOpen, Loader2, Eye, EyeOff, ZoomIn, ZoomOut, Copy, Check, AlertCircle, RefreshCw } from 'lucide-react';
@@ -53,7 +54,7 @@ const JuzReader: React.FC<{t: any}> = ({ t }) => {
         <h2 className="text-2xl font-black text-slate-900 dark:text-white">Failed to Load Juz {number}</h2>
         <p className="text-slate-500 dark:text-slate-400 max-w-md">{error || "Internet connection issue."}</p>
       </div>
-      <button onClick={() => navigate('/mushaf')} className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black shadow-lg hover:bg-emerald-700 transition-all">Back</button>
+      <button onClick={() => navigate('/mushaf')} className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black shadow-lg hover:bg-emerald-700 transition-all min-h-[44px]">Back</button>
     </div>
   );
 
@@ -85,7 +86,7 @@ const JuzReader: React.FC<{t: any}> = ({ t }) => {
       <div className="sticky top-0 bg-white/95 dark:bg-[#0b1121]/95 backdrop-blur-md z-40 py-8 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-8 mb-16 shadow-2xl rounded-b-[2.5rem]">
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-5">
-            <button onClick={() => navigate('/mushaf')} className="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all shadow-md group">
+            <button onClick={() => navigate('/mushaf')} className="p-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all shadow-md group min-h-[44px] min-w-[44px]" aria-label="Kembali ke Mushaf">
               <ArrowLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
             </button>
             <div>
@@ -93,16 +94,17 @@ const JuzReader: React.FC<{t: any}> = ({ t }) => {
               <p className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.3em] mt-1">Digital Mushaf</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 mr-24 md:mr-32">
+          <div className="flex items-center gap-3">
              <button 
               onClick={() => setShowLatin(!showLatin)} 
-              className={`p-4 rounded-2xl transition-all shadow-md ${showLatin ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}
+              className={`p-4 rounded-2xl transition-all shadow-md min-h-[44px] min-w-[44px] ${showLatin ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}
+              aria-label={showLatin ? "Sembunyikan Latin" : "Tampilkan Latin"}
             >
                {showLatin ? <Eye size={22}/> : <EyeOff size={22}/>}
             </button>
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 shadow-inner">
-              <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-700 rounded-xl shadow-sm hover:bg-emerald-500 hover:text-white transition-all"><ZoomOut size={16}/></button>
-              <button onClick={() => setFontSize(Math.min(80, fontSize + 4))} className="w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-700 rounded-xl shadow-sm hover:bg-emerald-500 hover:text-white transition-all"><ZoomIn size={16}/></button>
+              <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-700 rounded-xl shadow-sm hover:bg-emerald-500 hover:text-white transition-all min-h-[44px] min-w-[44px]" aria-label="Perkecil Font"><ZoomOut size={16}/></button>
+              <button onClick={() => setFontSize(Math.min(80, fontSize + 4))} className="w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-700 rounded-xl shadow-sm hover:bg-emerald-500 hover:text-white transition-all min-h-[44px] min-w-[44px]" aria-label="Perbesar Font"><ZoomIn size={16}/></button>
             </div>
           </div>
         </div>
@@ -114,7 +116,7 @@ const JuzReader: React.FC<{t: any}> = ({ t }) => {
             <div className="flex flex-col gap-10">
               <div className="flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-[2rem] border border-slate-100 dark:border-slate-800">
                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black min-h-[44px] min-w-[44px]">
                       {ayah.numberInSurah}
                     </div>
                     <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
@@ -122,7 +124,8 @@ const JuzReader: React.FC<{t: any}> = ({ t }) => {
                     </div>
                     <button 
                       onClick={() => handlePlayAyah(ayah.number)}
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${playingAyah === ayah.number ? 'bg-amber-500 text-white animate-pulse' : 'bg-white dark:bg-slate-800 text-emerald-600 shadow-sm'}`}
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all min-h-[44px] min-w-[44px] ${playingAyah === ayah.number ? 'bg-amber-500 text-white animate-pulse' : 'bg-white dark:bg-slate-800 text-emerald-600 shadow-sm'}`}
+                      aria-label="Putar Ayat"
                     >
                        <Play size={20} fill="currentColor" />
                     </button>
@@ -136,7 +139,8 @@ const JuzReader: React.FC<{t: any}> = ({ t }) => {
                         setCopiedId(ayah.number);
                         setTimeout(() => setCopiedId(null), 2000);
                       }}
-                      className={`p-3 rounded-xl transition-all ${copiedId === ayah.number ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-slate-800 text-slate-400'}`}
+                      className={`p-3 rounded-xl transition-all min-h-[44px] min-w-[44px] ${copiedId === ayah.number ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-slate-800 text-slate-400'}`}
+                      aria-label="Salin Ayat"
                     >
                       {copiedId === ayah.number ? <Check size={18} /> : <Copy size={18} />}
                     </button>
