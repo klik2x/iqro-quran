@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { iqroData } from '../../data/iqroData';
-import { ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowLeft, ArrowRight, SkipForward, BookText } from 'lucide-react';
 import { HijaiyahCard } from './HijaiyahCard';
-import { speakText, AudioPlaybackControls } from '../../services/geminiService'; // FIX: Changed to speakText and imported AudioPlaybackControls
+import { speakText, AudioPlaybackControls } from '../../services/geminiService';
 import { useIqroProgress } from '../../hooks/useIqroProgress';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext';
+import { IqroLevelData } from '../../types';
 
 interface PracticeViewProps {
-    levelData: typeof iqroData[0];
+    levelData: IqroLevelData;
 }
 
 const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
@@ -19,7 +20,6 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
 
     const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-    // FIX: Refactor audio controller to store playback control, not just sourceNode
     const currentAudioPlaybackRef = useRef<AudioPlaybackControls | null>(null);
 
     useEffect(() => {
@@ -27,7 +27,8 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
             section.items.map((item, itemIndex) => ({
                 ...item, 
                 id: `${levelData.level}-${sectionIndex}-${itemIndex}`,
-                sectionTitle: section.title
+                sectionTitle: section.title,
+                sectionInfo: section.info // Include section info for display
             }))
         );
         setAllItems(flattenedItems);
@@ -35,24 +36,27 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
     }, [levelData]);
 
     const goToNext = useCallback(() => {
+        if (currentAudioPlaybackRef.current) {
+            currentAudioPlaybackRef.current.stop();
+            setPlayingAudio(null);
+        }
         setCurrentIndex(prev => Math.min(prev + 1, allItems.length - 1));
     }, [allItems.length]);
 
     const goToPrev = () => {
+        if (currentAudioPlaybackRef.current) {
+            currentAudioPlaybackRef.current.stop();
+            setPlayingAudio(null);
+        }
         setCurrentIndex(prev => Math.max(prev - 1, 0));
     };
 
-    // FIX: Updated handlePlayAudio to use speakText and handle both char and latin
     const handlePlayAudio = useCallback(async (char: string, latin: string, id: string) => {
         if (loadingAudio) return;
         
-        // Stop current audio if playing
         if (currentAudioPlaybackRef.current) {
-            currentAudioPlaybackRef.current.sourceNode?.stop();
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-            }
-            if (playingAudio === id) { // If clicking the same item, just stop and exit
+            currentAudioPlaybackRef.current.stop();
+            if (playingAudio === id) {
                 setPlayingAudio(null);
                 currentAudioPlaybackRef.current = null;
                 return;
@@ -61,52 +65,49 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
 
         setLoadingAudio(id);
         try {
-            // speakText now returns an AudioPlayback object
-            const playback = await speakText(char, 'Kore', 'Indonesian', latin);
-            
-            // Call play() on the AudioPlayback object to start audio and get controls
-            const { sourceNode, controls } = playback.play();
-            
-            // Store the playback controls
-            currentAudioPlaybackRef.current = {
-                sourceNode,
-                controls,
-            };
-
+            // Requirement: Middle Eastern Arabic accent, ALWAYS use Web Speech API for Iqro practice
+            const playback = await speakText(char, 'Kore', 'Arabic', true, undefined, true); // isIqroContent: true
+            const controls = playback.play();
+            currentAudioPlaybackRef.current = controls;
             setPlayingAudio(id);
-            // Set onended callback on the returned controls
-            controls.onended = () => { 
-                setPlayingAudio(null); 
-                currentAudioPlaybackRef.current = null;
-            };
+            controls.controls.onended = () => setPlayingAudio(null);
         } catch (error) {
-            console.error("Error generating speech:", error);
-            alert("Gagal memutar audio. Coba lagi.");
+            console.error("Error speech:", error);
         } finally {
             setLoadingAudio(null);
         }
     }, [loadingAudio, playingAudio]);
 
-    const handleNextLesson = () => {
-        if (currentItem) {
-            markAsCompleted(currentItem.id);
-            goToNext();
-        }
-    };
-
     const currentItem = allItems[currentIndex];
-    
-    if (!currentItem) {
-        return <div className="text-center p-8">{t('noItemsForPractice')}</div>;
-    }
+    const currentSectionTitle = currentItem?.sectionTitle ? t(currentItem.sectionTitle as TranslationKeys) : '';
+    const currentSectionInfo = currentItem?.sectionInfo ? t(currentItem.sectionInfo as TranslationKeys) : '';
+
+    if (!currentItem) return <div className="text-center p-8">Memuat materi latihan...</div>;
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 space-y-6">
-            <div className="w-full max-w-xs sm:max-w-sm">
-                 <div className="text-center mb-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{currentItem.sectionTitle}</p>
-                    <p className="font-bold text-lg text-emerald-dark dark:text-white">{t('Item')} {currentIndex + 1} / {allItems.length}</p>
+        <div className="flex flex-col space-y-6 max-w-lg mx-auto">
+            {/* Header: Section Title and Info */}
+            <div className="space-y-4">
+                <div className="flex items-center gap-3 border-b-2 border-emerald-100 dark:border-emerald-900 pb-3">
+                    <div className="bg-emerald-600 text-white p-2 rounded-xl">
+                        <BookText size={20} />
+                    </div>
+                    <h3 className="font-bold text-xl text-emerald-dark dark:text-white">
+                        {currentSectionTitle}
+                    </h3>
                 </div>
+                
+                {currentSectionInfo && (
+                    <div className="bg-emerald-50/50 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/50">
+                        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                            {currentSectionInfo}
+                        </p>
+                    </div>
+                )}
+            </div>
+
+            {/* Practice Card - Arabic ONLY */}
+            <div className="w-full">
                 <HijaiyahCard 
                     id={currentItem.id}
                     item={currentItem}
@@ -114,35 +115,35 @@ const PracticeView: React.FC<PracticeViewProps> = ({ levelData }) => {
                     sectionTitle={currentItem.sectionTitle}
                     isLoading={loadingAudio === currentItem.id}
                     isPlaying={playingAudio === currentItem.id}
-                    // FIX: Pass both char and latin to onPlay
                     onPlay={(char, latin) => handlePlayAudio(char, latin, currentItem.id)}
                     isLarge={true}
+                    showLatinText={false} // Requirement for Iqro 1 Practice tab
                 />
             </div>
 
-            <div className="flex items-center justify-center w-full max-w-xs sm:max-w-sm space-x-4">
+            {/* Controls */}
+            <div className="flex items-center justify-center gap-4">
                 <button 
                     onClick={goToPrev} 
                     disabled={currentIndex === 0} 
-                    className="p-4 bg-gray-200 dark:bg-dark-blue rounded-full text-emerald-dark dark:text-emerald-light disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-700 transition min-h-[44px]"
-                    aria-label={t('Previous Item')}
+                    className="p-4 bg-gray-100 dark:bg-dark-blue rounded-full text-slate-400 hover:text-emerald-600 disabled:opacity-30 transition min-h-[44px] min-w-[44px]"
+                    aria-label={t('Sebelumnya')}
                 >
                     <ArrowLeft />
                 </button>
                 <button 
-                    onClick={handleNextLesson} 
+                    onClick={() => { markAsCompleted(currentItem.id); goToNext(); }} 
                     disabled={currentIndex === allItems.length - 1} 
-                    className="flex-grow bg-emerald-dark text-white px-6 py-4 rounded-full hover:bg-opacity-90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px]"
-                    aria-label={t('nextLesson')}
+                    className="flex-grow bg-emerald-dark text-white px-6 py-4 rounded-2xl font-black shadow-lg hover:bg-opacity-90 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                    <span>{t('nextLesson')}</span>
+                    <span>Lanjut Pelajaran</span>
                     <SkipForward size={20} />
                 </button>
                 <button 
                     onClick={goToNext} 
                     disabled={currentIndex === allItems.length - 1} 
-                    className="p-4 bg-gray-200 dark:bg-dark-blue rounded-full text-emerald-dark dark:text-emerald-light disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-700 transition min-h-[44px]"
-                    aria-label={t('Next Item')}
+                    className="p-4 bg-gray-100 dark:bg-dark-blue rounded-full text-slate-400 hover:text-emerald-600 disabled:opacity-30 transition min-h-[44px] min-w-[44px]"
+                    aria-label={t('Berikutnya')}
                 >
                     <ArrowRight />
                 </button>
