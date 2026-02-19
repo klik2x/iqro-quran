@@ -1,7 +1,8 @@
 
+
 import React from 'react';
 import { CertificateData } from '../../types';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext'; // NEW: Import TranslationKeys
 import { Award } from 'lucide-react';
 
 interface CertificateGeneratorProps {
@@ -48,7 +49,8 @@ const CertificateGenerator: React.FC<CertificateGeneratorProps> = ({ data, certi
             'ar': 'لنجاحه في إكمال درس إقرأ:',
         },
         'levelTitle': {
-            'id': `${t('iqroLevel')} ${data.levelTitle}`, // Use app-wide translation for "Iqro Level"
+            // FIX: Use TranslationKeys type for t() calls
+            'id': `${t('iqroLevel' as TranslationKeys)} ${data.levelTitle}`, // Use app-wide translation for "Iqro Level"
             'en': `Iqro Level ${data.levelTitle}`,
             'ar': `مستوى إقرأ ${data.levelTitle}`,
         },
