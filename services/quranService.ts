@@ -81,23 +81,23 @@ export const fetchDailyAyah = async () => {
   return handleResponse(response);
 };
 
-// Merged from quranApi.tsx for use in Rekam and Dashboard
 export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
-    const response = await fetchWithRetry(`${BASE_URL}/surah/${surahNumber}/editions/quran-uthmani,en.sahih,en.transliteration,ar.alafasy`);
-    const data = await response.json();
-    const editions = data.data;
+    const editionsToFetch = ['quran-uthmani', 'en.sahih', 'en.transliteration', 'ar.alafasy'];
+    const fetchedEditions = await Promise.all(editionsToFetch.map(async (editionIdentifier) => {
+        const response = await fetchWithRetry(`${BASE_URL}/surah/${surahNumber}/${editionIdentifier}`);
+        return handleResponse(response);
+    }));
 
-    if (!editions || editions.length < 4) {
-        throw new Error('Could not fetch all required editions for the surah.');
+    const surahInfo = fetchedEditions[0]; 
+    if (fetchedEditions.some(edition => !edition || !edition.ayahs)) {
+        throw new Error('Failed to fetch one or more required editions for the surah.');
     }
 
-    const surahInfo = editions[0];
-
-    const combineAyahData = (editions: any[]): Ayah[] => {
-        const textEdition = editions[0].ayahs;
-        const translationEdition = editions[1].ayahs;
-        const transliterationEdition = editions[2].ayahs;
-        const audioEdition = editions[3].ayahs;
+    const combineAyahData = (editionsData: any[]): Ayah[] => {
+        const textEdition = editionsData[0].ayahs;
+        const translationEdition = editionsData[1].ayahs;
+        const transliterationEdition = editionsData[2].ayahs;
+        const audioEdition = editionsData[3].ayahs;
 
         return textEdition.map((textAyah: any, index: number) => {
             return {
@@ -124,6 +124,6 @@ export const fetchSurah = async (surahNumber: number): Promise<SurahDetail> => {
         englishNameTranslation: surahInfo.englishNameTranslation,
         numberOfAyahs: surahInfo.numberOfAyahs,
         revelationType: surahInfo.revelationType,
-        ayahs: combineAyahData(editions),
+        ayahs: combineAyahData(fetchedEditions),
     };
 };

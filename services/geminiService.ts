@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Modality } from "@google/genai";
 
 // Audio Decoding Functions (as per guidelines)
@@ -39,17 +40,13 @@ export async function decodeAudioData(
   return buffer;
 }
 
-// Ensure global 'ai' instance is only for static calls, getGeminiInstance for dynamic key/context
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
-export const getGeminiInstance = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
 const outputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
 
 // NEW INTERFACE: AudioPlaybackControls represents the immediate result of starting playback
 export interface AudioPlaybackControls {
     sourceNode: AudioBufferSourceNode | null; // Can be null for Web Speech API
-    controls: { onended: (() => void) | null };
+    controls: { onended: (() => void) | null; onpaused: (() => void) | null }; // Added onpaused
+    stop: () => void;
 }
 
 // NEW INTERFACE: AudioPlayback represents an object that can initiate playback
@@ -66,21 +63,34 @@ const webSpeechSpeak = (text: string, lang: string = 'id-ID'): Promise<void> => 
       return;
     }
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang; 
     utterance.volume = 1; // 0 to 1
-    utterance.rate = 1; // 0.1 to 10
+    utterance.rate = 0.9; // Slightly slower for clarity
     utterance.pitch = 1; // 0 to 2
     
+    // Attempt to find a suitable voice
     const voices = window.speechSynthesis.getVoices();
-    const desiredVoice = voices.find(
-      (voice) => voice.lang.startsWith(lang.substring(0, 2)) && voice.localService
-    ) || voices.find((voice) => voice.lang.startsWith(lang.substring(0,2))); // Fallback to language prefix
 
-    if (desiredVoice) {
-      utterance.voice = desiredVoice;
+    // Prioritize specific Arabic voice if lang starts with 'ar'
+    if (lang.startsWith('ar')) {
+        utterance.lang = 'ar-SA'; // Explicitly set for Arabic
+        const arabicVoice = voices.find(v => v.lang.startsWith('ar') && (v.name.includes('Arabic') || v.name.includes('Amira') || v.name.includes('Tarab') || v.name.includes('Laila')));
+        if (arabicVoice) {
+            utterance.voice = arabicVoice;
+        } else {
+            console.warn(`No specific Arabic Web Speech API voice found for ${lang}, using default Arabic.`);
+        }
     } else {
-      console.warn(`No suitable Web Speech API voice found for ${lang}, using default.`);
+        utterance.lang = lang;
+        // Find voice for the requested language or a generic local one
+        const localVoice = voices.find((voice) => voice.lang.startsWith(lang.substring(0, 2)) && voice.localService) 
+                           || voices.find((voice) => voice.lang.startsWith(lang.substring(0,2)));
+        if (localVoice) {
+            utterance.voice = localVoice;
+        } else {
+            console.warn(`No suitable Web Speech API voice found for ${lang}, using default.`);
+        }
     }
+
 
     utterance.onend = () => {
         resolve();
@@ -98,86 +108,188 @@ export const generateSpeech = async (
   text: string, 
   languageHint: string = "Indonesian",
   voice: string = "Kore", // Gemini voice
-  latinText?: string // Optional for Iqro: to speak after Arabic
+  isArabic: boolean = false, // Flag to indicate if text is Arabic
+  latinText?: string, // Optional for Iqro: to speak after Arabic
+  isIqroContent: boolean = false // NEW: Flag to force Web Speech API for Iqro
 ): Promise<AudioPlayback> => {
-  const controls = { onended: null as (() => void) | null };
-  const fallbackLangCode = languageHint.toLowerCase().includes('indonesian') ? 'id-ID' : 'en-US';
+  const controls = { onended: null as (() => void) | null, onpaused: null as (() => void) | null };
+  // Determine fallback language codes
+  const arabicLangCode = 'ar-SA';
+  const localLangCode = languageHint.toLowerCase().includes('indonesian') ? 'id-ID' : navigator.language || 'en-US';
 
+  // Determine the primary language for Web Speech API
+  const primaryWebSpeechLang = isArabic ? arabicLangCode : localLangCode;
+
+  // --- FORCE WEB SPEECH API for Iqro content ---
+  if (isIqroContent) {
+    console.log("Using Web Speech API for Iqro content:", text, primaryWebSpeechLang);
+    const playFn = (): AudioPlaybackControls => {
+        let isStopped = false;
+        const stopAllPlayback = () => {
+            isStopped = true;
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            if (controls.onpaused) controls.onpaused();
+        };
+
+        const speakSequence = async () => {
+            if (isStopped) return;
+            try {
+                // Play main text (Arabic or non-Arabic explanation)
+                await webSpeechSpeak(text, primaryWebSpeechLang);
+                if (isStopped) return;
+                
+                // Then, play Latin text if provided (always in local language)
+                if (latinText) {
+                    await webSpeechSpeak(latinText, localLangCode);
+                }
+            } catch (e) {
+                console.error("Web Speech API failed for Iqro content:", e);
+                // Fallback to alert if Web Speech API also fails
+                alert("Gagal memutar audio Iqro. Periksa dukungan browser Anda.");
+            } finally {
+                if (!isStopped && controls.onended) controls.onended();
+            }
+        };
+        speakSequence();
+        return { sourceNode: null, controls, stop: stopAllPlayback };
+    };
+    return { play: playFn };
+  }
+
+
+  // --- Otherwise, proceed with Gemini API logic (for non-Iqro content like Murotal, Tafsir, Rekam, SetoranBerhadiah) ---
   try {
-    // Try Gemini TTS first
+    // FIX: Initialize GoogleGenAI instance inside the function to ensure API key is fresh
     const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await aiInstance.models.generateContent({
-      model: "gemini-2.5-flash-native-audio-preview-12-2025",
-      contents: [{ parts: [{ text: text }] }],
-      config: {
-        responseModalities: [Modality.AUDIO],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: voice as any },
-          },
+        model: "gemini-2.5-flash-native-audio-preview-12-2025", // Use native audio model for TTS
+        contents: [{ parts: [{ text: text }] }],
+        config: {
+            responseModalities: [Modality.AUDIO],
+            speechConfig: {
+                voiceConfig: { prebuiltVoiceConfig: { voiceName: voice as any } },
+            },
         },
-      },
     });
 
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!base64Audio) {
-      throw new Error("No audio data received from API.");
-    }
-
-    const audioBytes = decodeAudio(base64Audio);
-    const audioBuffer = await decodeAudioData(audioBytes, outputAudioContext, 24000, 1);
-
-    // FIX: playFn now returns AudioPlaybackControls
-    const playFn = (): AudioPlaybackControls => {
-        const source = outputAudioContext.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(outputAudioContext.destination);
-        source.onended = async () => {
-            if (latinText) {
-                // If Latin text exists, play it after the Arabic/primary text
-                try {
-                    await webSpeechSpeak(latinText, fallbackLangCode);
-                } catch (e) {
-                    console.error("Failed to speak Latin text with Web Speech API:", e);
+    if (base64Audio) {
+        const audioBytes = decodeAudio(base64Audio);
+        const audioBuffer = await decodeAudioData(audioBytes, outputAudioContext, 24000, 1);
+        
+        const geminiPlaybackControls: AudioPlaybackControls = {
+            sourceNode: null, // Will be set on play
+            controls: { onended: null, onpaused: null },
+            stop: () => {
+                if (geminiPlaybackControls.sourceNode) {
+                    geminiPlaybackControls.sourceNode.stop();
+                    geminiPlaybackControls.sourceNode = null; // Clear source node after stopping
                 }
             }
-            if (controls.onended) controls.onended();
         };
-        source.start();
-        return { sourceNode: source, controls };
-    };
 
-    // FIX: Only return the play function
-    return { play: playFn };
+        // Store the buffer for playing later
+        (geminiPlaybackControls as any).audioBuffer = audioBuffer;
+
+        const playFn = (): AudioPlaybackControls => {
+            let isStopped = false;
+
+            const stopAllPlayback = () => {
+                isStopped = true;
+                if (geminiPlaybackControls.sourceNode) {
+                    geminiPlaybackControls.sourceNode.stop();
+                    geminiPlaybackControls.sourceNode = null;
+                }
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                if (controls.onpaused) controls.onpaused();
+            };
+
+            const playSequence = async () => {
+                if (isStopped) return;
+
+                try {
+                    // Play Gemini audio
+                    const source = outputAudioContext.createBufferSource();
+                    source.buffer = (geminiPlaybackControls as any).audioBuffer;
+                    source.connect(outputAudioContext.destination);
+                    
+                    geminiPlaybackControls.sourceNode = source; // Store reference
+                    
+                    await new Promise<void>((resolve) => {
+                        source.onended = () => {
+                            geminiPlaybackControls.sourceNode = null; // Clear reference
+                            resolve();
+                        };
+                        source.start();
+                    });
+                } catch (e) {
+                    console.error("Error during Gemini playback:", e);
+                    // In case of error during playback, try to stop everything
+                    stopAllPlayback();
+                } finally {
+                    if (!isStopped && controls.onended) controls.onended();
+                }
+            };
+            
+            playSequence();
+            return { sourceNode: geminiPlaybackControls.sourceNode || null, controls, stop: stopAllPlayback };
+        };
+
+        return { play: playFn };
+
+    } else {
+        throw new Error("No audio data received from Gemini API.");
+    }
 
   } catch (error) {
     console.warn("Gemini TTS failed, falling back to Web Speech API:", error);
-    // Fallback to Web Speech API
-    // FIX: playFn now returns AudioPlaybackControls
+    // --- Fallback to Web Speech API ---
     const playFn = (): AudioPlaybackControls => {
-      webSpeechSpeak(text, fallbackLangCode)
-        .then(async () => {
+      let isStopped = false;
+
+      const stopAllPlayback = () => {
+          isStopped = true;
+          if (window.speechSynthesis.speaking) {
+              window.speechSynthesis.cancel();
+          }
+          if (controls.onpaused) controls.onpaused();
+      };
+
+      const speakSequence = async () => {
+        if (isStopped) return;
+        try {
+            // Speak primary text
+            await webSpeechSpeak(text, primaryWebSpeechLang);
+            if (isStopped) return;
+            
+            // Speak Latin text if provided (shouldn't happen for non-Iqro contexts, but for safety)
             if (latinText) {
-                try {
-                    await webSpeechSpeak(latinText, fallbackLangCode);
-                } catch (e) {
-                    console.error("Web Speech API Latin fallback failed:", e);
-                }
+                await webSpeechSpeak(latinText, localLangCode);
+                if (isStopped) return;
             }
-        })
-        .then(() => { if (controls.onended) controls.onended(); })
-        .catch(e => console.error("Web Speech API fallback failed:", e));
-      return { sourceNode: null, controls };
+        } catch (e) {
+            console.error("Web Speech API fallback failed:", e);
+            alert("Gagal memutar audio. Periksa koneksi atau dukungan browser.");
+        } finally {
+            if (!isStopped && controls.onended) controls.onended();
+        }
+      };
+      
+      speakSequence();
+      
+      return { sourceNode: null, controls, stop: stopAllPlayback };
     };
-    // FIX: Only return the play function
     return { play: playFn };
   }
 };
 
 // Added speakText as a wrapper for generateSpeech
-// FIX: speakText now directly returns the AudioPlayback object from generateSpeech
-export const speakText = async (text: string, voice: string = "Kore", languageHint: string = "Indonesian", latinText?: string): Promise<AudioPlayback> => {
-  return generateSpeech(text, languageHint, voice, latinText);
+export const speakText = async (text: string, voice: string = "Kore", languageHint: string = "Indonesian", isArabic: boolean = false, latinText?: string, isIqroContent: boolean = false): Promise<AudioPlayback> => {
+  return generateSpeech(text, languageHint, voice, isArabic, latinText, isIqroContent);
 };
 
 export const translateTexts = async (
@@ -191,7 +303,7 @@ export const translateTexts = async (
     const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await aiInstance.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: prompt,
+      contents: [{text: prompt}],
       config: {
         responseMimeType: "application/json",
       },
