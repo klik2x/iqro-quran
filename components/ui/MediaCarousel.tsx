@@ -1,13 +1,15 @@
 
+
 import React from 'react';
 import { Film, Image, FileText } from 'lucide-react';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext'; // NEW: Import TranslationKeys
 
 const mediaItems = [
     {
         type: 'video',
-        title: 'Live TV murotal Al-Quran (from Makkah and Madinah)',
-        content: 'https://win.holol.com/live/quran/playlist.m3u8'
+        title: 'Panduan Video Penggunaan Aplikasi',
+        content: 'https://www.youtube.com/embed/7-Qf3g-0xEI'
+    },
     {
         type: 'image',
         title: 'Keutamaan Membaca Al-Quran',
@@ -24,12 +26,13 @@ const MediaCarousel: React.FC = () => {
     const { t } = useTranslation();
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-bold text-emerald-dark dark:text-white">{t('mediaInfo')}</h2>
+            {/* FIX: Use TranslationKeys type for t() calls */}
+            <h2 className="text-xl font-bold text-emerald-dark dark:text-white">{t('mediaInfo' as TranslationKeys)}</h2>
             <div className="flex flex-col space-y-4">
                 {mediaItems.map((item, index) => (
                     <div key={index} className="w-full bg-white dark:bg-dark-blue-card rounded-xl shadow-md overflow-hidden">
                         <div className="aspect-video bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                           {item.type === 'video' && <iframe width="100%" height="100%" src={item.content} title="mp3quran video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>}
+                           {item.type === 'video' && <iframe width="100%" height="100%" src={item.content} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>}
                            {item.type === 'image' && <img src={item.content} alt={item.title} className="w-full h-full object-cover" />}
                            {item.type === 'image_link' && 
                                 <a href={item.content} target="_blank" rel="noopener noreferrer" className="w-full h-full">

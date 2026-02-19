@@ -1,6 +1,7 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext'; // NEW: Import TranslationKeys
 import { Play, Pause } from 'lucide-react';
 
 const audioSources = {
@@ -53,10 +54,11 @@ const HadithCard: React.FC = () => {
             </button>
             
             <div className="space-y-4 text-gray-700 dark:text-gray-300">
-                <h2 className="text-xl font-bold text-emerald-dark dark:text-white">{t('hadithInfo')}</h2>
+                {/* FIX: Use TranslationKeys type for t() calls */}
+                <h2 className="text-xl font-bold text-emerald-dark dark:text-white">{t('hadithInfo' as TranslationKeys)}</h2>
                 <p className="text-center font-semibold">Satu Huruf yang Dibaca dari Al-Qur’an Sudah Diganjar Pahala</p>
                 <p className="font-arabic text-2xl text-right leading-loose" dir="rtl">
-                    وَعَنِ ابْنِ مَسْعُوْدٍ رَضِيَ اللهُ عَنْهُ قَالَ : قَالَ رَسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ “مَنْ قَرَأَ حَرْفًا مِنْ كِتَابِ اللهِ فَلَهُ حَسَنَةٌ وَالحَسَنَةُ بِعَشْرِ أَمْثَالِهَا , لاَ أَقُوْلُ الم حَرْفٌ وَلَكِنْ أَلِفٌ حَرْفٌ وَلاَمٌ حَرْفٌ وَمِيْمٌ حَرْفٌ”
+                    وَعَنِ ابْنِ مَسْعُوْدٍ رَضِيَ اللهُ عَنْهُ قَالَ : قَالَ رَسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ “مَنْ قَرَأَ حَرْفًا مِنْ كِتَابِ اللهِ فَلَهُ حَسَنَةٌ وَالحَسَنَةُ بِعَشْرِ أَمْثَالِهَا , لاَ أَقُوْلُ الم حَرْفٌ وَلَكِنْ أَلِفٌ حَرْفٌ وَلاَ مٌ حَرْفٌ وَمِيْمٌ حَرْفٌ”
                 </p>
                 <p className="italic text-sm">
                     Ibnu Mas’ud radhiyallahu ‘anhu berkata, Rasulullah shallallahu ‘alaihi wa sallam bersabda, “Barang siapa yang membaca satu huruf dari kitab Allah, maka baginya satu kebaikan. Satu kebaikan itu dibalas dengan sepuluh kali lipatnya. Aku tidak mengatakan alif laam miim itu satu huruf, tetapi aliif itu satu huruf, laam itu satu huruf, dan miim itu satu huruf.”

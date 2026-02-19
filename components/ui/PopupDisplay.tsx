@@ -1,7 +1,8 @@
 
+
 import React from 'react';
 import { usePopup } from '../../contexts/PopupContext';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext';
 import { Users, Edit2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -14,9 +15,10 @@ const PopupDisplay: React.FC = () => {
             <div className="flex items-start gap-3">
                 <Users className="h-6 w-6 text-emerald-dark dark:text-emerald-light flex-shrink-0 mt-1" />
                 <div>
-                    <h2 className="text-xl font-bold mb-2 text-emerald-dark dark:text-white">{t('familyPrayer')}</h2>
+                    <h2 className="text-xl font-bold mb-2 text-emerald-dark dark:text-white">{t('familyPrayer' as TranslationKeys)}</h2>
+                    {/* FIX: Use TranslationKeys type for t() calls */}
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-4">
-                       {t('popupIntro')}
+                       {t('popupIntro' as TranslationKeys)}
                     </p>
                     {names.length > 0 ? (
                         <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">

@@ -1,7 +1,8 @@
 
+
 import React from 'react';
 import { usePopup } from '../../contexts/PopupContext';
-import { useTranslation } from '../../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext';
 import { Users, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -38,8 +39,9 @@ const FamilyPrayerPopup: React.FC<FamilyPrayerPopupProps> = ({ onClose }) => {
                         <p className="font-semibold mt-1">(HR. Tirmidzi, no. 2910)</p>
                     </div>
 
+                    {/* FIX: Use TranslationKeys type for t() calls */}
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                       "{t('popupIntro')}"
+                       "{t('popupIntro' as TranslationKeys)}"
                     </p>
                     <div className="max-h-40 overflow-y-auto bg-gray-50 dark:bg-dark-blue p-3 rounded-lg text-left">
                         <ul className="space-y-1 text-gray-800 dark:text-gray-200">
