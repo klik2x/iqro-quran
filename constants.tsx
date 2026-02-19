@@ -258,3 +258,17 @@ export const QARIS = [
   { identifier: 'ar.huzayfi', name: 'Ali Hudhaifi' },
   { identifier: 'ar.minshawi', name: 'Mohamed Siddiq El-Minshawi' },
 ];
+
+// New constants for HadithCard and MediaCarousel titles (translation keys)
+export const MEDIA_CAROUSEL_TITLES = {
+    videoTutorialTitle: 'videoTutorialTitle',
+    readingQuranVirtuesTitle: 'readingQuranVirtuesTitle',
+    oneLetterRewardTitle: 'oneLetterRewardTitle',
+};
+
+export const HADITH_TRANSLATION = {
+    hadithTranslationText: 'hadithTranslationText',
+    hadithSource: 'hadithSource',
+    playArabicHadithAudio: 'playArabicHadithAudio',
+    playHadithTranslationAudio: 'playHadithTranslationAudio'
+};

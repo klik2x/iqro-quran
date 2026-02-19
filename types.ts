@@ -1,4 +1,3 @@
-
 export interface Surah {
   number: number;
   name: string;
@@ -42,6 +41,7 @@ export interface Edition {
 export interface IqroItem {
   char: string;
   latin: string;
+  keterangan?: string; // NEW: Added for tooltip content
 }
 
 export interface IqroSection {
@@ -119,6 +119,3 @@ export interface VoiceTrigger {
   languages: { [key: string]: string[] }; // { 'id': ['lanjut', 'terus'], 'en': ['next', 'continue'] }
   action: 'next' | 'previous' | 'repeat' | 'stop' | 'start' | 'help';
 }
-
-// Removed unused AppState, HijaiyahLetter as they are defined in constants.tsx
-// or not directly used as state interfaces across the app main logic.

@@ -1,12 +1,27 @@
+
 <!DOCTYPE html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>IQRO Quran Digital</title>
-    <link rel="icon" type="image/png" href="IQRO_Quran_logo.jpg">
+    <title>IQRO Quran Digital V.3</title>
     
-    <meta name="keywords" content="belajar alquran, baca iqro, quran digital, learn quran, mushaf, murotal, qori, reading iqro, tajwid, murottal quran, belajar hijaiyah, quran online, tajwid digital, учить коран, lerne koran, apprendre le coran, aprender corán, aprender alcorão, 学习古兰经, コーランを学ぶ, 코란 배우기, تعلم القرآن, kuran öğren, korana ithuto, कुरान सीखें">
+    <!-- PWA Manifest & Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#036666">
+
+    <!-- Favicon & Apple Touch Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+    <link rel="mask-icon" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png" color="#036666">
+    <link rel="shortcut icon" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Aplikasi Quran Digital IQRO untuk belajar membaca Al-Quran, tajwid, tafsir, murotal, dan rekaman bacaan. Akses offline, responsif, dan inklusif. Quran digital, Iqro online, belajar Quran, tajwid, tafsir Al-Quran, murotal, rekaman Quran, PWA Quran, offline Quran.">
+    <meta name="keywords" content="Quran digital, Iqro online, belajar Quran, tajwid, tafsir Al-Quran, murotal, rekaman Quran, PWA Quran, offline Quran, Alquran Digital, Belajar Iqro, Kitab Suci Al-Quran, Aplikasi Quran, Iqro 1-6, Quran Offline, Quran App, Read Quran, Learn Quran, Tajweed, Tafsir Quran, Murotal Quran, Quran Recitation, Digital Quran App, Quran PWA, Holy Quran, القرآن الرقمي, تعلم القرآن, تجويد, تفسير القرآن, مرتّل, تسجيل القرآن, PWA القرآن, القرآن بدون إنترنت, digitaler Koran, Iqro lernen, Koran-App, Tajwid-Regeln, Koran-Auslegung, Quran-Lern-App, цифровой Коран, изучение Корана, Таджвид, толкование Корана, Коран приложение, lectura del Corán, Corán digital, aprender Corán, Corán sin conexión, Quran App Español, 数字古兰经, 在线学习古兰经, 泰吉威德, 古兰经注释, 古兰经应用程序, 古兰经PWA">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,6 +109,14 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
       }
+      @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+      }
+      .animate-blink {
+        animation: blink 1.5s infinite;
+      }
     </style>
      <script>
       tailwind.config = {
@@ -116,6 +139,7 @@
             animation: {
               'fade-in': 'fadeIn 0.3s ease-out forwards',
               'shake': 'shake 0.5s ease-in-out',
+              'blink': 'blink 1.5s infinite',
             },
             keyframes: {
               fadeIn: {
@@ -126,6 +150,10 @@
                 '0%, 100%': { transform: 'translateX(0)' },
                 '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
                 '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' },
+              },
+              blink: {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.6 },
               }
             }
           }

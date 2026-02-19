@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
-import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility, Award, Server } from 'lucide-react'; // Import Award and Server icon
+import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility, Award, Server, Download } from 'lucide-react'; // Import Award, Server, and Download icon
 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 import { UIProvider, useUI } from './contexts/UIContext';
-import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
+import { LanguageProvider, useTranslation, TranslationKeys } from './contexts/LanguageContext'; // NEW: Import TranslationKeys
 import { PopupProvider } from './contexts/PopupContext';
+import { ApiHealthProvider } from './contexts/ApiHealthContext'; // NEW IMPORT
 
 import Dashboard from './pages/Dashboard';
 import Mushaf from './pages/Mushaf';
@@ -25,7 +26,6 @@ import SettingsDropdown from './components/SettingsDropdown';
 import ReadingModeExitButton from './components/ui/ReadingModeExitButton';
 import Welcome from './pages/Welcome';
 import Login from './pages/Login';
-// FIX: Changed import paths for these pages to reflect new standalone files
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import FAQ from './pages/FAQ';
@@ -50,9 +50,11 @@ const App: React.FC = () => {
         <UIProvider>
           <BookmarkProvider>
             <PopupProvider>
-              <HashRouter>
-                <AppRoutes />
-              </HashRouter>
+              <ApiHealthProvider> {/* NEW: ApiHealthProvider */}
+                <HashRouter>
+                  <AppRoutes />
+                </HashRouter>
+              </ApiHealthProvider>
             </PopupProvider>
           </BookmarkProvider>
         </UIProvider>
@@ -116,11 +118,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/doa-keluarga" element={<PopupEntry />} />
         <Route path="/admin/stats" element={<AdminStats />} /> {/* NEW HIDDEN ROUTE */}
-        <Route path="/promo" element={
-          <div style={{ width: '100%', height: '100vh' }}>
-            <iframe src="/page.html" title="Promo" width="100%" height="100%" frameBorder="0" />
-          </div>
-        } />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
@@ -139,6 +136,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [showFamilyPrayerPopup, setShowFamilyPrayerPopup] = useState(false);
   const location = useLocation();
+
+  const [installPrompt, setInstallPrompt] = useState<any>(null); // NEW: State for PWA install prompt
+
+  useEffect(() => {
+      const handler = (e: Event) => {
+          e.preventDefault();
+          setInstallPrompt(e);
+      };
+      window.addEventListener('beforeinstallprompt', handler);
+
+      return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
 
   useEffect(() => {
     const hasSeenPopup = sessionStorage.getItem('hasSeenFamilyPrayerPopup');
@@ -164,6 +173,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
                 setSettingsOpen={setSettingsOpen}
                 isLoggedIn={isLoggedIn}
                 handleLogout={handleLogout}
+                installPrompt={installPrompt} // NEW: Pass installPrompt
+                setInstallPrompt={setInstallPrompt} // NEW: Pass setInstallPrompt
              />}
             <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-y-auto">
               <Outlet />
@@ -187,31 +198,53 @@ interface HeaderProps {
   setSettingsOpen: (isOpen: boolean) => void;
   isLoggedIn: boolean;
   handleLogout: () => void;
+  installPrompt: any; // NEW: Prop for PWA install prompt
+  setInstallPrompt: (prompt: any) => void; // NEW: Setter for PWA install prompt
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSettingsOpen, setSettingsOpen, isLoggedIn, handleLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSettingsOpen, setSettingsOpen, isLoggedIn, handleLogout, installPrompt, setInstallPrompt }) => {
+    const { t } = useTranslation(); // Use translation hook
+
+    const handleInstallClick = async () => { // NEW: PWA install logic
+        if (!installPrompt) return;
+        installPrompt.prompt();
+        const { outcome } = await installPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setInstallPrompt(null);
+        }
+    };
+
     return (
         <header className="sticky top-0 bg-soft-white/80 dark:bg-dark-blue/80 backdrop-blur-sm z-40 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-4">
-                <button onClick={onMenuClick} className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Buka menu">
+                <button onClick={onMenuClick} className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label={t('openMenu' as TranslationKeys)}>
                     <Menu className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                 </button>
                  <div className="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-emerald-dark dark:text-emerald-light">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                     </svg>
                     <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO Quran</h1>
                 </div>
             </div>
             <div className="flex items-center gap-1">
-                <button className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Pengaturan Aksesibilitas" onClick={() => alert('Fitur aksesibilitas akan datang!')}>
+                {installPrompt && ( // NEW: Show install button if prompt is available
+                    <button 
+                        onClick={handleInstallClick} 
+                        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" 
+                        aria-label={t('installApp' as TranslationKeys)}
+                    >
+                        <Download className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
+                    </button>
+                )}
+                <button className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label={t('accessibilitySettings' as TranslationKeys)} onClick={() => alert(t('accessibilityComingSoon' as TranslationKeys))}>
                     <Accessibility className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                 </button>
-                <Link to="/" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Ke halaman utama">
+                <Link to="/" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label={t('goToHomePage' as TranslationKeys)}>
                     <HomeIcon className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                 </Link>
                 <div className="relative">
-                    <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label="Buka pengaturan">
+                    <button onClick={onSettingsClick} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" aria-label={t('openSettings' as TranslationKeys)}>
                         <Cog className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                     </button>
                     <SettingsDropdown isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
@@ -225,24 +258,25 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
     const location = useLocation();
     const { t } = useTranslation();
     const navItems = [
-        { path: '/', icon: HomeIcon, label: t('dashboard') },
-        { path: '/mushaf', icon: BookOpen, label: t('mushaf') },
-        { path: '/iqro', icon: SpeakingHeadIcon, label: t('learnIqro') },
-        { path: '/murotal', icon: Headphones, label: t('murotal') },
-        { path: '/tafsir', icon: BookOpen, label: t('tafsir') },
-        { path: '/doa', icon: BookHeart, label: t('prayers') },
-        { path: '/rekam', icon: Mic, label: t('record') },
-        { path: '/setoran-berhadiah', icon: Award, label: t('setoranBerhadiah') }, // NEW: Setoran Berhadiah
-        { path: '/doa-keluarga', icon: Users, label: t('familyPrayer') },
+        { path: '/', icon: HomeIcon, label: t('dashboard' as TranslationKeys) },
+        { path: '/mushaf', icon: BookOpen, label: t('mushaf' as TranslationKeys) },
+        { path: '/iqro', icon: SpeakingHeadIcon, label: t('learnIqro' as TranslationKeys) },
+        { path: '/murotal', icon: Headphones, label: t('murotal' as TranslationKeys) },
+        { path: '/tafsir', icon: BookOpen, label: t('tafsir' as TranslationKeys) },
+        { path: '/doa', icon: BookHeart, label: t('prayers' as TranslationKeys) },
+        { path: '/rekam', icon: Mic, label: t('record' as TranslationKeys) },
+        { path: '/setoran-berhadiah', icon: Award, label: t('setoranBerhadiah' as TranslationKeys) }, // NEW: Setoran Berhadiah
+        { path: '/doa-keluarga', icon: Users, label: t('familyPrayer' as TranslationKeys) },
     ];
 
     const staticItems = [
-        { path: '/bookmarks', icon: Bookmark, label: t('bookmark') },
-        { type: 'link', href: 'mailto:hijr.time+qoriquran@gmail.com', icon: Mail, label: t('contactUs') },
-        { type: 'link', href: 'https://sociabuzz.com/syukrankatsiron/tribe', icon: Heart, label: t('supportUs') },
-        { path: '/privacy', icon: ShieldCheck, label: t('privacyPolicy') },
-        { path: '/terms', icon: FileText, label: t('termsOfService') },
-        { path: '/faq', icon: HelpCircle, label: t('faq') },
+        { path: '/bookmarks', icon: Bookmark, label: t('bookmark' as TranslationKeys) },
+        { type: 'link', href: 'mailto:hijr.time+qoriquran@gmail.com', icon: Mail, label: t('contactUs' as TranslationKeys) },
+        { type: 'link', href: 'https://sociabuzz.com/syukrankatsiron/tribe', icon: Heart, label: t('supportUs' as TranslationKeys) },
+        { path: '/privacy', icon: ShieldCheck, label: t('privacyPolicy' as TranslationKeys) },
+        { path: '/terms', icon: FileText, label: t('termsOfService' as TranslationKeys) },
+        { path: '/faq', icon: HelpCircle, label: t('faq' as TranslationKeys) },
+        { path: '/admin/stats', icon: Server, label: t('adminStatsTitle' as TranslationKeys) }, // NEW: Admin Stats
     ];
 
     return (
@@ -250,11 +284,11 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2">
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-emerald-dark dark:text-emerald-light">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                     </svg>
                     <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO</h1>
                 </div>
-                <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2 min-h-[44px] min-w-[44px]">
+                <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2 min-h-[44px] min-w-[44px]" aria-label={t('closeMenu' as TranslationKeys)}>
                     <X className="h-6 w-6" />
                 </button>
             </div>
@@ -263,7 +297,7 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
                   {navItems.map(item => (
                       <li key={item.path}>
                           <Link to={item.path} onClick={() => setSidebarOpen(false)} className={`flex items-center space-x-3 px-3 py-3 my-1 rounded-lg transition-colors min-h-[44px] ${location.pathname === item.path ? 'bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
-                              { item.label === t('learnIqro')
+                              { item.label === t('learnIqro' as TranslationKeys)
                                 ? <item.icon className="w-5 text-center text-xl" />
                                 : <item.icon className="h-5 w-5" />
                               }
@@ -303,11 +337,11 @@ const BottomNav: React.FC = () => {
     const location = useLocation();
     const { t } = useTranslation();
     const navItems = [
-        { path: '/iqro', icon: SpeakingHeadIcon, label: 'Iqro' },
-        { path: '/tafsir', icon: BookHeart, label: 'Tafsir' },
-        { path: '/mushaf', icon: BookOpen, label: 'Mushaf' },
-        { path: '/murotal', icon: Headphones, label: 'Audio' },
-        { path: '/rekam', icon: Mic, label: 'Rekam' },
+        { path: '/iqro', icon: SpeakingHeadIcon, label: t('learnIqro' as TranslationKeys) },
+        { path: '/tafsir', icon: BookHeart, label: t('tafsir' as TranslationKeys) },
+        { path: '/mushaf', icon: BookOpen, label: t('mushaf' as TranslationKeys) },
+        { path: '/murotal', icon: Headphones, label: t('murotal' as TranslationKeys) },
+        { path: '/rekam', icon: Mic, label: t('record' as TranslationKeys) },
     ];
     
     return (
@@ -318,9 +352,10 @@ const BottomNav: React.FC = () => {
                         to={item.path} 
                         key={item.path} 
                         className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-all duration-200 min-h-[44px] ${location.pathname === item.path ? 'text-emerald-dark dark:text-gold-light' : 'text-gray-500 dark:text-gray-400'} ${item.path === '/mushaf' ? 'transform -translate-y-3' : ''}`}
+                        aria-label={item.label}
                     >
                         <div className={`flex items-center justify-center rounded-full transition-all duration-200 ${item.path === '/mushaf' ? 'bg-emerald-dark dark:bg-gold-light p-4 -mt-6 shadow-lg' : 'p-2'}`}>
-                          { item.label === 'Iqro'
+                          { item.label === t('learnIqro' as TranslationKeys)
                             ? <item.icon className={`${item.path === '/mushaf' ? 'text-3xl' : 'text-2xl'}`} />
                             : <item.icon className={`${item.path === '/mushaf' ? 'h-8 w-8 text-white dark:text-emerald-dark' : 'h-6 w-6'}`} />
                           }
