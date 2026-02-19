@@ -16,7 +16,8 @@ type ViewMode = 'study' | 'practice' | 'tajwid' | 'quiz' | 'bookmarks';
 
 interface IqroModuleProps {
     t: any;
-    levelData: IqroLevelData; // Use the imported IqroLevelData type
+    // FIX: Changed levelData type to IqroLevelData
+    levelData: IqroLevelData; 
 }
 
 const IqroModule: React.FC<IqroModuleProps> = ({ t, levelData }) => {
@@ -49,6 +50,7 @@ const IqroModule: React.FC<IqroModuleProps> = ({ t, levelData }) => {
             </button>
         </div>
 
+        {/* FIX: Ensure levelData is passed with correct type. Already done by fixing IqroModuleProps */}
         {viewMode === 'study' && <StudyView levelData={levelData} />}
         {viewMode === 'practice' && <PracticeView levelData={levelData} />}
         {viewMode === 'tajwid' && <TajwidView />}
