@@ -41,7 +41,8 @@ interface LanguageContextType {
   translations: Translations;
   changeLanguage: (langCode: LanguageCode) => void;
   isLoading: boolean;
-  t: (key: TranslationKeys) => string;
+  // FIX: Updated `t` function signature to accept an optional options object for interpolation
+  t: (key: TranslationKeys, options?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -82,8 +83,16 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, [currentLanguage, translationCache]);
   
-  const t = useCallback((key: TranslationKeys): string => {
-      return translations[key] || idStrings[key];
+  // FIX: Updated `t` function implementation to handle the options object for interpolation
+  const t = useCallback((key: TranslationKeys, options?: Record<string, string | number>): string => {
+      let text = translations[key] || idStrings[key];
+      if (options) {
+          for (const optKey in options) {
+              // Replace placeholders like {{optKey}} with the actual value
+              text = text.replace(new RegExp(`{{${optKey}}}`, 'g'), String(options[optKey]));
+          }
+      }
+      return text;
   }, [translations]);
 
   return (
