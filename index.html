@@ -1,1 +1,188 @@
-Permission denied
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>IQRO Quran Digital V.3</title>
+    
+    <!-- PWA Manifest & Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#036666">
+
+    <!-- Favicon & Apple Touch Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+    <link rel="mask-icon" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png" color="#036666">
+    <link rel="shortcut icon" href="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Aplikasi Quran Digital IQRO untuk belajar membaca Al-Quran, tajwid, tafsir, murotal, dan rekaman bacaan. Akses offline, responsif, dan inklusif. Quran digital, Iqro online, belajar Quran, tajwid, tafsir Al-Quran, murotal, rekaman Quran, PWA Quran, offline Quran.">
+    <meta name="keywords" content="Quran digital, Iqro online, belajar Quran, tajwid, tafsir Al-Quran, murotal, rekaman Quran, PWA Quran, offline Quran, Alquran Digital, Belajar Iqro, Kitab Suci Al-Quran, Aplikasi Quran, Iqro 1-6, Quran Offline, Quran App, Read Quran, Learn Quran, Tajweed, Tafsir Quran, Murotal Quran, Quran Recitation, Digital Quran App, Quran PWA, Holy Quran, القرآن الرقمي, تعلم القرآن, تجويد, تفسير القرآن, مرتّل, تسجيل القرآن, PWA القرآن, القرآن بدون إنترنت, digitaler Koran, Iqro lernen, Koran-App, Tajwid-Regeln, Koran-Auslegung, Quran-Lern-App, цифровой Коран, изучение Корана, Таджвид, толкование Корана, Коран приложение, lectura del Corán, Corán digital, aprender Corán, Corán sin conexión, Quran App Español, 数字古兰经, 在线学习古兰经, 泰吉威德, 古兰经注释, 古兰经应用程序, 古兰经PWA">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+      :root { 
+        --emerald-dark: #036666; 
+        --emerald-light: #99D5C9;
+        --soft-white: #FDFBF7;
+        --gold-dark: #D4AF37;
+        --gold-light: #FFD700;
+      }
+      html {
+        -webkit-tap-highlight-color: transparent;
+        scroll-behavior: smooth;
+      }
+      body { 
+        touch-action: manipulation;
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+      }
+      .font-arabic { 
+        font-family: 'Amiri', serif; 
+        line-height: 2.8; 
+      }
+      #root { 
+        min-height: 100vh; 
+        display: flex; 
+        flex-direction: column;
+      }
+
+      /* Ayah Number Ornament */
+      .ayah-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--gold-dark);
+        border-radius: 50%;
+        width: 2.8rem;
+        height: 2.8rem;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--emerald-dark);
+        background: radial-gradient(circle, #ffffff 0%, #fcfcfc 100%);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin: 0 0.75rem;
+        vertical-align: middle;
+        flex-shrink: 0;
+      }
+      
+      .dark .ayah-circle {
+        border-color: var(--gold-light);
+        color: var(--emerald-light);
+        background: #1e293b;
+      }
+
+      /* For keyboard users */
+      :focus-visible {
+        outline: 2px solid #D4AF37;
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--emerald-dark);
+        border-radius: 10px;
+      }
+      
+      /* Utility to hide scrollbar */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+      }
+      .animate-blink {
+        animation: blink 1.5s infinite;
+      }
+    </style>
+     <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+              arabic: ['Amiri', 'Lateef', 'serif'],
+            },
+            colors: {
+              'emerald-dark': '#036666',
+              'emerald-light': '#99D5C9',
+              'gold-light': '#FFD700',
+              'gold-dark': '#D4AF37',
+              'soft-white': '#FDFBF7',
+              'dark-blue': '#0F172A',
+              'dark-blue-card': '#1E293B'
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
+              'shake': 'shake 0.5s ease-in-out',
+              'blink': 'blink 1.5s infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                'from': { opacity: 0, transform: 'scale(0.95)' },
+                'to': { opacity: 1, transform: 'scale(1)' },
+              },
+              shake: {
+                '0%, 100%': { transform: 'translateX(0)' },
+                '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
+                '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' },
+              },
+              blink: {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.6 },
+              }
+            }
+          }
+        }
+      }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "recharts": "https://esm.sh/recharts@3.0.0",
+    "url": "https://esm.sh/url@^0.11.4",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "path": "https://esm.sh/path@^0.12.7",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3",
+    "html2canvas": "https://esm.sh/html2canvas@^1.4.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-soft-white dark:bg-dark-blue">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
