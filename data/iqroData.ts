@@ -1,4 +1,7 @@
-export const iqroData = [
+
+import { IqroLevelData } from '../types';
+
+export const iqroData: IqroLevelData[] = [
     {
         level: 1, 
         title: "Iqro 1", 
@@ -6,436 +9,1348 @@ export const iqroData = [
         cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_1.png",
         sections: [
             {
-                title: "Halaman 1: Pengenalan Huruf Tunggal",
-                info: "Fokus utama pada Jilid 1 adalah pengenalan huruf tunggal dengan harakat Fathah (bunyi \"a\") yang harus dibaca pendek dan cepat (satu ketukan).",
+                title: "iqro1Page1Title",
+                info: "iqro1Page1Info",
                 items: [
-                    { char: 'اَ', latin: 'A' }, { char: 'بَ', latin: 'Ba' }, { char: 'تَ', latin: 'Ta' }, { char: 'ثَ', latin: 'Tsa' },
-                    { char: 'جَ', latin: 'Ja' }, { char: 'حَ', latin: 'Ha' }, { char: 'خَ', latin: 'Kho' }, { char: 'دَ', latin: 'Da' },
-                    { char: 'ذَ', latin: 'Dza' }, { char: 'رَ', latin: 'Ro' }, { char: 'زَ', latin: 'Za' }, { char: 'سَ', latin: 'Sa' },
-                    { char: 'شَ', latin: 'Sya' }, { char: 'صَ', latin: 'Sho' }, { char: 'ضَ', latin: 'Dho' }, { char: 'طَ', latin: 'Tho' },
-                    { char: 'ظَ', latin: 'Zho' }, { char: 'عَ', latin: "'A" }, { char: 'غَ', latin: 'Gho' }, { char: 'فَ', latin: 'Fa' },
-                    { char: 'قَ', latin: 'Qo' }, { char: 'كَ', latin: 'Ka' }, { char: 'لَ', latin: 'La' }, { char: 'مَ', latin: 'Ma' },
-                    { char: 'نَ', latin: 'Na' }, { char: 'وَ', latin: 'Wa' }, { char: 'هَ', latin: 'Ha' }, { char: 'يَ', latin: 'Ya' }
+                    { char: 'اَ', latin: 'A', keterangan: "Alif fathah, dibaca \"A\" jernih (dari tenggorokan jauh)." }, 
+                    { char: 'بَ', latin: 'Ba', keterangan: "Ba fathah, dibaca \"Ba\" (merapatkan kedua bibir)." }, 
+                    { char: 'تَ', latin: 'Ta', keterangan: "Ta fathah, dibaca \"Ta\" (ujung lidah ke pangkal gigi seri atas)." }, 
+                    { char: 'ثَ', latin: 'Tsa', keterangan: "Tsa fathah, dibaca lembut dengan ujung lidah menyentuh ujung gigi seri atas." },
+                    { char: 'جَ', latin: 'Ja', keterangan: "Jim fathah, dibaca \"Ja\" (tengah lidah menyentuh langit-langit)." }, 
+                    { char: 'حَ', latin: 'Ha', keterangan: "Ha fathah, dibaca \"Ha\" halus (bersih dari tenggorokan tengah)." }, 
+                    { char: 'خَ', latin: 'Kho', keterangan: "Kho fathah, dibaca serak (tenggorokan bagian atas)." }, 
+                    { char: 'دَ', latin: 'Da', keterangan: "Dal fathah, dibaca \"Da\"." },
+                    { char: 'ذَ', latin: 'Dza', keterangan: "Dzal fathah, dibaca \"Dza\" (ujung lidah menyentuh gigi depan)." }, 
+                    { char: 'رَ', latin: 'Ro', keterangan: "Ro fathah, dibaca tebal \"Ro\"." }, 
+                    { char: 'زَ', latin: 'Za', keterangan: "Zay fathah, dibaca \"Za\" (seperti suara lebah)." }, 
+                    { char: 'سَ', latin: 'Sa', keterangan: "Sin fathah, dibaca \"Sa\" (desis halus)." },
+                    { char: 'شَ', latin: 'Sya', keterangan: "Syin fathah, dibaca \"Sya\" (udara menyebar di mulut)." }, 
+                    { char: 'صَ', latin: 'Sho', keterangan: "Shod fathah, dibaca tebal \"Sho\"." }, 
+                    { char: 'ضَ', latin: 'Dhod', keterangan: "Dhod fathah, dibaca tebal \"Dho\" (sisi lidah ke geraham)." }, 
+                    { char: 'طَ', latin: 'Tho', keterangan: "Tho fathah, dibaca tebal dan kuat \"Tho\"." },
+                    { char: 'ظَ', latin: 'Zho', keterangan: "Zho fathah, dibaca tebal \"Zho\"." }, 
+                    { char: 'عَ', latin: "'A", keterangan: "'Ain fathah, dibaca \" 'A \" (tekanan di tengah tenggorokan)." }, 
+                    { char: 'غَ', latin: 'Gho', keterangan: "Ghoin fathah, dibaca \"Gho\"." }, 
+                    { char: 'فَ', latin: 'Fa', keterangan: "Fa fathah, dibaca \"Fa\"." },
+                    { char: 'قَ', latin: 'Qo', keterangan: "Qof fathah, dibaca \"Qo\" (pangkal lidah ke langit-langit lunak)." }, 
+                    { char: 'كَ', latin: 'Ka', keterangan: "Kaf fathah, dibaca \"Ka\"." }, 
+                    { char: 'لَ', latin: 'La', keterangan: "Lam fathah, dibaca \"La\"." }, 
+                    { char: 'مَ', latin: 'Ma', keterangan: "Mim fathah, dibaca \"Ma\"." },
+                    { char: 'نَ', latin: 'Na', keterangan: "Nun fathah, dibaca \"Na\"." }, 
+                    { char: 'وَ', latin: 'Wa', keterangan: "Wawu fathah, dibaca \"Wa\"." }, 
+                    { char: 'هَ', latin: 'Ha', keterangan: "Ha fathah (Ha besar), dibaca \"Ha\" (dari pangkal tenggorokan)." }, 
+                    { char: 'يَ', latin: 'Ya', keterangan: "Ya fathah, dibaca \"Ya\"." }
                 ],
-                guide: "💡 Petunjuk Penting Pengajaran (Sesuai Pedoman Iqro):\n* Langsung (Sintetik): Tidak perlu mengeja (misal: \"Alif fathah A\"). Langsung dibaca A, Ba, Ta.\n* Pendek-Cepat: Bacaan tidak boleh dipanjangkan. Semua huruf di atas memiliki nilai satu harakat.\n* Ketelitian: Pastikan perbedaan bunyi antara huruf yang mirip (seperti Ha halus dan Ha besar, atau A dan 'A)."
+                guide: "iqro1Page1Guide"
             },
             {
-                title: "Halaman 2: Latihan Kombinasi Huruf",
-                info: "Latihan ini dirancang untuk melatih kelancaran dalam membedakan bunyi huruf saat digabungkan, dengan prinsip bacaan yang tetap pendek dan cepat (satu ketukan).",
+                title: "iqro1Page2Title",
+                info: "iqro1Page2Info",
                 items: [
-                    { char: 'اَ بَ', latin: 'A Ba' }, { char: 'بَ اَ', latin: 'Ba A' }, { char: 'بَ تَ', latin: 'Ba Ta' },
-                    { char: 'اَ بَ تَ', latin: 'A Ba Ta' }, { char: 'تَ ثَ', latin: 'Ta Tsa' }, { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa' },
-                    { char: 'اَ ثَ بَ', latin: 'A Tsa Ba' }, { char: 'تَ اَ ثَ', latin: 'Ta A Tsa' }, { char: 'جَ', latin: 'Ja' },
-                    { char: 'اَ بَ تَ ثَ جَ', latin: 'A Ba Ta Tsa Ja' }, { char: 'حَ', latin: 'Ha' }, { char: 'جَ اَ حَ', latin: 'Ja A Ha' },
-                    { char: 'خَ', latin: 'Kho' }, { char: 'حَ اَ خَ', latin: 'Ha A Kho' }, { char: 'اَ بَ تَ ثَ جَ حَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho' },
-                    { char: 'دَ', latin: 'Da' }, { char: 'خَ اَ dَ', latin: 'Kho A Da' }, { char: 'ذَ', latin: 'Dza' }, { char: 'دَ اَ ذَ', latin: 'Da A Dza' }
+                    { char: 'اَ بَ', latin: 'A Ba', keterangan: "Pengenalan Alif dan Ba." }, 
+                    { char: 'بَ اَ', latin: 'Ba A', keterangan: "Latihan Alif dan Ba dibalik." }, 
+                    { char: 'اَ بَ اَ', latin: 'A Ba A', keterangan: "Kombinasi Alif dan Ba." },
+                    { char: 'بَ اَ بَ', latin: 'Ba A Ba', keterangan: "Variasi bunyi A dan Ba." }, 
+                    { char: 'اَ بَ تَ', latin: 'A Ba Ta', keterangan: "Pengenalan huruf Ta." }, 
+                    { char: 'بَ تَ اَ', latin: 'Ba Ta A', keterangan: "Urutan acak." },
+                    { char: 'تَ بَ اَ', latin: 'Ta Ba A', keterangan: "Latihan ketelitian titik." }
                 ],
-                guide: "💡 Tips Menggunakan Tabel Ini:\n* Jangan Mengeja: Langsung baca bunyinya: A - Ba.\n* Kecepatan Konsisten: Ulangi hingga lancar.\n* Perhatikan Kemiripan Bunyi: Ta (تَ) vs Tsa (ثَ), Ha (حَ) vs Kho (خَ)."
+                guide: "iqro1Page2Guide"
             },
             {
-                title: "Halaman 3: Pengenalan Huruf Tsa (ثَ)",
-                info: "Santri diperkenalkan dengan huruf Tsa (ثَ) yang memiliki tiga titik di atasnya. Cara membacanya adalah dengan menyentuhkan ujung lidah ke ujung gigi seri atas sehingga terdengar lembut.",
+                title: "iqro1Page3Title",
+                info: "iqro1Page3Info",
                 items: [
-                    { char: 'تَ - ثَ', latin: 'Ta - Tsa' }, { char: 'ثَ اَ بَ', latin: 'Tsa A Ba' }, { char: 'تَ بَ ثَ', latin: 'Ta Ba Tsa' },
-                    { char: 'اَ تَ ثَ', latin: 'A Ta Tsa' }, { char: 'ثَ بَ تَ', latin: 'Tsa Ba Ta' }, { char: 'اَ بَ ثَ', latin: 'A Ba Tsa' },
-                    { char: 'ثَ تَ اَ', latin: 'Tsa Ta A' }, { char: 'بَ تَ ثَ', latin: 'Ba Ta Tsa' }, { char: 'ثَ اَ ثَ', latin: 'Tsa A Tsa' },
-                    { char: 'بَ ثَ ثَ', latin: 'Ba Tsa Tsa' }, { char: 'اَ تَ بَ', latin: 'A Ta Ba' }, { char: 'ثَ ثَ اَ', latin: 'Tsa Tsa A' },
-                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa' }
+                    { char: 'تَ - ثَ', latin: 'Ta - Tsa', keterangan: "Perbandingan huruf Ta dan Tsa." },
+                    { char: 'ثَ اَ بَ', latin: 'Tsa A Ba', keterangan: "Kombinasi huruf baru (Tsa)." },
+                    { char: 'تَ بَ ثَ', latin: 'Ta Ba Tsa', keterangan: "Melatih ketelitian posisi titik." },
+                    { char: 'اَ تَ ثَ', latin: 'A Ta Tsa', keterangan: "Urutan huruf vokal Fathah." },
+                    { char: 'ثَ بَ تَ', latin: 'Tsa Ba Ta', keterangan: "Variasi urutan huruf." },
+                    { char: 'اَ بَ ثَ', latin: 'A Ba Tsa', keterangan: "Pengulangan dasar." },
+                    { char: 'ثَ اَ تَ', latin: 'Tsa Ta A', keterangan: "Melatih kecepatan baca." },
+                    { char: 'بَ تَ ثَ', latin: 'Ba Ta Tsa', keterangan: "Fokus pada perbedaan jumlah titik." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 3):\n1. Teknis Suara: Pastikan bunyi Tsa (ثَ) berbeda dengan Sa (سَ).\n2. Visual Titik: Ajarkan santri untuk melihat jumlah titik (Ba=1 bawah, Ta=2 atas, Tsa=3 atas).\n3. Kemandirian: Biarkan santri mencoba membaca sendiri terlebih dahulu."
+                guide: "iqro1Page3Guide"
             },
             {
-                title: "Halaman 4: Latihan Pengulangan",
-                info: "Halaman ini bertujuan untuk memantapkan ingatan santri terhadap bentuk huruf dan perbedaan jumlah serta letak titik.",
+                title: "iqro1Page4Title",
+                info: "iqro1Page4Info",
                 items: [
-                    { char: 'اَ ثَ بَ', latin: 'A Tsa Ba' }, { char: 'تَ اَ ثَ', latin: 'Ta A Tsa' }, { char: 'بَ ثَ اَ', latin: 'Ba Tsa A' },
-                    { char: 'تَ بَ ثَ', latin: 'Ta Ba Tsa' }, { char: 'اَ بَ تَ', latin: 'A Ba Ta' }, { char: 'تَ اَ بَ', latin: 'Ta A Ba' },
-                    { char: 'ثَ اَ ثَ', latin: 'Tsa A Tsa' }, { char: 'بَ تَ ثَ', latin: 'Ba Ta Tsa' }, { char: 'اَ ثَ ثَ', latin: 'A Tsa Tsa' },
-                    { char: 'تَ اَ تَ', latin: 'Ta A Ta' }, { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa' }
+                    { char: 'اَ ثَ بَ', latin: 'A Tsa Ba', keterangan: "Latihan kombinasi dasar." },
+                    { char: 'تَ اَ ثَ', latin: 'Ta A Tsa', keterangan: "Melatih ketelitian huruf Ta dan Tsa." },
+                    { char: 'بَ ثَ اَ', latin: 'Ba Tsa A', keterangan: "Variasi urutan huruf." },
+                    { char: 'تَ بَ ثَ', latin: 'Ta Ba Tsa', keterangan: "Fokus pada perbedaan titik." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Membaca rangkaian secara utuh." },
+                    { char: 'بَ تَ ثَ', latin: 'Ba Ta Tsa', keterangan: "Urutan titik 1, 2, dan 3." },
+                    { char: 'اَ ثَ ثَ', latin: 'A Tsa Tsa', keterangan: "Pengulangan huruf Tsa." },
+                    { char: 'تَ اَ تَ', latin: 'Ta A Ta', keterangan: "Pengulangan huruf Ta." },
                 ],
-                guide: "💡 Petunjuk Pengajaran (Halaman 4):\n* Kecepatan: Pastikan santri membaca dengan pendek dan cepat.\n* Perbedaan Titik: Fokuskan perhatian santri pada letak dan jumlah titik.\n* Metode Langsung: Guru tidak perlu menjelaskan teori, cukup berikan contoh bunyi yang benar."
+                guide: "iqro1Page4Guide"
             },
             {
-                title: "Halaman 5: Pengenalan Huruf Ja (جَ)",
-                info: "Huruf ini memiliki titik di tengah (saat berdiri sendiri atau di awal kata) dan dibaca bersih tanpa ada desis atau serak.",
+                title: "iqro1Page5Title",
+                info: "iqro1Page5Info",
                 items: [
-                    { char: 'ثَ - جَ', latin: 'Tsa - Ja' }, { char: 'جَ اَ بَ', latin: 'Ja A Ba' }, { char: 'جَ ثَ تَ', latin: 'Ja Tsa Ta' },
-                    { char: 'اَ تَ جَ', latin: 'A Ta Ja' }, { char: 'ثَ بَ جَ', latin: 'Tsa Ba Ja' }, { char: 'بَ جَ اَ', latin: 'Ba Ja A' },
-                    { char: 'جَ اَ ثَ', latin: 'Ja A Tsa' }, { char: 'بَ تَ جَ', latin: 'Ba Ta Ja' }, { char: 'جَ ثَ ثَ', latin: 'Ja Tsa Tsa' },
-                    { char: 'اَ بَ جَ', latin: 'A Ba Ja' }, { char: 'تَ ثَ جَ', latin: 'Ta Tsa Ja' }, { char: 'جَ اَ جَ', latin: 'Ja A Ja' },
-                    { char: 'اَ بَ تَ ثَ جَ', latin: 'A Ba Ta Tsa Ja' }
+                    { char: 'ثَ - جَ', latin: 'Tsa - Ja', keterangan: "Perbandingan huruf Tsa dan Ja." },
+                    { char: 'جَ اَ بَ', latin: 'Ja A Ba', keterangan: "Latihan kombinasi dasar dengan huruf baru." },
+                    { char: 'جَ ثَ تَ', latin: 'Ja Tsa Ta', keterangan: "Melatih ketelitian posisi titik." },
+                    { char: 'اَ تَ جَ', latin: 'A Ta Ja', keterangan: "Variasi urutan huruf." },
+                    { char: 'ثَ جَ بَ', latin: 'Tsa Ja Ba', keterangan: "Melatih kelancaran bunyi Ja di akhir." },
+                    { char: 'بَ جَ اَ', latin: 'Ba Ja A', keterangan: "Latihan makhraj Ja di tengah." },
+                    { char: 'جَ اَ ثَ', latin: 'Ja A Tsa', keterangan: "Membedakan bunyi Ja dan Tsa." },
+                    { char: 'بَ تَ جَ', latin: 'Ba Ta Ja', keterangan: "Kombinasi titik satu, dua, dan satu tengah." },
+                    { char: 'جَ ثَ ثَ', latin: 'Ja Tsa Tsa', keterangan: "Pengulangan huruf Tsa setelah Ja." },
+                    { char: 'اَ بَ جَ', latin: 'A Ba Ja', keterangan: "Review urutan huruf." },
+                    { char: 'تَ ثَ جَ', latin: 'Ta Tsa Ja', keterangan: "Urutan huruf titik dua, tiga, dan satu." },
+                    { char: 'جَ اَ جَ', latin: 'Ja A Ja', keterangan: "Pengulangan huruf Ja." },
+                    { char: 'اَ بَ تَ ثَ جَ', latin: 'A Ba Ta Tsa Ja', keterangan: "Evaluasi: Rangkaian huruf dari Alif sampai Jim." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 5):\n* Makhraj Ja (جَ): Bunyi Jim berasal dari tengah lidah yang menyentuh langit-langit mulut bagian tengah.\n* Visualisasi Titik: Kenali perbedaan visual titik Ba (bawah) dan Ja (tengah).\n* Pendek-Cepat: Semua bacaan harus dibaca pendek (satu ketukan)."
+                guide: "iqro1Page5Guide"
             },
             {
-                title: "Halaman 6: Pengenalan Huruf Kho (خَ)",
-                info: "Huruf Kho (خَ) memiliki satu titik di atas. Cara membacanya adalah dengan mengeluarkan suara serak atau ngorok yang berasal dari tenggorokan bagian atas.",
+                title: "iqro1Page6Title",
+                info: "iqro1Page6Info",
                 items: [
-                    { char: 'جَ حَ خَ', latin: 'Ja Ha Kho' }, { char: 'حَ اَ خَ', latin: 'Ha A Kho' }, { char: 'خَ تَ جَ', latin: 'Kho Ta Ja' },
-                    { char: 'بَ اَ خَ', latin: 'Ba A Kho' }, { char: 'تَ حَ ثَ', latin: 'Ta Ha Tsa' }, { char: 'جَ اَ خَ', latin: 'Ja A Kho' },
-                    { char: 'خَ بَ ثَ', latin: 'Kho Ba Tsa' }, { char: 'حَ ثَ جَ', latin: 'Ha Tsa Ja' }, { char: 'اَ بَ خَ', latin: 'A Ba Kho' },
-                    { char: 'تَ حَ جَ', latin: 'Ta Ha Ja' }, { char: 'اَ خَ خَ', latin: 'A Kho Kho' },
-                    { char: 'اَ بَ تَ ثَ جَ حَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho' }
+                    { char: 'حَ جَ خَ', latin: 'Ja Ha Kho', keterangan: "Perbandingan bentuk huruf Jim, Ha, dan Kho." },
+                    { char: 'حَ خَ اَ', latin: 'Ha Kho A', keterangan: "Melatih perpindahan bunyi Ha halus ke Kho serak." },
+                    { char: 'تَ خَ جَ', latin: 'Kho Ta Ja', keterangan: "Variasi titik atas, atas dua, dan tengah." },
+                    { char: 'بَ خَ اَ', latin: 'Ba A Kho', keterangan: "Kombinasi huruf dasar dengan Kho." },
+                    { char: 'تَ حَ ثَ', latin: 'Ta Ha Tsa', keterangan: "Review huruf-huruf sebelumnya." },
+                    { char: 'جَ خَ اَ', latin: 'Ja A Kho', keterangan: "Membedakan letak titik Jim dan Kho." },
+                    { char: 'خَ بَ ثَ', latin: 'Kho Ba Tsa', keterangan: "Latihan kelancaran makhraj." },
+                    { char: 'حَ ثَ جَ', latin: 'Ha Tsa Ja', keterangan: "Variasi bunyi halus dan tebal." },
+                    { char: 'اَ بَ خَ', latin: 'A Ba Kho', keterangan: "Rangkaian huruf awal dengan Kho." },
+                    { char: 'تَ جَ حَ', latin: 'Ta Ha Ja', keterangan: "Melatih ketelitian bentuk huruf mirip." },
+                    { char: 'اَ خَ خَ', latin: 'A Kho Kho', keterangan: "Pengulangan huruf Kho." },
+                    { char: 'حَ جَ خَ', latin: 'Ja Ha Kho', keterangan: "Memantapkan tiga huruf bersaudara." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi: Membaca lancar dari Alif sampai Kho." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 6):\n* Perbedaan Visual: Tekankan perbedaan titik pada ج ح خ (di perut, tanpa titik, di atas).\n* Kualitas Bunyi Kho: Pastikan terdengar serak, tidak tertukar dengan Ha atau Ka."
+                guide: "iqro1Page6Guide"
             },
             {
-                title: "Halaman 7: Pengenalan Huruf Da (دَ)",
-                info: "Huruf Da (دَ) dibaca dengan ujung lidah menyentuh pangkal gigi seri atas. Dibaca pendek dan cepat (satu ketukan).",
+                title: "iqro1Page7Title",
+                info: "iqro1Page7Info",
                 items: [
-                    { char: 'خَ - دَ', latin: 'Kho - Da' }, { char: 'دَ اَ دَ', latin: 'Da A Da' }, { char: 'خَ دَ دَ', latin: 'Kho Da Da' },
-                    { char: 'حَ بَ دَ', latin: 'Ha Ba Da' }, { char: 'جَ دَ اَ', latin: 'Ja Da A' }, { char: 'دَ بَ تَ', latin: 'Da Ba Ta' },
-                    { char: 'حَ دَ ثَ', latin: 'Ha Da Tsa' }, { char: 'دَ خَ اَ', latin: 'Da Kho A' }, { char: 'حَ جَ دَ', latin: 'Ha Ja Da' },
-                    { char: 'اَ بَ دَ', latin: 'A Ba Da' }, { char: 'تَ جَ دَ', latin: 'Ta Ja Da' },
-                    { char: 'اَ بَ تَ ثَ جَ حَ خَ دَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da' }
+                    { char: 'خَ - دَ', latin: 'Kho - Da', keterangan: "Perbandingan huruf Kho dan Da." },
+                    { char: 'دَ اَ دَ', latin: 'Da A Da', keterangan: "Latihan dasar huruf Da." },
+                    { char: 'خَ دَ دَ', latin: 'Kho Da Da', keterangan: "Variasi huruf Kho dan Da." },
+                    { char: 'دَ بَ حَ', latin: 'Ha Ba Da', keterangan: "Kombinasi huruf Ha, Ba, dan Da." },
+                    { char: 'جَ دَ اَ', latin: 'Ja Da A', keterangan: "Variasi urutan huruf." },
+                    { char: 'تَ بَ دَ', latin: 'Da Ba Ta', keterangan: "Latihan kelancaran makhraj." },
+                    { char: 'دَ حَ ثَ', latin: 'Ha Da Tsa', keterangan: "Membedakan bunyi Ha dan Tsa." },
+                    { char: 'دَ اَ خَ', latin: 'Da Kho A', keterangan: "Kombinasi huruf Da dan Kho." },
+                    { char: 'دَ جَ حَ', latin: 'Ha Ja Da', keterangan: "Latihan huruf-huruf mirip." },
+                    { char: 'اَ بَ دَ', latin: 'A Ba Da', keterangan: "Pengulangan huruf awal." },
+                    { char: 'تَ دَ جَ', latin: 'Ta Ja Da', keterangan: "Variasi titik atas dan tengah." },
+                    { char: 'اَ خَ دَ', latin: 'Kho A Da', keterangan: "Pengulangan huruf Kho dan Da." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ', latin: 'A Ba Ta Tsa Ha Ja Kho Da', keterangan: "Evaluasi: Membaca lancar hingga huruf Da." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 7):\n* Makhraj Da (دَ): Pastikan bunyi Da keluar dengan jelas dan mantap dari ujung lidah.\n* Tanpa Mengeja: Langsung membaca bunyinya tanpa mengeja 'Dal fathah Da'.\n* Pendek-Cepat: Semua bacaan dibaca pendek."
+                guide: "iqro1Page7Guide"
             },
             {
-                title: "Halaman 8: Pengenalan Huruf Dza (ذَ)",
-                info: "Huruf Dza (ذَ) memiliki satu titik di atas. Dibaca dengan menyentuhkan ujung lidah ke ujung gigi seri atas (bunyi lembut).",
+                title: "iqro1Page8Title",
+                info: "iqro1Page8Info",
                 items: [
-                    { char: 'دَ ذَ', latin: 'Da Dza' }, { char: 'دَ اَ ذَ', latin: 'Da A Dza' }, { char: 'خَ ذَ دَ', latin: 'Kho Dza Da' },
-                    { char: 'اَ حَ ذَ', latin: 'A Ha Dza' }, { char: 'خَ تَ دَ', latin: 'Kho Ta Da' }, { char: 'جَ بَ ذَ', latin: 'Ja Ba Dza' },
-                    { char: 'اَ بَ ذَ', latin: 'A Ba Dza' }, { char: 'جَ دَ خَ', latin: 'Ja Da Kho' }, { char: 'تَ ذَ اَ', latin: 'Ta Dza A' },
-                    { char: 'خَ ذَ بَ', latin: 'Kho Dza Ba' }, { char: 'خَ حَ دَ', latin: 'Kho Ha Da' },
-                    { char: 'اَ بَ تَ ثَ جَ حَ خَ دَ ذَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza' }
+                    { char: 'دَ - ذَ', latin: 'Da Dza', keterangan: "Perbandingan huruf Da (tanpa titik) dan Dza (titik satu)." },
+                    { char: 'دَ اَ ذَ', latin: 'Da A Dza', keterangan: "Latihan dasar perubahan bunyi Da ke Dza." },
+                    { char: 'خَ دَ ذَ', latin: 'Kho Dza Da', keterangan: "Variasi huruf Kho, Dza, dan Da." },
+                    { char: 'اَ حَ ذَ', latin: 'A Ha Dza', keterangan: "Kombinasi huruf vokal tenggorokan dan lidah." },
+                    { char: 'تَ خَ دَ', latin: 'Kho Ta Da', keterangan: "Latihan ketelitian bentuk huruf." },
+                    { char: 'بَ جَ ذَ', latin: 'Ja Ba Dza', keterangan: "Variasi letak titik (tengah, bawah, atas)." },
+                    { char: 'اَ بَ ذَ', latin: 'A Ba Dza', keterangan: "Pengulangan huruf-huruf awal." },
+                    { char: 'دَ جَ خَ', latin: 'Ja Da Kho', keterangan: "Latihan makhraj huruf tengah dan belakang." },
+                    { char: 'تَ اَ ذَ', latin: 'Ta Dza A', keterangan: "Variasi urutan bunyi." },
+                    { char: 'بَ خَ ذَ', latin: 'Kho Dza Ba', keterangan: "Melatih kelancaran antar huruf." },
+                    { char: 'دَ اَ ذَ', latin: 'Da A Dza', keterangan: "Pengulangan fokus utama halaman ini." },
+                    { char: 'خَ دَ حَ', latin: 'Kho Ha Da', keterangan: "Latihan huruf-huruf tanpa titik dan titik atas." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ ذَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza', keterangan: "Evaluasi: Rangkaian huruf dari Alif sampai Dza." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 8):\n* Perbedaan Bunyi: Pastikan santri dapat membedakan antara Da (دَ) yang mantap dan Dza (ذَ) yang lembut.\n* Visual Titik: Ingatkan bahwa Dza memiliki satu titik di atasnya."
+                guide: "iqro1Page8Guide"
             },
             {
-                title: "Halaman 9: Pengenalan Huruf Ro (رَ)",
-                info: "Huruf Ro (رَ) dibaca dengan menggetarkan ujung lidah pada langit-langit depan. Pastikan bacaan tetap pendek dan cepat.",
+                title: "iqro1Page9Title",
+                info: "iqro1Page9Info",
                 items: [
-                    { char: 'ذَ - رَ', latin: 'Dza - Ro' }, { char: 'دَ ذَ رَ', latin: 'Da Dza Ro' }, { char: 'خَ ذَ رَ', latin: 'Kho Dza Ro' },
-                    { char: 'رَ حَ دَ', latin: 'Ro Ha Da' }, { char: 'جَ رَ ذَ', latin: 'Ja Ro Dza' }, { char: 'رَ حَ ثَ', latin: 'Ro Ha Tsa' },
-                    { char: 'تَ ذَ رَ', latin: 'Ta Dza Ro' }, { char: 'بَ رَ دَ', latin: 'Ba Ro Da' }, { char: 'خَ رَ جَ', latin: 'Kho Ro Ja' },
-                    { char: 'حَ ذَ رَ', latin: 'Ha Dza Ro' }, { char: 'بَ رَ ثَ', latin: 'Ba Ro Tsa' }, { char: 'جَ حَ خَ', latin: 'Ja Ha Kho' }
+                    { char: 'ذَ - رَ', latin: 'Dza - Ro', keterangan: "Perbandingan huruf Dza dan Ro." },
+                    { char: 'دَ ذَ رَ', latin: 'Da Dza Ro', keterangan: "Urutan huruf Dal, Dzal, dan Ro." },
+                    { char: 'خَ ذَ رَ', latin: 'Kho Dza Ro', keterangan: "Latihan kombinasi huruf tenggorokan dan lidah." },
+                    { char: 'دَ حَ رَ', latin: 'Ro Ha Da', keterangan: "Variasi bunyi Ro, Ha (halus), dan Da." },
+                    { char: 'جَ ذَ رَ', latin: 'Ja Ro Dza', keterangan: "Latihan kelancaran makhraj Jim dan Dza." },
+                    { char: 'حَ ثَ رَ', latin: 'Ro Ha Tsa', keterangan: "Kombinasi huruf lidah dan tenggorokan." },
+                    { char: 'تَ ذَ رَ', latin: 'Ta Dza Ro', keterangan: "Variasi urutan huruf bersambung." },
+                    { char: 'بَ دَ رَ', latin: 'Ba Ro Da', keterangan: "Latihan bunyi huruf bibir dan lidah." },
+                    { char: 'خَ جَ رَ', latin: 'Kho Ro Ja', keterangan: "Melatih tiga makhraj yang berbeda." },
+                    { char: 'حَ ذَ رَ', latin: 'Ha Dza Ro', keterangan: "Variasi bunyi halus dan tebal." },
+                    { char: 'بَ ثَ رَ', latin: 'Ba Ro Tsa', keterangan: "Pengulangan huruf-huruf awal." },
+                    { char: 'خَ ذَ رَ', latin: 'Kho Dza Ro', keterangan: "Memantapkan pengenalan huruf Kho dan Dza." },
+                    { char: 'حَ جَ خَ', latin: 'Ja Ha Kho', keterangan: "Review huruf bersaudara (Jim, Ha, Kho)." },
+                    { char: 'دَ ذَ رَ', latin: 'Da Dza Ro', keterangan: "Evaluasi: Membaca lancar kelompok huruf Dal hingga Ro." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 9):\n* Makhraj Ro (رَ): Pastikan lidah bergetar namun tidak berlebihan. Huruf Ro dengan fathah harus terdengar mantap/tebal.\n* Visual Bentuk: Ingatkan santri bahwa Ro (رَ) tidak memiliki titik."
+                guide: "iqro1Page9Guide"
             },
             {
-                title: "Halaman 10: Pengenalan Huruf Za (زَ)",
-                info: "Huruf Za (زَ) memiliki satu titik di atas. Dibaca dengan suara berdesis tajam seperti suara lebah.",
+                title: "iqro1Page10Title",
+                info: "iqro1Page10Info",
                 items: [
-                    { char: 'رَ زَ', latin: 'Ro Za' }, { char: 'رَ اَ زَ', latin: 'Ro A Za' }, { char: 'زَ دَ رَ', latin: 'Za Da Ro' },
-                    { char: 'زَ خَ ذَ', latin: 'Za Kho Dza' }, { char: 'رَ حَ زَ', latin: 'Ro Ha Za' }, { char: 'خَ رَ جَ', latin: 'Kho Ro Ja' },
-                    { char: 'تَ زَ دَ', latin: 'Ta Za Da' }, { char: 'بَ زَ رَ', latin: 'Ba Za Ro' }, { char: 'جَ اَ زَ', latin: 'Ja A Za' },
-                    { char: 'ثَ بَ رَ', latin: 'Tsa Ba Ro' }, { char: 'حَ زَ دَ', latin: 'Ha Za Da' }, { char: 'دَ ذَ رَ زَ', latin: 'Da Dza Ro Za' }
+                    { char: 'رَ - زَ', latin: 'Ro Za', keterangan: "Perbandingan huruf Ro (tanpa titik) dan Za (titik satu)." },
+                    { char: 'رَ اَ زَ', latin: 'Ro A Za', keterangan: "Latihan dasar perpindahan bunyi Ro ke Za." },
+                    { char: 'دَ رَ زَ', latin: 'Za Da Ro', keterangan: "Variasi huruf Za, Da, dan Ro." },
+                    { char: 'خَ ذَ زَ', latin: 'Za Kho Dza', keterangan: "Latihan kombinasi titik atas." },
+                    { char: 'حَ رَ زَ', latin: 'Ro Ha Za', keterangan: "Kombinasi bunyi tebal, halus, dan desis." },
+                    { char: 'خَ جَ رَ', latin: 'Kho Ro Ja', keterangan: "Review makhraj huruf Kho, Ro, dan Ja." },
+                    { char: 'تَ دَ زَ', latin: 'Ta Za Da', keterangan: "Variasi urutan huruf dengan titik." },
+                    { char: 'بَ رَ زَ', latin: 'Ba Za Ro', keterangan: "Latihan kelancaran bunyi Za di tengah." },
+                    { char: 'جَ اَ زَ', latin: 'Ja A Za', keterangan: "Membedakan bunyi Jim dan Za." },
+                    { char: 'ثَ بَ رَ', latin: 'Tsa Ba Ro', keterangan: "Review huruf Tsa dan Ba." },
+                    { char: 'دَ حَ زَ', latin: 'Ha Za Da', keterangan: "Variasi bunyi Ha halus dan Za." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi baris pertama huruf Hijaiyah." },
+                    { char: 'دَ ذَ رَ زَ', latin: 'Da Dza Ro Za', keterangan: "Evaluasi: Rangkaian lancar dari Dal sampai Za." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 10):\n* Makhraj Za (زَ): Pastikan bunyi desisnya tajam dan jelas.\n* Visual Titik: Bantu santri mengenali bahwa Ro dan Za bentuknya sama, namun Za memiliki satu titik di atasnya."
+                guide: "iqro1Page10Guide"
             },
             {
-                title: "Halaman 11: Pengenalan Huruf Sa (سَ)",
-                info: "Huruf Sa (سَ) dibaca dengan suara desis halus (seperti bunyi 'S' pada kata 'Satu').",
+                title: "iqro1Page11Title",
+                info: "iqro1Page11Info",
                 items: [
-                    { char: 'زَ - سَ', latin: 'Za - Sa' }, { char: 'سَ اَ سَ', latin: 'Sa A Sa' }, { char: 'زَ رَ سَ', latin: 'Za Ro Sa' },
-                    { char: 'سَ خَ ذَ', latin: 'Sa Kho Dza' }, { char: 'حَ سَ دَ', latin: 'Ha Sa Da' }, { char: 'سَ خَ ثَ', latin: 'Sa Kho Tsa' },
-                    { char: 'جَ زَ رَ', latin: 'Ja Za Ro' }, { char: 'سَ بَ تَ', latin: 'Sa Ba Ta' }, { char: 'ذَ رَ سَ', latin: 'Dza Ro Sa' },
-                    { char: 'سَ زَ خَ', latin: 'Sa Za Kho' }, { char: 'رَ حَ زَ', latin: 'Ro Ha Za' },
-                    { char: 'ثَ جَ حَ خَ دَ ذَ رَ زَ سَ', latin: 'Tsa Ja Ha Kho Da Dza Ro Za Sa' }
+                    { char: 'زَ - سَ', latin: 'Za - Sa', keterangan: "Perbandingan huruf Za (desis tajam) dan Sa (desis halus)." },
+                    { char: 'سَ اَ سَ', latin: 'Sa A Sa', keterangan: "Latihan dasar pengucapan huruf Sa." },
+                    { char: 'رَ زَ سَ', latin: 'Za Ro Sa', keterangan: "Kombinasi huruf desis tajam, tebal, dan desis halus." },
+                    { char: 'خَ ذَ سَ', latin: 'Sa Kho Dza', keterangan: "Melatih ketelitian makhraj lidah dan tenggorokan." },
+                    { char: 'حَ دَ سَ', latin: 'Ha Sa Da', keterangan: "Variasi bunyi Ha halus, Sa, dan Da." },
+                    { char: 'خَ ثَ سَ', latin: 'Sa Kho Tsa', keterangan: "Latihan membedakan desis Sa dan kelembutan Tsa." },
+                    { char: 'جَ رَ زَ', latin: 'Ja Za Ro', keterangan: "Review huruf Jim, Za, dan Ro." },
+                    { char: 'تَ بَ سَ', latin: 'Sa Ba Ta', keterangan: "Latihan kelancaran huruf bibir dan lidah." },
+                    { char: 'ذَ رَ سَ', latin: 'Dza Ro Sa', keterangan: "Variasi urutan huruf Dzal, Ro, dan Sa." },
+                    { char: 'خَ زَ سَ', latin: 'Sa Za Kho', keterangan: "Membedakan dua jenis desis (Sa dan Za)." },
+                    { char: 'حَ رَ زَ', latin: 'Ro Ha Za', keterangan: "Review huruf tebal, halus, dan tajam." },
+                    { char: 'ثَ جَ سَ', latin: 'Sa Ja Tsa', keterangan: "Kombinasi huruf desis, tengah lidah, dan ujung lidah." },
+                    { char: 'اَ بَ تَ', latin: 'A Ba Ta', keterangan: "Pengulangan huruf-huruf dasar." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ ذَ رَ زَ سَ', latin: 'Tsa Ja Ha Kho Da Dza Ro Za Sa', keterangan: "Evaluasi: Membaca lancar rangkaian huruf hingga Sa." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 11):\n* Makhraj Sa (سَ): Bunyi keluar dari ujung lidah yang didekatkan ke gigi seri bawah, menghasilkan desis yang halus.\n* Perbedaan Sa dan Za: Tekankan perbedaan desis halus (Sa) dan desis tajam (Za)."
+                guide: "iqro1Page11Guide"
             },
             {
-                title: "Halaman 12: Pengenalan Huruf Sya (شَ)",
-                info: "Huruf Sya (شَ) memiliki bentuk yang sama dengan Sa (سَ) tetapi memiliki tiga titik di atasnya. Dibaca dengan menyebarkan udara di dalam mulut.",
+                title: "iqro1Page12Title",
+                info: "iqro1Page12Info",
                 items: [
-                    { char: 'سَ شَ', latin: 'Sa Sya' }, { char: 'سَ اَ شَ', latin: 'Sa A Sya' }, { char: 'سَ شَ شَ', latin: 'Sa Sya Sya' },
-                    { char: 'زَ تَ شَ', latin: 'Za Ta Sya' }, { char: 'شَ ذَ تَ', latin: 'Sya Dza Ta' }, { char: 'دَ رَ سَ', latin: 'Da Ro Sa' },
-                    { char: 'شَ تَ ذَ', latin: 'Sya Ta Dza' }, { char: 'زَ حَ ثَ', latin: 'Za Ha Tsa' }, { char: 'خَ شَ بَ', latin: 'Kho Sya Ba' },
-                    { char: 'جَ رَ سَ', latin: 'Ja Ro Sa' }, { char: 'رَ شَ ذَ', latin: 'Ro Sya Dza' },
-                    { char: 'ثَ جَ حَ خَ دَ ذَ رَ زَ سَ شَ', latin: 'Tsa Ja Ha Kho Da Dza Ro Za Sa Sya' }
+                    { char: 'سَ - شَ', latin: 'Sa Sya', keterangan: "Perbandingan huruf Sa (tanpa titik) dan Sya (titik tiga)." },
+                    { char: 'شَ اَ سَ', latin: 'Sa A Sya', keterangan: "Latihan dasar perubahan bunyi dari Sa ke Sya." },
+                    { char: 'شَ شَ سَ', latin: 'Sa Sya Sya', keterangan: "Melatih ketelitian jumlah titik." },
+                    { char: 'تَ زَ شَ', latin: 'Za Ta Sya', keterangan: "Variasi huruf desis tajam dan tebal." },
+                    { char: 'ذَ تَ شَ', latin: 'Sya Dza Ta', keterangan: "Kombinasi makhraj lidah dan gigi." },
+                    { char: 'دَ رَ سَ', latin: 'Da Ro Sa', keterangan: "Review huruf Dal, Ro, dan Sa." },
+                    { char: 'ذَ تَ شَ', latin: 'Sya Ta Dza', keterangan: "Melatih kelancaran bunyi Sya di awal." },
+                    { char: 'ثَ حَ زَ', latin: 'Za Ha Tsa', keterangan: "Review bunyi tajam, halus, dan lembut." },
+                    { char: 'بَ خَ شَ', latin: 'Kho Sya Ba', keterangan: "Variasi huruf tenggorokan, lidah, dan bibir." },
+                    { char: 'جَ رَ سَ', latin: 'Ja Ro Sa', keterangan: "Latihan makhraj Jim dan Ro." },
+                    { char: 'اَ سَ شَ', latin: 'Sa Sya A', keterangan: "Membedakan Sa dan Sya secara berdampingan." },
+                    { char: 'ذَ رَ شَ', latin: 'Ro Sya Dza', keterangan: "Latihan bunyi tebal dan lembut." },
+                    { char: 'حَ دَ سَ', latin: 'Ha Sa Da', keterangan: "Pengulangan kata sederhana." },
+                    { char: 'خَ دَ سَ', latin: 'Kho Sa Da', keterangan: "Variasi huruf Kho dan Sa." },
+                    { char: 'جَ زَ شَ', latin: 'Sya Za Ja', keterangan: "Kombinasi huruf-huruf tengah lidah." },
+                    { char: 'اَ بَ تَ', latin: 'A Ba Ta', keterangan: "Review huruf dasar." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ ذَ رَ زَ سَ شَ', latin: 'Tsa Ja Ha Kho Da Dza Ro Za Sa Sya', keterangan: "Evaluasi: Rangkaian huruf dari Alif hingga Sya." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 12):\n* Makhraj Sya (شَ): Pastikan bunyi 'Sya' keluar dengan aliran udara yang menyebar luas di dalam mulut.\n* Perbedaan Titik: Ingatkan bahwa Sa tidak memiliki titik, sedangkan Sya memiliki tiga titik."
+                guide: "iqro1Page12Guide"
             },
             {
-                title: "Halaman 13: Pengenalan Huruf Sho (صَ)",
-                info: "Huruf Sho (صَ) dibaca dengan pangkal lidah yang diangkat ke langit-langit sehingga menghasilkan suara yang tebal dan kuat.",
+                title: "iqro1Page13Title",
+                info: "iqro1Page13Info",
                 items: [
-                    { char: 'شَ - صَ', latin: 'Sya - Sho' }, { char: 'صَ اَ شَ', latin: 'Sho A Sya' }, { char: 'صَ رَ صَ', latin: 'Sho Ro Sho' },
-                    { char: 'سَ رَ صَ', latin: 'Sa Ro Sho' }, { char: 'صَ بَ رَ', latin: 'Sho Ba Ro' }, { char: 'دَ سَ صَ', latin: 'Da Sa Sho' },
-                    { char: 'صَ ثَ رَ', latin: 'Sho Tsa Ro' }, { char: 'رَ صَ زَ', latin: 'Ro Sho Za' }, { char: 'ذَ صَ حَ', latin: 'Dza Sho Ha' },
-                    { char: 'سَ خَ صَ', latin: 'Sa Kho Sho' }, { char: 'شَ بَ صَ', latin: 'Sya Ba Sho' },
-                    { char: 'دَ ذَ رَ زَ سَ شَ صَ', latin: 'Da Dza Ro Za Sa Sya Sho' }
+                    { char: 'شَ - صَ', latin: 'Sya - Sho', keterangan: "Perbandingan huruf Sya (titik tiga) dan Sho (tebal tanpa titik)." },
+                    { char: 'اَ شَ صَ', latin: 'Sho A Sya', keterangan: "Latihan dasar perubahan makhraj Sho ke Sya." },
+                    { char: 'صَ رَ صَ', latin: 'Sho Ro Sho', keterangan: "Kombinasi dua huruf tebal (Sho dan Ro)." },
+                    { char: 'سَ رَ صَ', latin: 'Sa Ro Sho', keterangan: "Membedakan desis halus Sa dan desis tebal Sho." },
+                    { char: 'بَ رَ صَ', latin: 'Sho Ba Ro', keterangan: "Latihan kelancaran kata dengan huruf tebal." },
+                    { char: 'دَ سَ صَ', latin: 'Da Sa Sho', keterangan: "Variasi bunyi Dal, Sa, dan Sho." },
+                    { char: 'ثَ رَ صَ', latin: 'Sho Tsa Ro', keterangan: "Perpaduan huruf tebal, lembut, dan getar." },
+                    { char: 'زَ رَ صَ', latin: 'Ro Sho Za', keterangan: "Latihan bunyi tebal dan desis tajam." },
+                    { char: 'حَ ذَ صَ', latin: 'Dza Sho Ha', keterangan: "Variasi makhraj lidah dan tenggorokan." },
+                    { char: 'خَ سَ صَ', latin: 'Sa Kho Sho', keterangan: "Melatih bunyi serak Kho dan tebal Sho." },
+                    { char: 'جَ رَ صَ', latin: 'Sho Ro Ja', keterangan: "Latihan kelancaran huruf tebal dan tengah lidah." },
+                    { char: 'بَ شَ صَ', latin: 'Sya Ba Sho', keterangan: "Kombinasi Sya, Ba, dan Sho." },
+                    { char: 'دَ رَ حَ', latin: 'Da Ro Ha', keterangan: "Review huruf Dal, Ro, dan Ha halus." },
+                    { char: 'خَ دَ صَ', latin: 'Sho Da Kho', keterangan: "Latihan huruf tebal dan serak." },
+                    { char: 'جَ زَ سَ', latin: 'Sa Ja Za', keterangan: "Review huruf desis dan tengah lidah." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'سَ شَ صَ ضَ ذَ رَ زَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho', keterangan: "Evaluasi: Rangkaian lancar hingga Sho." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 13):\n* Makhraj Sho (صَ): Pastikan mulut sedikit mencucu atau pangkal lidah naik agar suara terdengar 'tebal' (Istila'), berbeda dengan Sa (سَ) yang tipis.\n* Visualisasi: Bantu santri mengenali bentuk kepala huruf Sho (صَ)."
+                guide: "iqro1Page13Guide"
             },
             {
-                title: "Halaman 14: Pengenalan Huruf Dho (ضَ)",
-                info: "Huruf Dho (ضَ) memiliki satu titik di atas. Dibaca dengan menempelkan sisi lidah ke gigi geraham atas sehingga menghasilkan suara yang tebal dan berat.",
+                title: "iqro1Page14Title",
+                info: "iqro1Page14Info",
                 items: [
-                    { char: 'صَ - ضَ', latin: 'Sho - Dho' }, { char: 'صَ اَ ضَ', latin: 'Sho A Dho' }, { char: 'حَ ضَ رَ', latin: 'Ha Dho Ro' },
-                    { char: 'اَ ضَ رَ', latin: 'A Dho Ro' }, { char: 'شَ اَ ضَ', latin: 'Sya A Dho' }, { char: 'شَ خَ زَ', latin: 'Sya Kho Za' },
-                    { char: 'ضَ رَ بَ', latin: 'Dho Ro Ba' }, { char: 'صَ حَ ثَ', latin: 'Sho Ha Tsa' }, { char: 'صَ دَ زَ', latin: 'Sho Da Za' },
-                    { char: 'دَ شَ ضَ', latin: 'Da Sya Dho' }, { char: 'ضَ تَ ذَ', latin: 'Dho Ta Dza' },
-                    { char: 'دَ ذَ رَ زَ سَ شَ صَ ضَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho' }
+                    { char: 'صَ - ضَ', latin: 'Sho - Dho', keterangan: "Perbandingan huruf Sho (tanpa titik) dan Dho (titik satu)." },
+                    { char: 'اَ صَ ضَ', latin: 'Sho A Dho', keterangan: "Latihan dasar perubahan makhraj Sho ke Dho." },
+                    { char: 'حَ رَ ضَ', latin: 'Ha Dho Ro', keterangan: "Kombinasi bunyi Ha halus, Dho tebal, dan Ro." },
+                    { char: 'اَ رَ ضَ', latin: 'A Dho Ro', keterangan: "Latihan huruf vokal A dengan dua huruf tebal." },
+                    { char: 'اَ شَ ضَ', latin: 'Sya A Dho', keterangan: "Membedakan bunyi Sya yang menyebar dengan Dho yang berat." },
+                    { char: 'خَ زَ شَ', latin: 'Sya Kho Za', keterangan: "Review huruf Sya, Kho (serak), dan Za (tajam)." },
+                    { char: 'بَ رَ ضَ', latin: 'Dho Ro Ba', keterangan: "Latihan kelancaran kata dengan makhraj yang berbeda." },
+                    { char: 'ثَ حَ صَ', latin: 'Sho Ha Tsa', keterangan: "Review bunyi Sho tebal, Ha halus, dan Tsa lembut." },
+                    { char: 'زَ دَ صَ', latin: 'Sho Da Za', keterangan: "Variasi bunyi Sho, Da, dan Za." },
+                    { char: 'دَ شَ ضَ', latin: 'Da Sya Dho', keterangan: "Latihan bunyi Da, Sya, dan Dho." },
+                    { char: 'حَ سَ ذَ', latin: 'Sa Ha Dza', keterangan: "Review huruf desis halus, Ha halus, dan Dza." },
+                    { char: 'رَ دَ صَ', latin: 'Ro Sho Da', keterangan: "Kombinasi bunyi Ro, Sho, dan Da." },
+                    { char: 'ذَ تَ ضَ', latin: 'Dho Ta Dza', keterangan: "Latihan bunyi Dho, Ta, dan Dza." },
+                    { char: 'ثَ خَ زَ', latin: 'Tsa Kho Za', keterangan: "Review huruf Tsa, Kho, dan Za." },
+                    { char: 'جَ ذَ ضَ', latin: 'Dho Ja Dza', keterangan: "Kombinasi bunyi Dho, Jim, dan Dza." },
+                    { char: 'اَ سَ شَ', latin: 'Sa A Sya', keterangan: "Review perbedaan Sa dan Sya." },
+                    { char: 'رَ صَ ضَ', latin: 'Sho Ro Dho', keterangan: "Latihan tiga huruf tebal secara berurutan." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'سَ شَ صَ ضَ ذَ رَ زَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Dho." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 14):\n* Makhraj Dho (ضَ): Suara harus keluar dari samping lidah yang menyentuh geraham, bukan dari ujung lidah.\n* Ketebalan Suara: Pangkal lidah harus naik (Istila') agar suara terdengar penuh dan tebal."
+                guide: "iqro1Page14Guide"
             },
             {
-                title: "Halaman 15: Pengenalan Huruf Tho (طَ)",
-                info: "Huruf Tho (طَ) dibaca dengan ujung lidah ke pangkal gigi seri atas, namun dengan mengangkat pangkal lidah sehingga suaranya tebal dan kuat.",
+                title: "iqro1Page15Title",
+                info: "iqro1Page15Info",
                 items: [
-                    { char: 'طَ', latin: 'Tho' }, { char: 'طَ اَ ضَ', latin: 'Tho A Dho' }, { char: 'زَ طَ شَ', latin: 'Za Tho Sya' },
-                    { char: 'حَ جَ طَ', latin: 'Ha Ja Tho' }, { char: 'تَ صَ ضَ', latin: 'Ta Sho Dho' }, { char: 'ذَ طَ سَ', latin: 'Dza Tho Sa' },
-                    { char: 'زَ دَ طَ', latin: 'Za Da Tho' }, { char: 'ضَ صَ صَ', latin: 'Dho Sho Sho' }, { char: 'سَ رَ طَ', latin: 'Sa Ro Tho' },
-                    { char: 'شَ خَ طَ', latin: 'Sya Kho Tho' }, { char: 'طَ حَ ذَ', latin: 'Tho Ha Dza' },
-                    { char: 'دَ ذَ رَ زَ سَ شَ صَ ضَ طَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho Tho' }
+                    { char: 'طَ', latin: 'Tho', keterangan: "Pengenalan huruf Tho tunggal." },
+                    { char: 'اَ ضَ طَ', latin: 'Tho A Dho', keterangan: "Latihan bunyi tebal Tho dan Dho." },
+                    { char: 'شَ زَ طَ', latin: 'Za Tho Sya', keterangan: "Variasi bunyi tajam, tebal, dan menyebar." },
+                    { char: 'جَ حَ طَ', latin: 'Ha Ja Tho', keterangan: "Kombinasi bunyi halus, tengah lidah, dan tebal." },
+                    { char: 'صَ ضَ تَ', latin: 'Ta Sho Dho', keterangan: "Membedakan bunyi tipis Ta dengan tebal Sho/Dho." },
+                    { char: 'سَ ذَ طَ', latin: 'Dza Tho Sa', keterangan: "Variasi makhraj lidah dan desis." },
+                    { char: 'دَ زَ طَ', latin: 'Za Da Tho', keterangan: "Latihan kelancaran bunyi Da dan Tho." },
+                    { char: 'صَ صَ ضَ', latin: 'Dho Sho Sho', keterangan: "Latihan berurutan huruf-huruf tebal." },
+                    { char: 'رَ سَ طَ', latin: 'Sa Ro Tho', keterangan: "Kombinasi desis, getar, dan tebal." },
+                    { char: 'رَ شَ ثَ', latin: 'Sya Ro Tsa', keterangan: "Review bunyi Sya, Ro, dan Tsa." },
+                    { char: 'خَ شَ طَ', latin: 'Sya Kho Tho', keterangan: "Latihan bunyi menyebar, serak, dan tebal." },
+                    { char: 'حَ ذَ طَ', latin: 'Tho Ha Dza', keterangan: "Kombinasi Tho, Ha halus, dan Dza." },
+                    { char: 'بَ صَ ضَ', latin: 'Ba Sho Dho', keterangan: "Review huruf bibir dan dua huruf tebal." },
+                    { char: 'ذَ رَ طَ', latin: 'Dza Ro Tho', keterangan: "Latihan kelancaran bunyi Dza, Ro, dan Tho." },
+                    { char: 'جَ زَ ضَ', latin: 'Ja Za Dho', keterangan: "Variasi bunyi Jim, Za tajam, dan Dho berat." },
+                    { char: 'اَ شَ ثَ', latin: 'Tsa A Sya', keterangan: "Review huruf Tsa dan Sya." },
+                    { char: 'خَ سَ طَ', latin: 'Sa Kho Tho', keterangan: "Latihan bunyi desis, serak, dan tebal." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi rangkaian awal hijaiyah." },
+                    { char: 'ضَ صَ شَ سَ ذَ رَ زَ طَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho Tho', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Tho." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 15):\n* Makhraj Tho (طَ): Pastikan suara Tho terdengar jauh lebih kuat dan tebal daripada Ta (تَ).\n* Visualisasi: Bantu santri mengenali bentuk huruf Tho yang memiliki garis tegak."
+                guide: "iqro1Page15Guide"
             },
             {
-                title: "Halaman 16: Pengenalan Huruf Zho (ظَ)",
-                info: "Huruf Zho (ظَ) memiliki satu titik di atas. Dibaca dengan menyentuhkan ujung lidah ke ujung gigi seri atas namun dengan suara yang tebal.",
+                title: "iqro1Page16Title",
+                info: "iqro1Page16Info",
                 items: [
-                    { char: 'طَ - ظَ', latin: 'Tho - Zho' }, { char: 'ظَ اَ طَ', latin: 'Zho A Tho' }, { char: 'طَ حَ ظَ', latin: 'Tho Ha Zho' },
-                    { char: 'ذَ - ظَ', latin: 'Dza - Zho' }, { char: 'سَ رَ ظَ', latin: 'Sa Ro Zho' }, { char: 'ضَ صَ ظَ', latin: 'Dho Sho Zho' },
-                    { char: 'شَ اَ ظَ', latin: 'Sya A Zho' }, { char: 'زَ خَ طَ', latin: 'Za Kho Tho' }, { char: 'ثَ رَ ظَ', latin: 'Tsa Ro Zho' },
-                    { char: 'تَ ضَ ظَ', latin: 'Ta Dho Zho' }, { char: 'شَ طَ ظَ', latin: 'Sya Tho Zho' },
-                    { char: 'رَ زَ سَ شَ صَ ضَ طَ ظَ', latin: 'Ro Za Sa Sya Sho Dho Tho Zho' }
+                    { char: 'طَ - ظَ', latin: 'Tho - Zho', keterangan: "Perbandingan huruf Tho (tanpa titik) dan Zho (titik satu)." },
+                    { char: 'اَ طَ ظَ', latin: 'Zho A Tho', keterangan: "Latihan dasar perubahan makhraj Zho ke Tho." },
+                    { char: 'حَ طَ ظَ', latin: 'Tho Ha Zho', keterangan: "Kombinasi bunyi Tho tebal, Ha halus, dan Zho." },
+                    { char: 'ذَ - ظَ', latin: 'Dza - Zho', keterangan: "Membedakan Dza (tipis) dan Zho (tebal)." },
+                    { char: 'رَ سَ ظَ', latin: 'Sa Ro Zho', keterangan: "Variasi bunyi desis, tebal, dan berat." },
+                    { char: 'صَ ضَ ظَ', latin: 'Dho Sho Zho', keterangan: "Latihan berurutan tiga huruf paling tebal." },
+                    { char: 'اَ شَ ظَ', latin: 'Sya A Zho', keterangan: "Variasi bunyi menyebar dan bunyi tebal." },
+                    { char: 'خَ زَ طَ', latin: 'Za Kho Tho', keterangan: "Review bunyi tajam, serak, dan tebal." },
+                    { char: 'ثَ رَ ظَ', latin: 'Tsa Ro Zho', keterangan: "Kombinasi bunyi lembut, tebal, dan berat." },
+                    { char: 'خَ زَ طَ', latin: 'Za Kho Tho', keterangan: "Latihan pengulangan makhraj berbeda." },
+                    { char: 'تَ ضَ ظَ', latin: 'Ta Dho Zho', keterangan: "Membedakan bunyi tipis Ta dengan Dho dan Zho." },
+                    { char: 'دَ صَ شَ', latin: 'Sho Da Sya', keterangan: "Review huruf Sho, Dal, dan Syin." },
+                    { char: 'ضَ طَ جَ', latin: 'Ja Tho Dho', keterangan: "Kombinasi bunyi tengah lidah dan dua huruf tebal." },
+                    { char: 'طَ شَ ظَ', latin: 'Sya Tho Zho', keterangan: "Latihan bunyi Sya, Tho, dan Zho." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Review baris pertama hijaiyah." },
+                    { char: 'حَ جَ خَ دَ ذَ', latin: 'Ja Ha Kho Da Dza', keterangan: "Review baris kedua hijaiyah." },
+                    { char: 'رَ زَ سَ شَ صَ ضَ طَ ظَ', latin: 'Ro Za Sa Sya Sho Dho Tho Zho', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Zho." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 16):\n* Makhraj Zho (ظَ): Ujung lidah menyentuh ujung gigi seri atas, suara tebal karena pangkal lidah terangkat.\n* Perbedaan Dza dan Zho: Bedakan bunyi Dza (ذَ) yang tipis dengan Zho (ظَ) yang sangat tebal."
+                guide: "iqro1Page16Guide"
             },
             {
-                title: "Halaman 17: Pengenalan Huruf 'A (عَ)",
-                info: "Huruf 'Ain (عَ) dibaca dengan tekanan di tengah tenggorokan. Pastikan bunyi ini bersih dan berbeda dengan Alif (A).",
+                title: "iqro1Page17Title",
+                info: "iqro1Page17Info",
                 items: [
-                    { char: 'عَ', latin: "'A" }, { char: 'ظَ اَ عَ', latin: 'Zho A \'A' }, { char: 'تَ عَ رَ', latin: 'Ta \'A Ro' },
-                    { char: 'بَ عَ طَ', latin: 'Ba \'A Tho' }, { char: 'صَ عَ زَ', latin: 'Sho \'A Za' }, { char: 'صَ عَ ضَ', latin: 'Sho \'A Dho' },
-                    { char: 'دَ حَ ظَ', latin: 'Da Ha Zho' }, { char: 'بَ عَ ثَ', latin: 'Ba \'A Tsa' }, { char: 'سَ عَ ظَ', latin: 'Sa \'A Zho' },
-                    { char: 'ضَ عَ شَ', latin: 'Dho \'A Sya' }, { char: 'طَ عَ طَ', latin: 'Tho \'A Tho' },
-                    { char: 'رَ زَ سَ شَ صَ ضَ طَ ظَ عَ', latin: 'Ro Za Sa Sya Sho Dho Tho Zho \'A' }
+                    { char: 'عَ', latin: "'A", keterangan: "Pengenalan huruf 'Ain tunggal." },
+                    { char: 'اَ ظَ عَ', latin: 'Zho A \'A', keterangan: "Latihan bunyi Zho, A, dan 'A." },
+                    { char: 'عُ رَ تَ', latin: 'Ta \'A Ro', keterangan: "Kombinasi bunyi Ta, 'Ain, dan Ro." },
+                    { char: 'طَ بَ عَ', latin: 'Ba \'A Tho', keterangan: "Variasi bunyi bibir, tenggorokan, dan tebal." },
+                    { char: 'زَ صَ عَ', latin: 'Sho \'A Za', keterangan: "Kombinasi Sho tebal, 'Ain, dan Za tajam." },
+                    { char: 'صَ ضَ عَ', latin: 'Sho \'A Dho', keterangan: "Latihan dua huruf tebal mengapit 'Ain." },
+                    { char: 'دَ حَ ظَ', latin: 'Da Ha Zho', keterangan: "Review huruf Dal, Ha halus, dan Zho." },
+                    { char: 'ثَ بَ عَ', latin: 'Ba \'A Tsa', keterangan: "Kombinasi Ba, 'Ain, dan Tsa lembut." },
+                    { char: 'ظَ سَ عَ', latin: 'Sa \'A Zho', keterangan: "Variasi bunyi Sa, 'Ain, dan Zho." },
+                    { char: 'طَ شَ عَ', latin: 'Sya Tho \'A', keterangan: "Latihan bunyi Sya menyebar, Tho, dan 'Ain." },
+                    { char: 'جَ خَ ذَ', latin: 'Ja Kho Dza', keterangan: "Review huruf Jim, Kho, dan Dza." },
+                    { char: 'اَ زَ ضَ', latin: 'Za A Dho', keterangan: "Review bunyi Za, A, dan Dho tebal." },
+                    { char: 'طَ جَ عَ', latin: '\'A Ja Tho', keterangan: "Latihan bunyi 'Ain, Jim, dan Tho tebal." },
+                    { char: 'ضَ طَ دَ', latin: 'Da Tho Dho', keterangan: "Review huruf Dal dan dua huruf tebal." },
+                    { char: 'طَ عَ طَ', latin: 'Tho \'A Tho', keterangan: "Latihan ketepatan bunyi 'Ain di antara Tho." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'حَ جَ خَ دَ ذَ', latin: 'Ja Ha Kho Da Dza', keterangan: "Evaluasi baris kedua hijaiyah." },
+                    { char: 'رَ زَ سَ شَ صَ ضَ طَ ظَ عَ', latin: 'Ro Za Sa Sya Sho Dho Tho Zho \'A', keterangan: "Evaluasi: Rangkaian lancar hingga 'Ain." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 17):\n* Makhraj 'Ain (عَ): Tekankan bunyi dari tengah tenggorokan agar tidak terdengar seperti Alif (A).\n* Visualisasi: Kenali bentuk huruf 'Ain (عَ) yang kepalanya terbuka."
+                guide: "iqro1Page17Guide"
             },
             {
-                title: "Halaman 18: Pengenalan Huruf Gho (غَ)",
-                info: "Huruf Ghoin (غَ) memiliki satu titik di atas. Dibaca dengan suara dari tenggorokan bagian atas (seperti berkumur) dan dibaca tebal.",
+                title: "iqro1Page18Title",
+                info: "iqro1Page18Info",
                 items: [
-                    { char: 'عَ - غَ', latin: "'A - Gho" }, { char: 'غَ اَ عَ', latin: 'Gho A \'A' }, { char: 'دَ غَ ظَ', latin: 'Da Gho Zho' },
-                    { char: 'عَ اَ غَ', latin: "'A A Gho" }, { char: 'ثَ عَ ظَ', latin: 'Tsa \'A Zho' }, { char: 'جَ غَ ظَ', latin: 'Ja Gho Zho' },
-                    { char: 'سَ طَ عَ', latin: 'Sa Tho \'A' }, { char: 'شَ غَ طَ', latin: 'Sya Gho Tho' }, { char: 'صَ رَ عَ', latin: 'Sho Ro \'A' },
-                    { char: 'تَ غَ ضَ', latin: 'Ta Gho Dho' }, { char: 'طَ عَ ظَ', latin: 'Tho \'A Zho' }, { char: 'طَ ظَ عَ غَ', latin: 'Tho Zho \'A Gho' }
+                    { char: 'عَ - غَ', latin: 'A - Gho', keterangan: "Perbandingan huruf 'Ain (tanpa titik) dan Ghoin (titik satu)." },
+                    { char: 'اَ عَ غَ', latin: 'Gho A \'A', keterangan: "Latihan dasar perubahan makhraj dari Ghoin ke 'Ain." },
+                    { char: 'دَ ظَ غَ', latin: 'Da Gho Zho', keterangan: "Kombinasi bunyi Dal, Ghoin tebal, dan Zho tebal." },
+                    { char: 'اَ غَ عَ', latin: 'A A Gho', keterangan: "Variasi bunyi tenggorokan tengah, bawah, dan atas." },
+                    { char: 'ثَ عَ ظَ', latin: 'Tsa \'A Zho', keterangan: "Review bunyi Tsa lembut, 'Ain, dan Zho tebal." },
+                    { char: 'جَ ظَ غَ', latin: 'Ja Gho Zho', keterangan: "Kombinasi bunyi Jim, Ghoin, dan Zho." },
+                    { char: 'طَ سَ عَ', latin: 'Sa Tho \'A', keterangan: "Review bunyi desis Sa, Tho tebal, dan 'Ain." },
+                    { char: 'رَ حَ ظَ', latin: 'Ha Ro Zho', keterangan: "Kombinasi Ha halus, Ro tebal, dan Zho." },
+                    { char: 'طَ شَ غَ', latin: 'Sya Gho Tho', keterangan: "Latihan bunyi Sya menyebar, Ghoin, dan Tho tebal." },
+                    { char: 'رَ صَ عَ', latin: 'Sho Ro \'A', keterangan: "Kombinasi Sho tebal, Ro, dan 'Ain." },
+                    { char: 'خَ زَ ظَ', latin: 'Za Kho Zho', keterangan: "Review bunyi Za tajam, Kho serak, dan Zho tebal." },
+                    { char: 'ذَ عَ ضَ', latin: 'Dho \'A Dza', keterangan: "Kombinasi Dho berat, 'Ain, dan Dza lembut." },
+                    { char: 'ضَ غَ تَ', latin: 'Ta Gho Dho', keterangan: "Membedakan bunyi tipis Ta dengan Ghoin dan Dho." },
+                    { char: 'رَ شَ ظَ', latin: 'Sya Ro Zho', keterangan: "Review bunyi Sya, Ro, dan Zho." },
+                    { char: 'طَ عَ ظَ', latin: 'Tho \'A Zho', keterangan: "Latihan bunyi Tho tebal, 'Ain, dan Zho tebal." },
+                    { char: 'صَ غَ بَ', latin: 'Ba Gho Sho', keterangan: "Kombinasi Ba, Ghoin, dan Sho tebal." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi rangkaian baris pertama hijaiyah." },
+                    { char: 'سَ شَ صَ ضَ ذَ رَ زَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho', keterangan: "Evaluasi rangkaian baris kedua hijaiyah." },
+                    { char: 'عَ غَ طَ ظَ', latin: 'Tho Zho \'A Gho', keterangan: "Evaluasi: Membaca lancar kelompok huruf Tho hingga Ghoin." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 18):\n* Makhraj Gho (غَ): Pastikan bunyi Ghoin tidak tertukar dengan Kho. Ghoin lebih halus seperti suara air berkumur, sedangkan Kho lebih kering dan serak."
+                guide: "iqro1Page18Guide"
             },
             {
-                title: "Halaman 19: Pengenalan Huruf Fa (فَ)",
-                info: "Huruf Fa (فَ) dibaca dengan menempelkan ujung gigi seri atas ke bagian dalam bibir bawah.",
+                title: "iqro1Page19Title",
+                info: "iqro1Page19Info",
                 items: [
-                    { char: 'غَ - فَ', latin: 'Gho - Fa' }, { char: 'فَ اَ غَ', latin: 'Fa A Gho' }, { char: 'فَ رَ جَ', latin: 'Fa Ro Ja' },
-                    { char: 'غَ اَ فَ', latin: 'Gho A Fa' }, { char: 'حَ صَ فَ', latin: 'Ha Sho Fa' }, { char: 'فَ ظَ لَ', latin: 'Fa Zho La' },
-                    { char: 'شَ غَ فَ', latin: 'Sya Gho Fa' }, { char: 'عَ ذَ فَ', latin: '\'A Dza Fa' }, { char: 'فَ خَ ذَ', latin: 'Fa Kho Dza' },
-                    { char: 'صَ رَ فَ', latin: 'Sho Ro Fa' }, { char: 'فَ عَ لَ', latin: 'Fa \'A La' },
-                    { char: 'طَ ظَ عَ غَ فَ', latin: 'Tho Zho \'A Gho Fa' }
+                    { char: 'غَ - فَ', latin: 'Gho - Fa', keterangan: "Perbandingan huruf Ghoin (tebal) dan Fa." },
+                    { char: 'اَ غَ فَ', latin: 'Fa A Gho', keterangan: "Latihan dasar huruf Fa dikombinasikan dengan Ghoin." },
+                    { char: 'جَ رَ فَ', latin: 'Fa Ro Ja', keterangan: "Kombinasi bunyi bibir, lidah, dan tengah lidah." },
+                    { char: 'اَ غَ فَ', latin: 'Gho A Fa', keterangan: "Variasi urutan bunyi tenggorokan dan bibir." },
+                    { char: 'حَ صَ فَ', latin: 'Ha Sho Fa', keterangan: "Review bunyi Ha halus, Sho tebal, dan Fa." },
+                    { char: 'لَ ظَ فَ', latin: 'Fa Zho La', keterangan: "Latihan makhraj Fa dengan Zho tebal." },
+                    { char: 'غَ شَ فَ', latin: 'Sya Gho Fa', keterangan: "Kombinasi bunyi menyebar, serak, dan bibir." },
+                    { char: 'ذَ عَ فَ', latin: '\'A Dza Fa', keterangan: "Variasi bunyi tenggorokan tengah, lembut, dan bibir." },
+                    { char: 'ذَ خَ فَ', latin: 'Fa Kho Dza', keterangan: "Latihan bunyi Fa, Kho serak, dan Dza lembut." },
+                    { char: 'صَ رَ فَ', latin: 'Sho Ro Fa', keterangan: "Kombinasi dua huruf tebal dengan satu huruf bibir." },
+                    { char: 'ضَ غَ فَ', latin: 'Gho Dho Fa', keterangan: "Latihan berurutan huruf-huruf tebal dan Fa." },
+                    { char: 'بَ طَ فَ', latin: 'Ba Tho Fa', keterangan: "Review bunyi Ba, Tho tebal, dan Fa." },
+                    { char: 'هَ رَ ظَ', latin: 'Zho Ha Ro', keterangan: "Latihan bunyi Zho tebal, Ha besar, dan Ro." },
+                    { char: 'لَ عَ فَ', latin: 'Fa \'A La', keterangan: "Latihan bunyi Fa, 'Ain, dan Lam." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ', latin: 'A Ba Ta Tsa Ja Ha Kho', keterangan: "Evaluasi rangkaian awal hijaiyah." },
+                    { char: 'سَ شَ صَ ضَ ذَ رَ زَ', latin: 'Da Dza Ro Za Sa Sya Sho Dho', keterangan: "Evaluasi baris kedua hijaiyah." },
+                    { char: 'عَ غَ طَ ظَ فَ', latin: 'Tho Zho \'A Gho Fa', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Fa." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 19):\n* Makhraj Fa (فَ): Pastikan suara keluar dengan aliran udara melalui celah gigi seri atas dan bibir bawah.\n* Langsung Bunyi: Langsung baca bunyinya 'Fa', jangan mengeja."
+                guide: "iqro1Page19Guide"
             },
             {
-                title: "Halaman 20: Pengenalan Huruf Qo (قَ)",
-                info: "Huruf Qof (قَ) dibaca dengan pangkal lidah menyentuh langit-langit lunak (belakang). Bunyinya mantap dan tebal.",
+                title: "iqro1Page20Title",
+                info: "iqro1Page20Info",
                 items: [
-                    { char: 'فَ - قَ', latin: 'Fa - Qo' }, { char: 'قَ بَ ضَ', latin: 'Qo Ba Dho' }, { char: 'قَ طَ فَ', latin: 'Qo Tho Fa' },
-                    { char: 'فَ رَ قَ', latin: 'Fa Ro Qo' }, { char: 'ثَ غَ ظَ', latin: 'Tsa Gho Zho' }, { char: 'فَ قَ ظَ', latin: 'Fa Qo Zho' },
-                    { char: 'سَ عَ فَ', latin: 'Sa \'A Fa' }, { char: 'قَ فَ صَ', latin: 'Qo Fa Sho' }, { char: 'عَ قَ دَ', latin: '\'A Qo Da' },
-                    { char: 'ضَ غَ طَ', latin: 'Dho Gho Tho' }, { char: 'زَ قَ قَ', latin: 'Za Qo Qo' }, { char: 'فَ قَ', latin: 'Fa Qo' }
+                    { char: 'فَ - قَ', latin: 'Fa - Qo', keterangan: "Perbandingan huruf Fa (titik satu) dan Qof (titik dua)." },
+                    { char: 'بَ ضَ قَ', latin: 'Qo Ba Dho', keterangan: "Latihan bunyi tebal Qof dan Dho." },
+                    { char: 'فَ طَ قَ', latin: 'Qo Tho Fa', keterangan: "Variasi bunyi tebal Tho dan bunyi bibir Fa." },
+                    { char: 'فَ رَ قَ', latin: 'Fa Ro Qo', keterangan: "Latihan kelancaran bunyi Ro dan Qof." },
+                    { char: 'ثَ غَ ظَ', latin: 'Tsa Gho Zho', keterangan: "Review huruf Tsa, Ghoin, dan Zho." },
+                    { char: 'ظَ قَ فَ', latin: 'Fa Qo Zho', keterangan: "Kombinasi bunyi bibir dan dua huruf tebal." },
+                    { char: 'سَ عَ فَ', latin: 'Sa \'A Fa', keterangan: "Review bunyi Sa, 'Ain, dan Fa." },
+                    { char: 'ذَ خَ حَ', latin: 'Ha Dza Kho', keterangan: "Latihan bunyi tenggorokan dan lidah lembut." },
+                    { char: 'فَ صَ قَ', latin: 'Qo Fa Sho', keterangan: "Kombinasi Qof, Fa, dan Sho tebal." },
+                    { char: 'دَ عَ قَ', latin: '\'A Qo Da', keterangan: "Latihan bunyi 'Ain, Qof, dan Dal." },
+                    { char: 'طَ غَ ضَ', latin: 'Dho Gho Tho', keterangan: "Pengulangan tiga huruf tebal berurutan." },
+                    { char: 'شَ عَ فَ', latin: 'Sya Fa \'A', keterangan: "Review bunyi Sya, Fa, dan 'Ain." },
+                    { char: 'زَ قَ قَ', latin: 'Za Qo Qo', keterangan: "Pengulangan huruf Qof." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'حَ جَ خَ', latin: 'Ja Ha Kho', keterangan: "Evaluasi baris kedua hijaiyah." },
+                    { char: 'دَ ذَ', latin: 'Da Dza', keterangan: "Review huruf Dal dan Dzal." },
+                    { char: 'رَ زَ', latin: 'Ro Za', keterangan: "Review huruf Ro dan Za." },
+                    { char: 'سَ شَ', latin: 'Sa Sya', keterangan: "Review huruf Sa dan Sya." },
+                    { char: 'صَ ضَ', latin: 'Sho Dho', keterangan: "Review huruf Sho dan Dho." },
+                    { char: 'طَ ظَ', latin: 'Tho Zho', keterangan: "Review huruf Tho dan Zho." },
+                    { char: 'عَ غَ', latin: '\'A Gho', keterangan: "Review huruf 'Ain dan Ghoin." },
+                    { char: 'فَ قَ', latin: 'Fa Qo', keterangan: "Evaluasi: Membaca lancar pasangan Fa dan Qof." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 20):\n* Makhraj Qo (قَ): Pastikan suara Qof keluar dari pangkal lidah secara mantap (tebal).\n* Perbedaan Visual: Fa memiliki satu titik, sedangkan Qof memiliki dua titik."
+                guide: "iqro1Page20Guide"
             },
             {
-                title: "Halaman 21: Pengenalan Huruf Ka (كَ)",
-                info: "Huruf Kaf (كَ) dibaca dengan pangkal lidah ke langit-langit keras (lebih depan dari Qof). Bunyinya tipis dan disertai hembusan udara halus (hams).",
+                title: "iqro1Page21Title",
+                info: "iqro1Page21Info",
                 items: [
-                    { char: 'قَ - كَ', latin: 'Qo - Ka' }, { char: 'كَ حَ قَ', latin: 'Ka Ha Qo' }, { char: 'كَ قَ خَ', latin: 'Ka Qo Kho' },
-                    { char: 'ضَ حَ كَ', latin: 'Dho Ha Ka' }, { char: 'عَ طَ فَ', latin: '\'A Tho Fa' }, { char: 'شَ كَ رَ', latin: 'Sya Ka Ro' },
-                    { char: 'جَ كَ تَ', latin: 'Ja Ka Ta' }, { char: 'قَ لَ فَ', latin: 'Qo La Fa' }, { char: 'ذَ غَ سَ', latin: 'Dza Gho Sa' },
-                    { char: 'عَ فَ كَ', latin: '\'A Fa Ka' }, { char: 'زَ كَ طَ', latin: 'Za Ka Tho' }, { char: 'فَ قَ كَ', latin: 'Fa Qo Ka' }
+                    { char: 'قَ - كَ', latin: 'Qo - Ka', keterangan: "Perbandingan huruf Qof (tebal) dan Kaf (tipis)." },
+                    { char: 'قَ حَ كَ', latin: 'Ka Ha Qo', keterangan: "Latihan bunyi Ka tipis, Ha halus, dan Qo tebal." },
+                    { char: 'كَ خَ قَ', latin: 'Ka Qo Kho', keterangan: "Variasi bunyi pangkal lidah dan tenggorokan atas." },
+                    { char: 'كَ ضَ حَ', latin: 'Dho Ha Ka', keterangan: "Kombinasi bunyi Dho tebal, Ha halus, dan Ka tipis." },
+                    { char: 'فَ طَ عَ', latin: '\'A Tho Fa', keterangan: "Review bunyi 'Ain, Tho tebal, dan Fa." },
+                    { char: 'رَ كَ شَ', latin: 'Sya Ka Ro', keterangan: "Latihan bunyi Sya, Ka tipis, dan Ro tebal." },
+                    { char: 'تَ جَ كَ', latin: 'Ja Ka Ta', keterangan: "Kombinasi bunyi Jim, Ka, dan Ta." },
+                    { char: 'لَ فَ قَ', latin: 'Qo La Fa', keterangan: "Review bunyi Qof tebal, Lam, dan Fa." },
+                    { char: 'سَ غَ ذَ', latin: 'Dza Gho Sa', keterangan: "Review bunyi Dza lembut, Ghoin tebal, dan Sa desis." },
+                    { char: 'ثَ صَ دَ', latin: 'Sho Da Tsa', keterangan: "Review bunyi Sho tebal, Da, dan Tsa lembut." },
+                    { char: 'كَ عَ فَ', latin: '\'A Fa Ka', keterangan: "Latihan bunyi 'Ain, Fa, dan Ka tipis." },
+                    { char: 'طَ زَ كَ', latin: 'Za Ka Tho', keterangan: "Kombinasi bunyi Za tajam, Ka, dan Tho tebal." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'حَ جَ خَ', latin: 'Ja Ha Kho', keterangan: "Evaluasi baris kedua hijaiyah." },
+                    { char: 'دَ ذَ رَ زَ', latin: 'Da Dza Ro Za', keterangan: "Review rangkaian huruf Dal hingga Za." },
+                    { char: 'سَ شَ صَ ضَ', latin: 'Sa Sya Sho Dho', keterangan: "Review rangkaian huruf Sa hingga Dho." },
+                    { char: 'عَ غَ طَ ظَ', latin: 'Tho Zho \'A Gho', keterangan: "Review rangkaian huruf Tho hingga Ghoin." },
+                    { char: 'كَ قَ فَ', latin: 'Fa Qo Ka', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Ka." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 21):\n* Makhraj Ka (كَ): Pastikan suara Kaf terdengar tipis dan bersih, tidak seberat Qof.\n* Pendek-Cepat: Semua bacaan harus dibaca pendek (satu harakat)."
+                guide: "iqro1Page21Guide"
             },
             {
-                title: "Halaman 22: Pengenalan Huruf La (لَ)",
-                info: "Huruf Lam (لَ) dibaca dengan menyentuhkan ujung lidah ke langit-langit mulut bagian depan (di atas gusi).",
+                title: "iqro1Page22Title",
+                info: "iqro1Page22Info",
                 items: [
-                    { char: 'لَ', latin: 'La' }, { char: 'قَ لَ بَ', latin: 'Qo La Ba' }, { char: 'جَ عَ لَ', latin: 'Ja \'A La' },
-                    { char: 'خَ لَ طَ', latin: 'Kho La Tho' }, { char: 'ذَ كَ رَ', latin: 'Dza Ka Ro' }, { char: 'غَ لَ ظَ', latin: 'Gho La Zho' },
-                    { char: 'قَ فَ صَ', latin: 'Qo Fa Sho' }, { char: 'حَ لَ فَ', latin: 'Ha La Fa' }, { char: 'شَ كَ لَ', latin: 'Sya Ka La' },
-                    { char: 'ضَ رَ عَ', latin: 'Dho Ro \'A' }, { char: 'كَ لَ لَ', latin: 'Ka La La' }, { char: 'فَ قَ كَ لَ', latin: 'Fa Qo Ka La' }
+                    { char: 'لَ', latin: 'La', keterangan: "Pengenalan huruf Lam tunggal." },
+                    { char: 'بَ قَ لَ', latin: 'Qo La Ba', keterangan: "Latihan bunyi Qof tebal, Lam, dan Ba." },
+                    { char: 'لَ جَ عَ', latin: 'Ja \'A La', keterangan: "Kombinasi bunyi Jim, 'Ain, dan Lam." },
+                    { char: 'طَ خَ لَ', latin: 'Kho La Tho', keterangan: "Variasi bunyi Kho serak, Lam, dan Tho tebal." },
+                    { char: 'رَ كَ ذَ', latin: 'Dza Ka Ro', keterangan: "Review bunyi Dza lembut, Ka tipis, dan Ro." },
+                    { char: 'ظَ غَ لَ', latin: 'Gho La Zho', keterangan: "Kombinasi bunyi Ghoin tebal, Lam, dan Zho tebal." },
+                    { char: 'فَ صَ قَ', latin: 'Qo Fa Sho', keterangan: "Review bunyi Qof, Fa, dan Sho tebal." },
+                    { char: 'لَ فَ حَ', latin: 'Ha La Fa', keterangan: "Latihan bunyi Ha halus, Lam, dan Fa." },
+                    { char: 'سَ غَ دَ', latin: 'Da Gho Sa', keterangan: "Review bunyi Dal, Ghoin tebal, dan Sa desis." },
+                    { char: 'لَ كَ شَ', latin: 'Sya Ka La', keterangan: "Kombinasi bunyi Sya menyebar, Ka, dan Lam." },
+                    { char: 'عَ رَ ضَ', latin: 'Dho Ro \'A', keterangan: "Review bunyi Dho berat, Ro, dan 'Ain." },
+                    { char: 'طَ زَ تَ', latin: 'Za Ta Tho', keterangan: "Review bunyi Za tajam, Ta tipis, dan Tho tebal." },
+                    { char: 'لَ لَ كَ', latin: 'Ka La La', keterangan: "Latihan pengulangan huruf Lam." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'حَ جَ خَ', latin: 'Ja Ha Kho', keterangan: "Evaluasi baris kedua hijaiyah." },
+                    { char: 'دَ ذَ', latin: 'Da Dza', keterangan: "Review huruf Dal dan Dzal." },
+                    { char: 'رَ زَ', latin: 'Ro Za', keterangan: "Review huruf Ro dan Za." },
+                    { char: 'سَ شَ', latin: 'Sa Sya', keterangan: "Review huruf Sa dan Sya." },
+                    { char: 'صَ ضَ', latin: 'Sho Dho', keterangan: "Review huruf Sho dan Dho." },
+                    { char: 'طَ ظَ', latin: 'Tho Zho', keterangan: "Review huruf Tho dan Zho." },
+                    { char: 'لَ كَ قَ فَ', latin: 'Fa Qo Ka La', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Lam." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 22):\n* Makhraj La (لَ): Bunyi Lam dihasilkan dengan lidah yang menyentuh langit-langit atas, pastikan bunyinya jelas dan ringan.\n* Tanpa Mengeja: Langsung baca 'La'."
+                guide: "iqro1Page22Guide"
             },
             {
-                title: "Halaman 23: Pengenalan Huruf Ma (مَ)",
-                info: "Huruf Mim (مَ) dibaca dengan cara merapatkan kedua bibir. Dibaca pendek dan cepat (satu ketukan).",
+                title: "iqro1Page23Title",
+                info: "iqro1Page23Info",
                 items: [
-                    { char: 'مَ', latin: 'Ma' }, { char: 'غَ مَ ضَ', latin: 'Gho Ma Dho' }, { char: 'لَ مَ سَ', latin: 'La Ma Sa' },
-                    { char: 'جَ مَ عَ', latin: 'Ja Ma \'A' }, { char: 'فَ رَ ضَ', latin: 'Fa Ro Dho' }, { char: 'كَ رَ مَ', latin: 'Ka Ro Ma' },
-                    { char: 'خَ لَ طَ', latin: 'Kho La Tho' }, { char: 'صَ مَ دَ', latin: 'Sho Ma Da' }, { char: 'ظَ اَ تَ', latin: 'Zho A Ta' },
-                    { char: 'مَ رَ قَ', latin: 'Ma Ro Qo' }, { char: 'غَ مَ مَ', latin: 'Gho Ma Ma' },
-                    { char: 'عَ غَ فَ قَ كَ لَ مَ', latin: '\'A Gho Fa Qo Ka La Ma' }
+                    { char: 'مَ', latin: 'Ma', keterangan: "Pengenalan huruf Mim tunggal." },
+                    { char: 'ضَ مَ غَ', latin: 'Gho Ma Dho', keterangan: "Kombinasi Ghoin tebal, Mim, dan Dho berat." },
+                    { char: 'سَ مَ لَ', latin: 'La Ma Sa', keterangan: "Latihan bunyi Lam, Mim, dan Sa desis halus." },
+                    { char: 'عَ مَ جَ', latin: 'Ja Ma \'A', keterangan: "Kombinasi Jim, Mim, dan 'Ain." },
+                    { char: 'فَ رَ ضَ', latin: 'Fa Ro Dho', keterangan: "Review bunyi Fa, Ro tebal, dan Dho berat." },
+                    { char: 'مَ رَ كَ', latin: 'Ka Ro Ma', keterangan: "Kombinasi bunyi Kaf tipis, Ro, dan Mim." },
+                    { char: 'لَ خَ طَ', latin: 'Kho La Tho', keterangan: "Review bunyi Kho serak, Lam, dan Tho tebal." },
+                    { char: 'دَ مَ صَ', latin: 'Sho Ma Da', keterangan: "Latihan bunyi Sho tebal, Mim, dan Dal." },
+                    { char: 'اَ تَ ظَ', latin: 'Zho A Ta', keterangan: "Review bunyi Zho tebal, A, dan Ta tipis." },
+                    { char: 'قَ رَ مَ', latin: 'Ma Ro Qo', keterangan: "Kombinasi bunyi Mim, Ro, dan Qof tebal." },
+                    { char: 'لَ مَ شَ', latin: 'Sya Ma La', keterangan: "Latihan bunyi Sya menyebar, Mim, dan Lam." },
+                    { char: 'حَ كَ فَ', latin: 'Fa Ka Ha', keterangan: "Review bunyi Fa, Kaf tipis, dan Ha halus." },
+                    { char: 'مَ مَ غَ', latin: 'Gho Ma Ma', keterangan: "Latihan pengulangan huruf Mim." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 23):\n* Makhraj Ma (مَ): Pastikan bunyi Mim dihasilkan dengan merapatkan bibir secara sempurna.\n* Cara Belajar Santri Aktif (CBSA): Biarkan santri mencoba membaca sendiri secara mandiri."
+                guide: "iqro1Page23Guide"
             },
             {
-                title: "Halaman 24: Pengenalan Huruf Na (نَ)",
-                info: "Huruf Nun (نَ) dibaca dengan menyentuhkan ujung lidah ke langit-langit mulut bagian depan, sedikit di bawah makhraj huruf Lam.",
+                title: "iqro1Page24Title",
+                info: "iqro1Page24Info",
                 items: [
-                    { char: 'نَ', latin: 'Na' }, { char: 'نَ ظَ فَ', latin: 'Na Zho Fa' }, { char: 'نَ غَ شَ', latin: 'Na Gho Sya' },
-                    { char: 'طَ عَ نَ', latin: 'Tho \'A Na' }, { char: 'صَ مَ ضَ', latin: 'Sho Ma Dho' }, { char: 'قَ رَ نَ', latin: 'Qo Ro Na' },
-                    { char: 'خَ لَ قَ', latin: 'Kho La Qo' }, { char: 'زَ مَ نَ', latin: 'Za Ma Na' }, { char: 'كَ ذَ بَ', latin: 'Ka Dza Ba' },
-                    { char: 'جَ نَ دَ', latin: 'Ja Na Da' }, { char: 'مَ نَ نَ', latin: 'Ma Na Na' },
-                    { char: 'فَ قَ كَ لَ مَ نَ', latin: 'Fa Qo Ka La Ma Na' }
+                    { char: 'نَ', latin: 'Na', keterangan: "Pengenalan huruf Nun tunggal." },
+                    { char: 'مَ نَ لَ', latin: 'La Na Ma', keterangan: "Kombinasi Lam, Nun, dan Mim." },
+                    { char: 'قَ نَ بَ', latin: 'Ba Na Qo', keterangan: "Kombinasi Nun, Ba, dan Qof tebal." },
+                    { char: 'فَ نَ شَ', latin: 'Sya Na Fa', keterangan: "Latihan bunyi Nun, Syin menyebar, dan Fa." },
+                    { char: 'عَ نَ ظَ', latin: 'Zho Na \'A', keterangan: "Kombinasi Nun, 'Ain, dan Zho tebal." },
+                    { char: 'طَ نَ دَ', latin: 'Da Na Tho', keterangan: "Kombinasi Nun, Dal, dan Tho tebal." },
+                    { char: 'خَ نَ رَ', latin: 'Ro Na Kho', keterangan: "Kombinasi Nun, Ro, dan Kho serak." },
+                    { char: 'جَ نَ حَ', latin: 'Ha Na Ja', keterangan: "Kombinasi Nun, Jim, dan Ha halus." },
+                    { char: 'ذَ نَ زَ', latin: 'Za Na Dza', keterangan: "Kombinasi Nun, Za tajam, dan Dza lembut." },
+                    { char: 'سَ نَ صَ', latin: 'Sho Na Sa', keterangan: "Kombinasi Nun, Sa desis, dan Sho tebal." },
+                    { char: 'تَ نَ ثَ', latin: 'Tsa Na Ta', keterangan: "Kombinasi Nun, Tsa lembut, dan Ta tipis." },
+                    { char: 'اَ نَ بَ', latin: 'Ba Na A', keterangan: "Kombinasi Nun, Ba, dan Alif." },
+                    { char: 'لَ نَ لَ', latin: 'La Na La', keterangan: "Latihan pengulangan huruf Nun." },
+                    { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa', keterangan: "Evaluasi baris pertama hijaiyah." },
+                    { char: 'حَ جَ خَ دَ ذَ', latin: 'Ja Ha Kho Da Dza', keterangan: "Evaluasi baris kedua hijaiyah." },
+                    { char: 'رَ زَ سَ شَ صَ ضَ طَ ظَ', latin: 'Ro Za Sa Sya Sho Dho Tho Zho', keterangan: "Evaluasi rangkaian huruf Ro hingga Zho." },
+                    { char: 'عَ غَ فَ قَ كَ لَ مَ نَ', latin: 'Fa Qo Ka La Ma Na \'A Gho', keterangan: "Evaluasi: Rangkaian lancar hingga huruf Nun." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 24):\n* Makhraj Na (نَ): Bunyi Nun dihasilkan dari ujung lidah, pastikan bunyinya jelas.\n* Visual Titik: Ingatkan santri bahwa Nun (نَ) memiliki satu titik di atas, berbeda dengan Ba (بَ)."
+                guide: "iqro1Page24Guide"
             },
             {
-                title: "Halaman 25: Pengenalan Huruf Wa (وَ)",
-                info: "Huruf Wawu (وَ) dibaca dengan membulatkan kedua bibir.",
+                title: "iqro1Page25Title",
+                info: "iqro1Page25Info",
                 items: [
-                    { char: 'نَ - وَ', latin: 'Na - Wa' }, { char: 'وَ زَ رَ', latin: 'Wa Za Ro' }, { char: 'وَ لَ غَ', latin: 'Wa La Gho' },
-                    { char: 'دَ وَ مَ', latin: 'Da Wa Ma' }, { char: 'فَ طَ نَ', latin: 'Fa Tho Na' }, { char: 'قَ وَ مَ', latin: 'Qo Wa Ma' },
-                    { char: 'ظَ جَ عَ', latin: 'Zho Ja \'A' }, { char: 'كَ وَ نَ', latin: 'Ka Wa Na' }, { char: 'سَ كَ تَ', latin: 'Sa Ka Ta' },
-                    { char: 'خَ وَ صَ', latin: 'Kho Wa Sho' }, { char: 'وَ نَ وَ', latin: 'Wa Na Wa' },
-                    { char: 'طَ ظَ عَ غَ فَ قَ كَ لَ مَ نَ وَ', latin: 'Tho Zho \'A Gho Fa Qo Ka La Ma Na Wa' }
+                    { char: 'وَ', latin: 'Wa', keterangan: "Pengenalan huruf Wawu tunggal." },
+                    { char: 'نَ وَ مَ', latin: 'Ma Wa Na', keterangan: "Kombinasi Nun, Wawu, dan Mim." },
+                    { char: 'لَ وَ كَ', latin: 'Ka Wa La', keterangan: "Kombinasi Wawu, Lam, dan Kaf." },
+                    { char: 'قَ وَ فَ', latin: 'Fa Wa Qo', keterangan: "Kombinasi Wawu, Fa, dan Qof tebal." },
+                    { char: 'عَ وَ غَ', latin: 'Gho Wa \'A', keterangan: "Kombinasi Wawu, 'Ain, dan Ghoin tebal." },
+                    { char: 'ظَ وَ طَ', latin: 'Tho Wa Zho', keterangan: "Kombinasi Wawu, Tho, dan Zho tebal." },
+                    { char: 'ضَ وَ صَ', latin: 'Sho Wa Dho', keterangan: "Kombinasi Wawu, Sho, dan Dhod tebal." },
+                    { char: 'شَ وَ سَ', latin: 'Sa Wa Sya', keterangan: "Kombinasi Wawu, Sin, dan Syin menyebar." },
+                    { char: 'زَ وَ رَ', latin: 'Ro Wa Za', keterangan: "Kombinasi Wawu, Ro, dan Zay tajam." },
+                    { char: 'ذَ وَ دَ', latin: 'Da Wa Dza', keterangan: "Kombinasi Wawu, Dal, dan Dzal lembut." },
+                    { char: 'خَ وَ حَ', latin: 'Ha Wa Kho', keterangan: "Kombinasi Wawu, Ha halus, dan Kho serak." },
+                    { char: 'جَ وَ ثَ', latin: 'Tsa Wa Ja', keterangan: "Kombinasi Wawu, Tsa lembut, dan Jim." },
+                    { char: 'تَ وَ بَ', latin: 'Ba Wa Ta', keterangan: "Kombinasi Wawu, Ba, dan Ta." },
+                    { char: 'اَ وَ اَ', latin: 'A Wa A', keterangan: "Kombinasi Wawu dengan Alif." },
+                    { char: 'نَ وَ نَ', latin: 'Na Wa Na', keterangan: "Latihan pengulangan huruf Wawu." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ ذَ رَ زَ سَ شَ صَ ضَ طَ ظَ عَ غَ فَ قَ كَ لَ مَ نَ وَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza Ro Za Sa Sya Sho Dho Tho Zho \'A Gho Fa Qo Ka La Ma Na Wa', keterangan: "Evaluasi: Rangkaian huruf dari Alif hingga Wawu." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 25):\n* Makhraj Wa (وَ): Pastikan bibir mencucu (membulat) sempurna saat melafalkan bunyi Wa.\n* Evaluasi Rangkaian: Santri diharapkan sudah mulai lancar menyebutkan urutan huruf hingga Wawu."
+                guide: "iqro1Page25Guide"
             },
             {
-                title: "Halaman 26: Pengenalan Huruf Ha (هَ)",
-                info: "Huruf Ha (هَ) dibaca dengan suara yang keluar dari pangkal tenggorokan. Perhatikan perbedaannya dengan huruf Ha (حَ) halus.",
+                title: "iqro1Page26Title",
+                info: "iqro1Page26Info",
                 items: [
-                    { char: 'هَ', latin: 'Ha' }, { char: 'هَ مَ شَ', latin: 'Ha Ma Sya' }, { char: 'جَ هَ دَ', latin: 'Ja Ha Da' },
-                    { char: 'دَ وَ هَ', latin: 'Da Wa Ha' }, { char: 'فَ خَ عَ', latin: 'Fa Kho \'A' }, { char: 'طَ هَ رَ', latin: 'Tho Ha Ro' },
-                    { char: 'وَ ضَ حَ', latin: 'Wa Dho Ha' }, { char: 'وَ هَ ظَ', latin: 'Wa Ha Zho' }, { char: 'لَ مَ نَ', latin: 'La Ma Na' },
-                    { char: 'زَ هَ قَ', latin: 'Za Ha Qo' }, { char: 'جَ هَ هَ', latin: 'Ja Ha Ha' },
-                    { char: 'طَ ظَ عَ غَ فَ قَ كَ لَ مَ نَ وَ هَ', latin: 'Tho Zho \'A Gho Fa Qo Ka La Ma Na Wa Ha' }
+                    { char: 'هَ', latin: 'Ha', keterangan: "Pengenalan huruf Ha (besar) tunggal." },
+                    { char: 'وَ هَ مَ', latin: 'Ma Ha Wa', keterangan: "Kombinasi Wawu, Ha besar, dan Mim." },
+                    { char: 'نَ هَ لَ', latin: 'La Ha Na', keterangan: "Kombinasi Ha besar, Nun, dan Lam." },
+                    { char: 'مَ هَ كَ', latin: 'Ka Ha Ma', keterangan: "Kombinasi Ha besar, Kaf, dan Mim." },
+                    { char: 'لَ هَ قَ', latin: 'Qo Ha La', keterangan: "Kombinasi Ha besar, Qof, dan Lam." },
+                    { char: 'كَ هَ فَ', latin: 'Fa Ha Ka', keterangan: "Kombinasi Ha besar, Fa, dan Kaf." },
+                    { char: 'قَ هَ غَ', latin: 'Gho Ha Qo', keterangan: "Kombinasi Ha besar, Ghoin, dan Qof." },
+                    { char: 'فَ هَ عَ', latin: '\'A Ha Fa', keterangan: "Kombinasi Ha besar, 'Ain, dan Fa." },
+                    { char: 'غَ هَ ظَ', latin: 'Zho Ha Gho', keterangan: "Kombinasi Ha besar, Zho tebal, dan Ghoin tebal." },
+                    { char: 'عَ هَ طَ', latin: 'Tho Ha \'A', keterangan: "Kombinasi Ha besar, Tho tebal, dan 'Ain." },
+                    { char: 'ظَ هَ ضَ', latin: 'Dho Ha Zho', keterangan: "Kombinasi Ha besar, Dhod tebal, dan Zho tebal." },
+                    { char: 'طَ هَ صَ', latin: 'Sho Ha Tho', keterangan: "Kombinasi Ha besar, Shod tebal, dan Tho tebal." },
+                    { char: 'ضَ هَ شَ', latin: 'Sya Ha Dho', keterangan: "Kombinasi Ha besar, Syin menyebar, dan Dhod tebal." },
+                    { char: 'صَ هَ سَ', latin: 'Sa Ha Sho', keterangan: "Kombinasi Ha besar, Sin desis, dan Shod tebal." },
+                    { char: 'شَ هَ زَ', latin: 'Za Ha Sya', keterangan: "Kombinasi Ha besar, Zay tajam, dan Syin menyebar." },
+                    { char: 'سَ هَ رَ', latin: 'Ro Ha Sa', keterangan: "Kombinasi Ha besar, Ro, dan Sin desis." },
+                    { char: 'زَ هَ ذَ', latin: 'Dza Ha Za', keterangan: "Kombinasi Ha besar, Dzal lembut, dan Zay tajam." },
+                    { char: 'رَ هَ دَ', latin: 'Da Ha Ro', keterangan: "Kombinasi Ha besar, Dal, dan Ro." },
+                    { char: 'ذَ هَ خَ', latin: 'Kho Ha Dza', keterangan: "Kombinasi Ha besar, Kho serak, dan Dzal lembut." },
+                    { char: 'دَ هَ حَ', latin: 'Ha Ha Da', keterangan: "Kombinasi Ha besar, Ha halus, dan Dal." },
+                    { char: 'خَ هَ جَ', latin: 'Ja Ha Kho', keterangan: "Kombinasi Ha besar, Jim, dan Kho serak." },
+                    { char: 'حَ هَ ثَ', latin: 'Tsa Ha Ha', keterangan: "Kombinasi Ha besar, Tsa lembut, dan Ha halus." },
+                    { char: 'جَ هَ تَ', latin: 'Ta Ha Ja', keterangan: "Kombinasi Ha besar, Ta, dan Jim." },
+                    { char: 'ثَ هَ بَ', latin: 'Ba Ha Tsa', keterangan: "Kombinasi Ha besar, Ba, dan Tsa lembut." },
+                    { char: 'تَ هَ اَ', latin: 'A Ha Ta', keterangan: "Kombinasi Ha besar, Alif, dan Ta." },
+                    { char: 'هَ هَ هَ', latin: 'Ha Ha Ha', keterangan: "Latihan pengulangan huruf Ha besar." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ ذَ رَ زَ سَ شَ صَ ضَ طَ ظَ عَ غَ فَ قَ كَ لَ مَ نَ وَ هَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza Ro Za Sa Sya Sho Dho Tho Zho \'A Gho Fa Qo Ka La Ma Na Wa Ha', keterangan: "Evaluasi: Rangkaian huruf dari Alif hingga Ha besar." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 26):\n* Makhraj Ha (هَ): Pastikan suara keluar dari pangkal tenggorokan (dada) sehingga terdengar berat dan berbeda dengan Ha (حَ) halus.\n* Kemandirian: Biarkan santri mencoba membaca sendiri secara aktif."
+                guide: "iqro1Page26Guide"
             },
             {
-                title: "Halaman 27: Pengenalan Huruf Ya (يَ)",
-                info: "Huruf Ya (يَ) adalah huruf terakhir dalam deretan huruf Hijaiyah. Dibaca dengan menaikkan tengah lidah ke langit-langit keras.",
+                title: "iqro1Page27Title",
+                info: "iqro1Page27Info",
                 items: [
-                    { char: 'يَ', latin: 'Ya' }, { char: 'ضَ يَا نَ', latin: 'Dho Ya Na' }, { char: 'سَ يَ غَ', latin: 'Sa Ya Gho' },
-                    { char: 'طَ هَ ظَ', latin: 'Tho Ha Zho' }, { char: 'هَ يَ مَ', latin: 'Ha Ya Ma' }, { char: 'اَ بَ تَ ثَ', latin: 'A Ba Ta Tsa' },
-                    { char: 'سَ شَ صَ ضَ', latin: 'Sa Sya Sho Dho' }, { char: 'ضَ حَ يَ', latin: 'Dho Ha Ya' }, { char: 'وَ كَ لَ', latin: 'Wa Ka La' },
-                    { char: 'شَ يَ عَ', latin: 'Sya Ya \'A' }, { char: 'جَ ذَ ثَ', latin: 'Ja Dza Tsa' },
-                    { char: 'مَ نَ وَ هَ يَ', latin: 'Ma Na Wa Ha Ya' }
+                    { char: 'يَ', latin: 'Ya', keterangan: "Pengenalan huruf Ya tunggal." },
+                    { char: 'هَ يَ مَ', latin: 'Ma Ya Ha', keterangan: "Kombinasi Ha besar, Ya, dan Mim." },
+                    { char: 'وَ يَ نَ', latin: 'Na Ya Wa', keterangan: "Kombinasi Ya, Wawu, dan Nun." },
+                    { char: 'نَ يَ لَ', latin: 'La Ya Na', keterangan: "Kombinasi Ya, Nun, dan Lam." },
+                    { char: 'مَ يَ كَ', latin: 'Ka Ya Ma', keterangan: "Kombinasi Ya, Mim, dan Kaf." },
+                    { char: 'لَ يَ قَ', latin: 'Qo Ya La', keterangan: "Kombinasi Ya, Qof, dan Lam." },
+                    { char: 'كَ يَ فَ', latin: 'Fa Ya Ka', keterangan: "Kombinasi Ya, Fa, dan Kaf." },
+                    { char: 'قَ يَ غَ', latin: 'Gho Ya Qo', keterangan: "Kombinasi Ya, Ghoin, dan Qof." },
+                    { char: 'فَ يَ عَ', latin: '\'A Ya Fa', keterangan: "Kombinasi Ya, 'Ain, dan Fa." },
+                    { char: 'غَ يَ ظَ', latin: 'Zho Ya Gho', keterangan: "Kombinasi Ya, Zho tebal, dan Ghoin tebal." },
+                    { char: 'عَ يَ طَ', latin: 'Tho Ya \'A', keterangan: "Kombinasi Ya, Tho tebal, dan 'Ain." },
+                    { char: 'ظَ يَ ضَ', latin: 'Dho Ya Zho', keterangan: "Kombinasi Ya, Dhod tebal, dan Zho tebal." },
+                    { char: 'طَ يَ صَ', latin: 'Sho Ya Tho', keterangan: "Kombinasi Ya, Shod tebal, dan Tho tebal." },
+                    { char: 'ضَ يَ شَ', latin: 'Sya Ya Dho', keterangan: "Kombinasi Ya, Syin menyebar, dan Dhod tebal." },
+                    { char: 'صَ يَ سَ', latin: 'Sa Ya Sho', keterangan: "Kombinasi Ya, Sin desis, dan Shod tebal." },
+                    { char: 'شَ يَ زَ', latin: 'Za Ya Sya', keterangan: "Kombinasi Ya, Zay tajam, dan Syin menyebar." },
+                    { char: 'سَ يَ رَ', latin: 'Ro Ya Sa', keterangan: "Kombinasi Ya, Ro, dan Sin desis." },
+                    { char: 'زَ يَ ذَ', latin: 'Dza Ya Za', keterangan: "Kombinasi Ya, Dzal lembut, dan Zay tajam." },
+                    { char: 'رَ يَ دَ', latin: 'Da Ya Ro', keterangan: "Kombinasi Ya, Dal, dan Ro." },
+                    { char: 'ذَ يَ خَ', latin: 'Kho Ya Dza', keterangan: "Kombinasi Ya, Kho serak, dan Dzal lembut." },
+                    { char: 'دَ يَ حَ', latin: 'Ha Ya Da', keterangan: "Kombinasi Ya, Ha halus, dan Dal." },
+                    { char: 'خَ يَ جَ', latin: 'Ja Ya Kho', keterangan: "Kombinasi Ya, Jim, dan Kho serak." },
+                    { char: 'حَ يَ ثَ', latin: 'Tsa Ya Ha', keterangan: "Kombinasi Ya, Tsa lembut, dan Ha halus." },
+                    { char: 'جَ يَ تَ', latin: 'Ta Ya Ja', keterangan: "Kombinasi Ya, Ta, dan Jim." },
+                    { char: 'ثَ يَ بَ', latin: 'Ba Ya Tsa', keterangan: "Kombinasi Ya, Ba, dan Tsa lembut." },
+                    { char: 'تَ يَ اَ', latin: 'A Ya Ta', keterangan: "Kombinasi Ya, Alif, dan Ta." },
+                    { char: 'يَ يَ يَ', latin: 'Ya Ya Ya', keterangan: "Latihan pengulangan huruf Ya." },
+                    { char: 'اَ بَ تَ ثَ حَ جَ خَ دَ ذَ رَ زَ سَ شَ صَ ضَ طَ ظَ عَ غَ فَ قَ كَ لَ مَ نَ وَ هَ يَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza Ro Za Sa Sya Sho Dho Tho Zho \'A Gho Fa Qo Ka La Ma Na Wa Ha Ya', keterangan: "Evaluasi: Rangkaian huruf dari Alif hingga Ya." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 27):\n* Makhraj Ya (يَ): Pastikan bunyi Ya keluar dengan jelas dari tengah lidah dan tidak tertukar dengan bunyi Alif (A).\n* Evaluasi Menyeluruh: Santri diharapkan sudah hafal huruf secara acak maupun berurutan."
+                guide: "iqro1Page27Guide"
             },
             {
-                title: "Halaman 28: Latihan Kelancaran (1)",
-                info: "Mulai melatih santri membaca kata-kata sederhana dengan tiga huruf hijaiyah tunggal yang dibaca secara pendek dan cepat.",
+                title: "iqro1Page28Title",
+                info: "iqro1Page28Info",
                 items: [
-                    { char: 'بَ رَ اَ', latin: 'Ba Ro A' }, { char: 'بَ رَ رَ', latin: 'Ba Ro Ro' }, { char: 'قَ رَ اَ', latin: 'Qo Ro A' },
-                    { char: 'اَ مَ مَ', latin: 'A Ma Ma' }, { char: 'جَ نَ اَ', latin: 'Ja Na A' }, { char: 'سَ اَ لَ', latin: 'Sa A La' },
-                    { char: 'رَ زَ قَ', latin: 'Ro Za Qo' }, { char: 'مَ دَ حَ', latin: 'Ma Da Ha' }, { char: 'غَ مَ مَ', latin: 'Gho Ma Ma' },
-                    { char: 'لَ اَ كَ', latin: 'La A Ka' }, { char: 'مَ شَ اَ', latin: 'Ma Sya A' }, { char: 'حَ سَ نَ', latin: 'Ha Sa Na' }
+                    { char: 'بَطَشَ', latin: 'Ba-Tho-Sya', keterangan: "Melatih kecepatan membaca." },
+                    { char: 'عَبَدَ', latin: 'A-Ba-Da', keterangan: "Kombinasi huruf tengah tenggorokan." },
+                    { char: 'سَجَدَ', latin: 'Sa-Ja-Da', keterangan: "Latihan makhraj lidah dan gigi." },
+                    { char: 'ذَهَبَ', latin: 'Dza-Ha-Ba', keterangan: "Kombinasi huruf lembut dan halus." },
+                    { char: 'رَفَعَ', latin: 'Ro-Fa-A', keterangan: "Latihan bunyi Ro, Fa, dan Ain." },
+                    { char: 'فَجَعَلَ', latin: 'Fa-Ja-A-La', keterangan: "Rangkaian empat huruf pendek." },
+                    { char: 'وَدَفَعَ', latin: 'Wa-Da-Fa-A', keterangan: "Kombinasi Wawu, Dal, Fa, dan Ain." },
+                    { char: 'خَرَجَ', latin: 'Kho-Ro-Ja', keterangan: "Latihan bunyi serak, tebal, dan tengah lidah." },
+                    { char: 'جَلَسَ', latin: 'Ja-La-Sa', keterangan: "Kombinasi Jim, Lam, dan Sin." },
+                    { char: 'قَدَرَ', latin: 'Qo-Da-Ro', keterangan: "Latihan makhraj Qof tebal, Dal, dan Ro." },
+                    { char: 'كَتَبَ', latin: 'Ka-Ta-Ba', keterangan: "Kombinasi Kaf tipis, Ta, dan Ba." },
+                    { char: 'لَبِثَ', latin: 'La-Bi-Tsa', keterangan: "Latihan bunyi Lam, Ba, dan Tsa lembut." },
+                    { char: 'مَسَحَ', latin: 'Ma-Sa-Ha', keterangan: "Kombinasi Mim, Sin, dan Ha halus." },
+                    { char: 'نَظَرَ', latin: 'Na-Zho-Ro', keterangan: "Latihan Nun, Zho tebal, dan Ro." },
+                    { char: 'هَلَكَ', latin: 'Ha-La-Ka', keterangan: "Kombinasi Ha besar, Lam, dan Kaf tipis." },
+                    { char: 'يَجِدُ', latin: 'Ya-Ji-Du', keterangan: "Kombinasi Ya, Jim, dan Dal." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 28):\n* Kecepatan dan Ketepatan: Santri harus bisa membaca setiap baris dengan lancar tanpa terhenti.\n* Makhraj Huruf: Tetap perhatikan perbedaan makhraj, terutama A (اَ) dan 'A (عَ)."
+                guide: "iqro1Page28Guide"
             },
             {
-                title: "Halaman 29: Latihan Kelancaran (2)",
-                info: "Latihan pemantapan bagi santri untuk membaca kombinasi huruf-huruf tunggal dalam bentuk kata-kata pendek dengan harakat fathah.",
+                title: "iqro1Page29Title",
+                info: "iqro1Page29Info",
                 items: [
-                    { char: 'ثَ بَ تَ', latin: 'Tsa Ba Ta' }, { char: 'جَ حَ خَ', latin: 'Ja Ha Kho' }, { char: 'دَ ذَ رَ', latin: 'Da Dza Ro' },
-                    { char: 'زَ سَ شَ', latin: 'Za Sa Sya' }, { char: 'اَ صَ ظَ', latin: 'A Sho Zho' }, { char: 'طَ ظَ عَ', latin: 'Tho Zho \'A' },
-                    { char: 'غَ فَ قَ', latin: 'Gho Fa Qo' }, { char: 'كَ لَ مَ', latin: 'Ka La Ma' }, { char: 'نَ وَ هَ', latin: 'Na Wa Ha' },
-                    { char: 'حَ هَ لَ', latin: 'Ha Ha La' }, { char: 'بَ يَ نَ', latin: 'Ba Ya Na' }, { char: 'اَ كَ لَ', latin: 'A Ka La' }
+                    { char: 'ثَبَتَ', latin: 'Tsa-Ba-Ta', keterangan: "Pengulangan huruf Tsa." },
+                    { char: 'جَمَعَ', latin: 'Ja-Ma-A', keterangan: "Kombinasi Jim, Mim, dan Ain." },
+                    { char: 'حَشَرَ', latin: 'Ha-Sya-Ro', keterangan: "Kombinasi Ha halus, Syin, dan Ro." },
+                    { char: 'خَلَقَ', latin: 'Kho-La-Qo', keterangan: "Kombinasi Kho serak, Lam, dan Qof tebal." },
+                    { char: 'دَخَلَ', latin: 'Da-Kho-La', keterangan: "Kombinasi Dal, Kho serak, dan Lam." },
+                    { char: 'ذَكَرَ', latin: 'Dza-Ka-Ro', keterangan: "Kombinasi Dzal lembut, Kaf, dan Ro." },
+                    { char: 'رَزَقَ', latin: 'Ro-Za-Qo', keterangan: "Kombinasi Ro, Zay tajam, dan Qof tebal." },
+                    { char: 'سَمِعَ', latin: 'Sa-Mi-A', keterangan: "Kombinasi Sin, Mim, dan Ain." },
+                    { char: 'شَرَبَ', latin: 'Sya-Ro-Ba', keterangan: "Kombinasi Syin, Ro, dan Ba." },
+                    { char: 'صَدَقَ', latin: 'Sho-Da-Qo', keterangan: "Kombinasi Shod tebal, Dal, dan Qof tebal." },
+                    { char: 'ضَرَبَ', latin: 'Dho-Ro-Ba', keterangan: "Kombinasi Dhod tebal, Ro, dan Ba." },
+                    { char: 'طَلَبَ', latin: 'Tho-La-Ba', keterangan: "Kombinasi Tho tebal, Lam, dan Ba." },
+                    { char: 'ظَلَمَ', latin: 'Zho-La-Ma', keterangan: "Kombinasi Zho tebal, Lam, dan Mim." },
+                    { char: 'عَرَفَ', latin: 'A-Ro-Fa', keterangan: "Kombinasi Ain, Ro, dan Fa." },
+                    { char: 'غَفَرَ', latin: 'Gho-Fa-Ro', keterangan: "Kombinasi Ghoin tebal, Fa, dan Ro." },
+                    { char: 'فَتَحَ', latin: 'Fa-Ta-Ha', keterangan: "Kombinasi Fa, Ta, dan Ha halus." },
+                    { char: 'قَرَأَ', latin: 'Qo-Ro-A', keterangan: "Kombinasi Qof tebal, Ro, dan Alif." },
+                    { char: 'كَرَمَ', latin: 'Ka-Ro-Ma', keterangan: "Kombinasi Kaf tipis, Ro, dan Mim." },
+                    { char: 'لَبَنَ', latin: 'La-Ba-Na', keterangan: "Kombinasi Lam, Ba, dan Nun." },
+                    { char: 'مَلَكَ', latin: 'Ma-La-Ka', keterangan: "Kombinasi Mim, Lam, dan Kaf." },
+                    { char: 'نَزَلَ', latin: 'Na-Za-La', keterangan: "Kombinasi Nun, Zay tajam, dan Lam." },
+                    { char: 'وَلَدَ', latin: 'Wa-La-Da', keterangan: "Kombinasi Wawu, Lam, dan Dal." },
+                    { char: 'هَجَرَ', latin: 'Ha-Ja-Ro', keterangan: "Kombinasi Ha besar, Jim, dan Ro." },
+                    { char: 'يَسَرَ', latin: 'Ya-Sa-Ro', keterangan: "Kombinasi Ya, Sin, dan Ro." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 29):\n* Kecepatan: Santri dianggap lulus jika mampu membaca setiap baris dengan lancar.\n* Perbedaan Bunyi: Berikan perhatian khusus pada Ha (حَ) vs Ha (هَ), dan A (اَ) vs 'A (عَ)."
+                guide: "iqro1Page29Guide"
             },
             {
-                title: "Halaman 30: Perhatian - Bedakan Bunyi",
-                info: "Halaman ini sangat penting untuk melatih ketelitian dalam membedakan bunyi huruf-huruf yang memiliki makhraj atau sifat yang hampir mirip.",
+                title: "iqro1Page30Title",
+                info: "iqro1Page30Info",
                 items: [
-                    { char: 'اَ - عَ', latin: "A - 'A" }, { char: 'ثَ - سَ', latin: 'Tsa - Sa' }, { char: 'حَ - هَ', latin: 'Ha - Ha' },
-                    { char: 'ثَ - شَ', latin: 'Tsa - Sya' }, { char: 'جَ - زَ', latin: 'Ja - Za' }, { char: 'سَ - شَ', latin: 'Sa - Sya' },
-                    { char: 'ذَ - زَ', latin: 'Dza - Za' }, { char: 'سَ - صَ', latin: 'Sa - Sho' }, { char: 'خَ - غَ', latin: 'Kho - Gho' },
-                    { char: 'تَ - طَ', latin: 'Ta - Tho' }, { char: 'كَ - قَ', latin: 'Ka - Qo' }, { char: 'ظَ - ضَ', latin: 'Zho - Dho' }
+                    { char: 'اَ - عَ', latin: 'A - \'A', keterangan: "Perbedaan Alif dan Ain." },
+                    { char: 'حَ - هَ', latin: 'Ha - Ha', keterangan: "Perbedaan Ha halus dan Ha besar." },
+                    { char: 'سَ - صَ - ثَ', latin: 'Sa - Sho - Tsa', keterangan: "Perbedaan Sin, Shod, dan Tsa." },
+                    { char: 'زَ - ذَ - ظَ', latin: 'Za - Dza - Zho', keterangan: "Perbedaan Zay, Dzal, dan Zho." },
+                    { char: 'تَ - طَ', latin: 'Ta - Tho', keterangan: "Perbedaan Ta dan Tho." },
+                    { char: 'قَ - كَ', latin: 'Qo - Ka', keterangan: "Perbedaan Qof dan Kaf." },
+                    { char: 'ضَ - دَ', latin: 'Dho - Da', keterangan: "Perbedaan Dhod dan Dal." },
+                    { char: 'غَ - خَ', latin: 'Gho - Kho', keterangan: "Perbedaan Ghoin dan Kho." },
+                    { char: 'وَلَا - لَا', latin: 'Wa-La - La', keterangan: "Perbedaan Wawu Alif dan Lam Alif." },
+                    { char: 'أ - ء', latin: 'A - \'A', keterangan: "Perbedaan Hamzah dan Ain." }
                 ],
-                guide: "💡 Petunjuk Pembelajaran (Halaman 30):\n* Kunci Kelulusan: Santri tidak diperkenankan lanjut jika masih sering tertukar dalam melafalkan pasangan huruf di atas.\n* Praktek Mandiri: Ulangi berkali-kali sampai perbedaannya terdengar nyata."
+                guide: "iqro1Page30Guide"
             },
             {
-                title: "Halaman 31: Evaluasi Akhir",
-                info: "Menentukan apakah santri sudah menguasai seluruh huruf Hijaiyah tunggal dan siap melanjutkan ke Jilid 2.",
+                title: "iqro1Page31Title",
+                info: "iqro1Page31Info",
                 items: [
-                    { char: 'اَ بَ تَ ثَ جَ حَ خَ دَ ذَ رَ زَ', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza Ro Za' },
-                    { char: 'سَ شَ صَ ضَ طَ ظَ عَ غَ', latin: 'Sa Sya Sho Dho Tho Zho \'A Gho' },
-                    { char: 'فَ قَ كَ لَ مَ نَ وَ هَ ء يَ', latin: 'Fa Qo Ka La Ma Na Wa Ha \'A Ya' },
-                    { char: 'يَ ء هَ وَ نَ مَ لَ كَ قَ فَ', latin: 'Ya \'A Ha Wa Na Ma La Ka Qo Fa' },
-                    { char: 'غَ عَ ظَ طَ ضَ صَ شَ سَ', latin: 'Gho \'A Zho Tho Dho Sho Sya Sa' },
-                    { char: 'زَ رَ ذَ دَ خَ حَ جَ ثَ تَ بَ اَ', latin: 'Za Ro Dza Da Kho Ha Ja Tsa Ta Ba A' }
+                    { char: 'ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن و ه ي', latin: 'A Ba Ta Tsa Ja Ha Kho Da Dza Ro Za Sa Sya Sho Dho Tho Zho \'A Gho Fa Qo Ka La Ma Na Wa Ha Ya', keterangan: "Evaluasi seluruh huruf Hijaiyah tunggal." },
+                    { char: 'بَ تَ ثَ', latin: 'Ba Ta Tsa', keterangan: "Latihan identifikasi titik." },
+                    { char: 'جَ حَ خَ', latin: 'Ja Ha Kho', keterangan: "Latihan identifikasi titik dan makhraj tenggorokan." },
+                    { char: 'دَ ذَ رَ زَ', latin: 'Da Dza Ro Za', keterangan: "Latihan identifikasi titik dan huruf yang tidak menyambung." },
+                    { char: 'سَ شَ صَ ضَ', latin: 'Sa Sya Sho Dho', keterangan: "Latihan identifikasi titik dan makhraj." },
+                    { char: 'طَ ظَ عَ غَ', latin: 'Tho Zho \'A Gho', keterangan: "Latihan identifikasi titik dan makhraj tebal." },
+                    { char: 'فَ قَ كَ لَ مَ نَ', latin: 'Fa Qo Ka La Ma Na', keterangan: "Latihan identifikasi titik dan makhraj." },
+                    { char: 'وَ هَ يَ', latin: 'Wa Ha Ya', keterangan: "Latihan makhraj bibir, tenggorokan, dan lidah." },
+                    { char: 'قَرَأَ وَسَجَدَ', latin: 'Qo-Ro-A Wa Sa-Ja-Da', keterangan: "Membaca gabungan kata." },
+                    { char: 'خَلَقَ فَسَوَّى', latin: 'Kho-La-Qo Fa Saw-wa', keterangan: "Membaca gabungan kata dengan huruf mati." },
+                    { char: 'يَوْمَ نَادَى', latin: 'Yaw-ma Na-da', keterangan: "Membaca gabungan kata dengan mad." },
+                    { char: 'لَا تُفْسِدُوْا', latin: 'La Tuf-si-du', keterangan: "Membaca gabungan kata dengan mad dan sukun." }
                 ],
-                guide: "💡 Kriteria Kelulusan Jilid 1:\n* Kelancaran: Mampu membaca seluruh huruf secara berurutan maupun acak tanpa terbata-bata.\n* Ketepatan Makhraj: Perbedaan bunyi antara huruf yang mirip harus konsisten dan benar.\n* Tanpa Mengeja dan Pendek-Cepat."
+                guide: "iqro1Page31Guide"
             }
-        ]
-    },
-    { 
-        level: 2, 
+        ] // End of sections for Iqro 1
+    }, // End of IqroLevelData for level 1
+    // Start of IqroLevelData for level 2
+    {
+        level: 2,
         title: "Iqro 2",
-        description: "Mempelajari huruf yang disambung dan pengenalan bacaan panjang (Mad Thobi'i) yang dibaca sepanjang 2 harakat.",
-        cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_2.png",
-        sections: [ 
-            { 
-                title: "Coming Soon", 
-                info: "Materi untuk Iqro 2 sedang dalam persiapan.",
-                items: []
+        description: "Memperkenalkan cara menyambung dua huruf serta menekankan bahwa bacaan harus tetap pendek (kecuali jika ada tanda panjang nantinya).",
+        cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_2.png", // Placeholder cover for Iqro 2
+        sections: [
+            {
+                title: "iqro2Page1Title",
+                info: "iqro2Page1Info",
+                items: [
+                    { char: 'بَ نَ', latin: 'Ba Na', keterangan: "Ba dan Nun disambung, dibaca pendek." },
+                    { char: 'نَ بَ', latin: 'Na Ba', keterangan: "Nun dan Ba disambung." },
+                    { char: 'تَ نَ', latin: 'Ta Na', keterangan: "Ta dan Nun disambung." },
+                    { char: 'نَ تَ', latin: 'Na Ta', keterangan: "Nun dan Ta disambung." },
+                    { char: 'ثَ نَ', latin: 'Tsa Na', keterangan: "Tsa dan Nun disambung." },
+                    { char: 'نَ ثَ', latin: 'Na Tsa', keterangan: "Nun dan Tsa disambung." },
+                    { char: 'يَ نَ', latin: 'Ya Na', keterangan: "Ya dan Nun disambung." },
+                    { char: 'نَ يَ', latin: 'Na Ya', keterangan: "Nun dan Ya disambung." },
+                    { char: 'بَ يَ', latin: 'Ba Ya', keterangan: "Ba dan Ya disambung." },
+                    { char: 'يَ بَ', latin: 'Ya Ba', keterangan: "Ya dan Ba disambung." },
+                    { char: 'تَ يَ', latin: 'Ta Ya', keterangan: "Ta dan Ya disambung." },
+                    { char: 'يَ تَ', latin: 'Ya Ta', keterangan: "Ya dan Ta disambung." },
+                    { char: 'ثَ يَ', latin: 'Tsa Ya', keterangan: "Tsa dan Ya disambung." },
+                    { char: 'يَ ثَ', latin: 'Ya Tsa', keterangan: "Ya dan Tsa disambung." },
+                    { char: 'نَ بَ تَ', latin: 'Na Ba Ta', keterangan: "Nun, Ba, dan Ta disambung." },
+                    { char: 'تَ نَ بَ', latin: 'Ta Na Ba', keterangan: "Ta, Nun, dan Ba disambung." },
+                    { char: 'بَ يَ نَ', latin: 'Ba Ya Na', keterangan: "Ba, Ya, dan Nun disambung." },
+                    { char: 'يَ تِ نَ', latin: 'Ya Ti Na', keterangan: "Ya, Ta, dan Nun disambung." },
+                    { char: 'بَ تِ نَ', latin: 'Ba Ti Na', keterangan: "Ba, Ta, dan Nun disambung." },
+                    { char: 'ثَ تِ نَ', latin: 'Tsa Ti Na', keterangan: "Tsa, Ta, dan Nun disambung." },
+                    { char: 'نَ نَ نَ', latin: 'Na Na Na', keterangan: "Tiga Nun disambung." },
+                    { char: 'يَ بَ تَ', latin: 'Ya Ba Ta', keterangan: "Ya, Ba, Ta disambung." }
+                ],
+                guide: "iqro2Page1Guide"
+            },
+            {
+                title: "iqro2Page2Title",
+                info: "iqro2Page2Info",
+                items: [
+                    { char: 'جَ لَ', latin: 'Ja La', keterangan: "Jim dan Lam disambung." },
+                    { char: 'حَ مَ', latin: 'Ha Ma', keterangan: "Ha dan Mim disambung." },
+                    { char: 'خَ ذَ', latin: 'Kho Dza', keterangan: "Kho dan Dzal disambung." },
+                    { char: 'خَ لَ قَ', latin: 'Kho La Qo', keterangan: "Kho, Lam, dan Qof disambung." },
+                    { char: 'جَ مَ عَ', latin: 'Ja Ma \'A', keterangan: "Jim, Mim, dan Ain disambung." },
+                    { char: 'حَ سَ دَ', latin: 'Ha Sa Da', keterangan: "Ha, Sin, dan Dal disambung." },
+                    { char: 'خَ بَ رَ', latin: 'Kho Ba Ro', keterangan: "Kho, Ba, dan Ro disambung." },
+                    { char: 'جَ عَ لَ', latin: 'Ja \'A La', keterangan: "Jim, Ain, Lam disambung." },
+                    { char: 'حَ رَ ثَ', latin: 'Ha Ro Tsa', keterangan: "Ha, Ro, dan Tsa disambung." },
+                    { char: 'خَ دَ مَ', latin: 'Kho Da Ma', keterangan: "Kho, Dal, dan Mim disambung." },
+                    { char: 'جَ دَ لَ', latin: 'Ja Da La', keterangan: "Jim, Dal, dan Lam disambung." },
+                    { char: 'حَ بَ سَ', latin: 'Ha Ba Sa', keterangan: "Ha, Ba, dan Sin disambung." },
+                    { char: 'خَ سَ رَ', latin: 'Kho Sa Ro', keterangan: "Kho, Sin, dan Ro disambung." },
+                    { char: 'جَ نَ حَ', latin: 'Ja Na Ha', keterangan: "Jim, Nun, dan Ha disambung." },
+                    { char: 'حَ سَ نَ', latin: 'Ha Sa Na', keterangan: "Ha, Sin, dan Nun disambung." },
+                    { char: 'خَ شَ عَ', latin: 'Kho Sya \'A', keterangan: "Kho, Syin, dan Ain disambung." }
+                ],
+                guide: "iqro2Page2Guide"
+            },
+            {
+                title: "iqro2Page3Title",
+                info: "iqro2Page3Info",
+                items: [
+                    { char: 'دَ رَ', latin: 'Da Ro', keterangan: "Dal dan Ro, Dal tidak menggandeng." },
+                    { char: 'ذَ رَ', latin: 'Dza Ro', keterangan: "Dzal dan Ro, Dzal tidak menggandeng." },
+                    { char: 'رَ زَ', latin: 'Ro Za', keterangan: "Ro dan Za, Ro tidak menggandeng." },
+                    { char: 'زَ دَ', latin: 'Za Da', keterangan: "Za dan Dal, Za tidak menggandeng." },
+                    { char: 'وَ دَ', latin: 'Wa Da', keterangan: "Wawu dan Dal, Wawu tidak menggandeng." },
+                    { char: 'بَ دَ رَ', latin: 'Ba Da Ro', keterangan: "Ba, Dal, Ro. Dal tidak menggandeng." },
+                    { char: 'جَ ذَ رَ', latin: 'Ja Dza Ro', keterangan: "Jim, Dzal, Ro. Dzal tidak menggandeng." },
+                    { char: 'حَ رَ رَ', latin: 'Ha Ro Ro', keterangan: "Ha, Ro, Ro. Ro pertama tidak menggandeng." },
+                    { char: 'خَ زَ نَ', latin: 'Kho Za Na', keterangan: "Kho, Za, Nun. Za tidak menggandeng." },
+                    { char: 'دَ خَ لَ', latin: 'Da Kho La', keterangan: "Dal, Kho, Lam. Dal tidak menggandeng." },
+                    { char: 'ذَ هَ بَ', latin: 'Dza Ha Ba', keterangan: "Dzal, Ha, Ba. Dzal tidak menggandeng." },
+                    { char: 'رَ زَ قَ', latin: 'Ro Za Qo', keterangan: "Ro, Za, Qof. Ro dan Za tidak menggandeng." },
+                    { char: 'زَ رَ عَ', latin: 'Za Ro \'A', keterangan: "Za, Ro, Ain. Za dan Ro tidak menggandeng." },
+                    { char: 'وَ جَ دَ', latin: 'Wa Ja Da', keterangan: "Wawu, Jim, Dal. Wawu tidak menggandeng." },
+                    { char: 'أَ وَ بَ', latin: 'A Wa Ba', keterangan: "Alif, Wawu, Ba. Alif dan Wawu tidak menggandeng." },
+                    { char: 'أَ ذَ نَ', latin: 'A Dza Na', keterangan: "Alif, Dzal, Nun. Alif dan Dzal tidak menggandeng." }
+                ],
+                guide: "iqro2Page3Guide"
+            },
+            {
+                title: "iqro2Page4Title",
+                info: "iqro2Page4Info",
+                items: [
+                    { char: 'سَ لَ', latin: 'Sa La', keterangan: "Sin dan Lam disambung." },
+                    { char: 'شَ جَ', latin: 'Sya Ja', keterangan: "Syin dan Jim disambung." },
+                    { char: 'سَ مَ رَ', latin: 'Sa Ma Ro', keterangan: "Sin, Mim, Ro disambung." },
+                    { char: 'شَ دَ دَ', latin: 'Sya Da Da', keterangan: "Syin, Dal, Dal disambung." },
+                    { char: 'فَ سَ قَ', latin: 'Fa Sa Qo', keterangan: "Fa, Sin, Qof disambung." },
+                    { char: 'كَ شَ فَ', latin: 'Ka Sya Fa', keterangan: "Kaf, Syin, Fa disambung." },
+                    { char: 'بَ سَ طَ', latin: 'Ba Sa Tho', keterangan: "Ba, Sin, Tho disambung." },
+                    { char: 'تَ شَ رَ', latin: 'Ta Sya Ro', keterangan: "Ta, Syin, Ro disambung." },
+                    { char: 'نَ سَ ءَ', latin: 'Na Sa A', keterangan: "Nun, Sin, Hamzah disambung." },
+                    { char: 'يَ شَ ءَ', latin: 'Ya Sya A', keterangan: "Ya, Syin, Hamzah disambung." },
+                    { char: 'سَ سَ رَ', latin: 'Sa Sa Ro', keterangan: "Sin, Sin, Ro disambung." },
+                    { char: 'شَ شَ رَ', latin: 'Sya Sya Ro', keterangan: "Syin, Syin, Ro disambung." },
+                    { char: 'سَ دَ سَ', latin: 'Sa Da Sa', keterangan: "Sin, Dal, Sin disambung." },
+                    { char: 'شَ هَ دَ', latin: 'Sya Ha Da', keterangan: "Syin, Ha besar, Dal disambung." },
+                    { char: 'سَ جَ دَ', latin: 'Sa Ja Da', keterangan: "Sin, Jim, Dal disambung." },
+                    { char: 'شَ رَ حَ', latin: 'Sya Ro Ha', keterangan: "Syin, Ro, Ha halus disambung." }
+                ],
+                guide: "iqro2Page4Guide"
+            },
+            {
+                title: "iqro2Page5Title",
+                info: "iqro2Page5Info",
+                items: [
+                    { char: 'صَ بَ رَ', latin: 'Sho Ba Ro', keterangan: "Shod, Ba, Ro disambung." },
+                    { char: 'ضَ رَ بَ', latin: 'Dho Ro Ba', keterangan: "Dhod, Ro, Ba disambung." },
+                    { char: 'نَ صَ رَ', latin: 'Na Sho Ro', keterangan: "Nun, Shod, Ro disambung." },
+                    { char: 'يَ ضَ رَ', latin: 'Ya Dho Ro', keterangan: "Ya, Dhod, Ro disambung." },
+                    { char: 'حَ صَ دَ', latin: 'Ha Sho Da', keterangan: "Ha halus, Shod, Dal disambung." },
+                    { char: 'خَ ضَ عَ', latin: 'Kho Dho \'A', keterangan: "Kho, Dhod, Ain disambung." },
+                    { char: 'أَ صَ لَ', latin: 'A Sho La', keterangan: "Alif, Shod, Lam disambung." },
+                    { char: 'بَ ضَ لَ', latin: 'Ba Dho La', keterangan: "Ba, Dhod, Lam disambung." },
+                    { char: 'صَ صَ لَ', latin: 'Sho Sho La', keterangan: "Shod, Shod, Lam disambung." },
+                    { char: 'ضَ ضَ لَ', latin: 'Dho Dho La', keterangan: "Dhod, Dhod, Lam disambung." },
+                    { char: 'صَ بَ بَ', latin: 'Sho Ba Ba', keterangan: "Shod, Ba, Ba disambung." },
+                    { char: 'ضَ رَ رَ', latin: 'Dho Ro Ro', keterangan: "Dhod, Ro, Ro disambung." },
+                    { char: 'صَ دَ قَ', latin: 'Sho Da Qo', keterangan: "Shod, Dal, Qof disambung." },
+                    { char: 'ضَ مَ نَ', latin: 'Dho Ma Na', keterangan: "Dhod, Mim, Nun disambung." },
+                    { char: 'أَ صَ رَ', latin: 'A Sho Ro', keterangan: "Alif, Shod, Ro disambung." },
+                    { char: 'أَ ضَ عَ', latin: 'A Dho \'A', keterangan: "Alif, Dhod, Ain disambung." }
+                ],
+                guide: "iqro2Page5Guide"
+            },
+            {
+                title: "iqro2Page6Title",
+                info: "iqro2Page6Info",
+                items: [
+                    { char: 'طَ بَ عَ', latin: 'Tho Ba \'A', keterangan: "Tho, Ba, Ain disambung." },
+                    { char: 'ظَ لَ مَ', latin: 'Zho La Ma', keterangan: "Zho, Lam, Mim disambung." },
+                    { char: 'بَ طَ شَ', latin: 'Ba Tho Sya', keterangan: "Ba, Tho, Syin disambung." },
+                    { char: 'مَ ظَ هَ رَ', latin: 'Ma Zho Ha Ro', keterangan: "Mim, Zho, Ha besar, Ro disambung." },
+                    { char: 'فَ طَ رَ', latin: 'Fa Tho Ro', keterangan: "Fa, Tho, Ro disambung." },
+                    { char: 'ذَ ظَ رَ', latin: 'Dza Zho Ro', keterangan: "Dzal, Zho, Ro disambung." },
+                    { char: 'صَ طَ دَ', latin: 'Sho Tho Da', keterangan: "Shod, Tho, Dal disambung." },
+                    { char: 'ضَ ظَ رَ', latin: 'Dho Zho Ro', keterangan: "Dhod, Zho, Ro disambung." },
+                    { char: 'طَ طَ بَ', latin: 'Tho Tho Ba', keterangan: "Tho, Tho, Ba disambung." },
+                    { char: 'ظَ ظَ مَ', latin: 'Zho Zho Ma', keterangan: "Zho, Zho, Mim disambung." },
+                    { char: 'طَ عَ مَ', latin: 'Tho \'A Ma', keterangan: "Tho, Ain, Mim disambung." },
+                    { char: 'ظَ فَرَ', latin: 'Zho Fa Ro', keterangan: "Zho, Fa, Ro disambung." },
+                    { char: 'أَ طَ رَ', latin: 'A Tho Ro', keterangan: "Alif, Tho, Ro disambung." },
+                    { char: 'أَ ظَ لَ', latin: 'A Zho La', keterangan: "Alif, Zho, Lam disambung." }
+                ],
+                guide: "iqro2Page6Guide"
+            },
+            {
+                title: "iqro2Page7Title",
+                info: "iqro2Page7Info",
+                items: [
+                    { char: 'عَ بَ دَ', latin: '\'A Ba Da', keterangan: "Ain, Ba, Dal disambung." },
+                    { char: 'غَ فَرَ', latin: 'Gho Fa Ro', keterangan: "Ghoin, Fa, Ro disambung." },
+                    { char: 'جَ عَ لَ', latin: 'Ja \'A La', keterangan: "Jim, Ain, Lam disambung." },
+                    { char: 'خَ بَ غَ', latin: 'Kho Ba Gho', keterangan: "Kho, Ba, Ghoin disambung." },
+                    { char: 'فَ عَ لَ', latin: 'Fa \'A La', keterangan: "Fa, Ain, Lam disambung." },
+                    { char: 'صَ بَ غَ', latin: 'Sho Ba Gho', keterangan: "Shod, Ba, Ghoin disambung." },
+                    { char: 'مَ عَ نَ', latin: 'Ma \'A Na', keterangan: "Mim, Ain, Nun disambung." },
+                    { char: 'مَ غَ فَرَ', latin: 'Ma Gho Fa Ro', keterangan: "Mim, Ghoin, Fa, Ro disambung." },
+                    { char: 'عَ عَ لَ', latin: '\'A \'A La', keterangan: "Ain, Ain, Lam disambung." },
+                    { char: 'غَ غَ لَ', latin: 'Gho Gho La', keterangan: "Ghoin, Ghoin, Lam disambung." },
+                    { char: 'نَ عَ لَ', latin: 'Na \'A La', keterangan: "Nun, Ain, Lam disambung." },
+                    { char: 'نَ غَ شَ', latin: 'Na Gho Sya', keterangan: "Nun, Ghoin, Syin disambung." },
+                    { char: 'عَ رَ فَ', latin: '\'A Ro Fa', keterangan: "Ain, Ro, Fa disambung." },
+                    { char: 'غَ سَ قَ', latin: 'Gho Sa Qo', keterangan: "Ghoin, Sin, Qof disambung." }
+                ],
+                guide: "iqro2Page7Guide"
+            },
+            {
+                title: "iqro2Page8Title",
+                info: "iqro2Page8Info",
+                items: [
+                    { char: 'فَ تَنَ', latin: 'Fa Ta Na', keterangan: "Fa, Ta, Nun disambung." },
+                    { char: 'قَ تَلَ', latin: 'Qo Ta La', keterangan: "Qof, Ta, Lam disambung." },
+                    { char: 'حَ فَ ظَ', latin: 'Ha Fa Zho', keterangan: "Ha halus, Fa, Zho disambung." },
+                    { char: 'مَ قَ طَ', latin: 'Ma Qo Tho', keterangan: "Mim, Qof, Tho disambung." },
+                    { char: 'نَ فَعَ', latin: 'Na Fa \'A', keterangan: "Nun, Fa, Ain disambung." },
+                    { char: 'نَ قَ صَ', latin: 'Na Qo Sho', keterangan: "Nun, Qof, Shod disambung." },
+                    { char: 'لَ فَ حَ', latin: 'La Fa Ha', keterangan: "Lam, Fa, Ha halus disambung." },
+                    { char: 'لَ قَ رَ', latin: 'La Qo Ro', keterangan: "Lam, Qof, Ro disambung." },
+                    { char: 'فَ فَ رَ', latin: 'Fa Fa Ro', keterangan: "Fa, Fa, Ro disambung." },
+                    { char: 'قَ قَ رَ', latin: 'Qo Qo Ro', keterangan: "Qof, Qof, Ro disambung." },
+                    { char: 'فَ عَ لَ', latin: 'Fa \'A La', keterangan: "Fa, Ain, Lam disambung." },
+                    { char: 'قَ عَ دَ', latin: 'Qo \'A Da', keterangan: "Qof, Ain, Dal disambung." },
+                    { char: 'أَ فَ لَ', latin: 'A Fa La', keterangan: "Alif, Fa, Lam disambung." },
+                    { char: 'أَ قَ رَ', latin: 'A Qo Ro', keterangan: "Alif, Qof, Ro disambung." }
+                ],
+                guide: "iqro2Page8Guide"
+            },
+            {
+                title: "iqro2Page9Title",
+                info: "iqro2Page9Info",
+                items: [
+                    { char: 'كَ بَ دَ', latin: 'Ka Ba Da', keterangan: "Kaf, Ba, Dal disambung." },
+                    { char: 'لَ زَمَ', latin: 'La Za Ma', keterangan: "Lam, Za, Mim disambung." },
+                    { char: 'فَ كَ هَ', latin: 'Fa Ka Ha', keterangan: "Fa, Kaf, Ha besar disambung." },
+                    { char: 'عَ لَ قَ', latin: '\'A La Qo', keterangan: "Ain, Lam, Qof disambung." },
+                    { char: 'جَ كَ لَ', latin: 'Ja Ka La', keterangan: "Jim, Kaf, Lam disambung." },
+                    { char: 'دَ لَ لَ', latin: 'Da La La', keterangan: "Dal, Lam, Lam disambung." },
+                    { char: 'مَ كَ رَ', latin: 'Ma Ka Ro', keterangan: "Mim, Kaf, Ro disambung." },
+                    { char: 'بَ لَ غَ', latin: 'Ba La Gho', keterangan: "Ba, Lam, Ghoin disambung." },
+                    { char: 'كَ كَ لَ', latin: 'Ka Ka La', keterangan: "Kaf, Kaf, Lam disambung." },
+                    { char: 'لَ لَ كَ', latin: 'La La Ka', keterangan: "Lam, Lam, Kaf disambung." },
+                    { char: 'كَ بَ بَ', latin: 'Ka Ba Ba', keterangan: "Kaf, Ba, Ba disambung." },
+                    { char: 'لَ حَ لَ', latin: 'La Ha La', keterangan: "Lam, Ha halus, Lam disambung." },
+                    { char: 'أَ كَ لَ', latin: 'A Ka La', keterangan: "Alif, Kaf, Lam disambung." },
+                    { char: 'أَ لَ مَ', latin: 'A La Ma', keterangan: "Alif, Lam, Mim disambung." }
+                ],
+                guide: "iqro2Page9Guide"
+            },
+            {
+                title: "iqro2Page10Title",
+                info: "iqro2Page10Info",
+                items: [
+                    { char: 'مَ رَ', latin: 'Ma Ro', keterangan: "Mim dan Ro disambung." },
+                    { char: 'نَ زَ', latin: 'Na Za', keterangan: "Nun dan Za disambung." },
+                    { char: 'مَ كَ نَ', latin: 'Ma Ka Na', keterangan: "Mim, Kaf, Nun disambung." },
+                    { char: 'نَ مَ رَ', latin: 'Na Ma Ro', keterangan: "Nun, Mim, Ro disambung." },
+                    { char: 'بَ مَ رَ', latin: 'Ba Ma Ro', keterangan: "Ba, Mim, Ro disambung." },
+                    { char: 'تَ نَ رَ', latin: 'Ta Na Ro', keterangan: "Ta, Nun, Ro disambung." },
+                    { char: 'لَ مَ سَ', latin: 'La Ma Sa', keterangan: "Lam, Mim, Sin disambung." },
+                    { char: 'حَ نَ ثَ', latin: 'Ha Na Tsa', keterangan: "Ha halus, Nun, Tsa disambung." },
+                    { char: 'مَ مَ نَ', latin: 'Ma Ma Na', keterangan: "Mim, Mim, Nun disambung." },
+                    { char: 'نَ نَ مَ', latin: 'Na Na Ma', keterangan: "Nun, Nun, Mim disambung." },
+                    { char: 'مَ لَ كَ', latin: 'Ma La Ka', keterangan: "Mim, Lam, Kaf disambung." },
+                    { char: 'نَ سَ ءَ', latin: 'Na Sa A', keterangan: "Nun, Sin, Hamzah disambung." },
+                    { char: 'أَ مَ رَ', latin: 'A Ma Ro', keterangan: "Alif, Mim, Ro disambung." },
+                    { char: 'أَ نَ سَ', latin: 'A Na Sa', keterangan: "Alif, Nun, Sin disambung." }
+                ],
+                guide: "iqro2Page10Guide"
+            },
+            {
+                title: "iqro2Page11Title",
+                info: "iqro2Page11Info",
+                items: [
+                    { char: 'بَ هَ جَ', latin: 'Ba Ha Ja', keterangan: "Ba, Ha besar, Jim disambung." },
+                    { char: 'لَ هَ بَ', latin: 'La Ha Ba', keterangan: "Lam, Ha besar, Ba disambung." },
+                    { char: 'وَ هَ بَ', latin: 'Wa Ha Ba', keterangan: "Wawu, Ha besar, Ba. Wawu tidak menggandeng." },
+                    { char: 'مَ هَ لَ', latin: 'Ma Ha La', keterangan: "Mim, Ha besar, Lam disambung." },
+                    { char: 'نَ هَ رَ', latin: 'Na Ha Ro', keterangan: "Nun, Ha besar, Ro disambung." },
+                    { char: 'عَ هَ دَ', latin: '\'A Ha Da', keterangan: "Ain, Ha besar, Dal disambung." },
+                    { char: 'كَرِهَ', latin: 'Ka Ri Ha', keterangan: "Kaf, Ro, Ha besar disambung." },
+                    { char: 'فَكِهَ', latin: 'Fa Ki Ha', keterangan: "Fa, Kaf, Ha besar disambung." },
+                    { char: 'مَوَاهِبُ', latin: 'Ma Wa Hi Bu', keterangan: "Mim, Wawu, Ha besar, Ba disambung." },
+                    { char: 'فَوَكِهُوْا', latin: 'Fa Wa Ki Hu', keterangan: "Fa, Wawu, Kaf, Ha besar disambung." },
+                    { char: 'أَشْهَدُ', latin: 'Asy Ha Du', keterangan: "Alif, Syin, Ha besar, Dal disambung." },
+                    { char: 'بَ هَ هَ', latin: 'Ba Ha Ha', keterangan: "Ba, Ha besar, Ha besar disambung." },
+                    { char: 'هَ هَ هَ', latin: 'Ha Ha Ha', keterangan: "Tiga Ha besar disambung." },
+                    { char: 'وَجْهَهُ', latin: 'Waj Ha Hu', keterangan: "Wawu, Jim, Ha besar, Ha besar disambung." }
+                ],
+                guide: "iqro2Page11Guide"
+            },
+            {
+                title: "iqro2Page12Title",
+                info: "iqro2Page12Info",
+                items: [
+                    { char: 'ءَابَ', latin: 'A-Bā', keterangan: "Hamzah pendek, Ba panjang (2 ketukan)." },
+                    { char: 'تَابَ', latin: 'Tā-Ba', keterangan: "Ta panjang, Ba pendek." },
+                    { char: 'جَاءَ', latin: 'Jā-A', keterangan: "Jim panjang, Hamzah pendek." },
+                    { char: 'حَارَ', latin: 'Hā-Ro', keterangan: "Ha halus panjang, Ro pendek." },
+                    { char: 'دَارَ', latin: 'Dā-Ro', keterangan: "Dal panjang, Ro pendek." },
+                    { char: 'ذَاكَ', latin: 'Dzā-Ka', keterangan: "Dzal panjang, Kaf pendek." },
+                    { char: 'رَامَ', latin: 'Rā-Ma', keterangan: "Ro panjang, Mim pendek." },
+                    { char: 'زَادَ', latin: 'Zā-Da', keterangan: "Za panjang, Dal pendek." },
+                    { char: 'سَاءَ', latin: 'Sā-A', keterangan: "Sin panjang, Hamzah pendek." },
+                    { char: 'شَاءَ', latin: 'Syā-A', keterangan: "Syin panjang, Hamzah pendek." },
+                    { char: 'صَامَ', latin: 'Shā-Ma', keterangan: "Shod panjang, Mim pendek." },
+                    { char: 'ضَاقَ', latin: 'Dhā-Qo', keterangan: "Dhod panjang, Qof pendek." },
+                    { char: 'طَافَ', latin: 'Thā-Fa', keterangan: "Tho panjang, Fa pendek." },
+                    { char: 'ظَاهِرَ', latin: 'Zhā-Hi-Ro', keterangan: "Zho panjang, Ha besar pendek, Ro pendek." },
+                    { char: 'عَاشَ', latin: 'Ā-Sya', keterangan: "Ain panjang, Syin pendek." },
+                    { char: 'غَابَ', latin: 'Ghā-Ba', keterangan: "Ghoin panjang, Ba pendek." },
+                    { char: 'فَازَ', latin: 'Fā-Za', keterangan: "Fa panjang, Za pendek." },
+                    { char: 'قَالَ', latin: 'Qō-La', keterangan: "Qof panjang, Lam pendek." },
+                    { char: 'كَانَ', latin: 'Kā-Na', keterangan: "Kaf panjang, Nun pendek." },
+                    { char: 'لَمَا', latin: 'La-Mā', keterangan: "Lam pendek, Mim panjang." },
+                    { char: 'مَالًا', latin: 'Mā-Lan', keterangan: "Mim panjang, Lam Alif panjang." },
+                    { char: 'نَارًا', latin: 'Nā-Ron', keterangan: "Nun panjang, Ro panjang." },
+                    { char: 'وَلَاءَ', latin: 'Wa-Lā-A', keterangan: "Wawu pendek, Lam Alif panjang, Hamzah pendek." },
+                    { char: 'هَذَا', latin: 'Hā-Dzā', keterangan: "Ha besar panjang, Dzal panjang." },
+                    { char: 'يَايَا', latin: 'Yā-Yā', keterangan: "Ya panjang, Ya panjang." }
+                ],
+                guide: "iqro2Page12Guide"
+            },
+            {
+                title: "iqro2Page13Title",
+                info: "iqro2Page13Info",
+                items: [
+                    { char: 'جَادَلَ', latin: 'Jā-Da-La', keterangan: "Jim panjang, Dal pendek, Lam pendek." },
+                    { char: 'حَاشَا', latin: 'Hā-Syā', keterangan: "Ha halus panjang, Syin panjang." },
+                    { char: 'خَابَ', latin: 'Khā-Ba', keterangan: "Kho panjang, Ba pendek." },
+                    { char: 'جَارِيَةٌ', latin: 'Jā-Ri-Ya', keterangan: "Jim panjang, Ro pendek, Ya pendek." },
+                    { char: 'حَاصِرٌ', latin: 'Hā-Shi-Ron', keterangan: "Ha halus panjang, Shod pendek, Ro pendek." },
+                    { char: 'خَاشِعَةٌ', latin: 'Khā-Syi-A-Tun', keterangan: "Kho panjang, Syin pendek, Ain pendek, Ta marbutah pendek." },
+                    { char: 'جَاهِدْ', latin: 'Jā-Hid', keterangan: "Jim panjang, Ha halus pendek, Dal sukun." },
+                    { char: 'حَافَظَ', latin: 'Hā-Fa-Zho', keterangan: "Ha halus panjang, Fa pendek, Zho pendek." },
+                    { char: 'خَاطِئٌ', latin: 'Khō-Thi-Un', keterangan: "Kho panjang, Tho pendek, Hamzah pendek." },
+                    { char: 'جَاهِلٌ', latin: 'Jā-Hi-Lun', keterangan: "Jim panjang, Ha halus pendek, Lam pendek." },
+                    { char: 'حَاكِمٌ', latin: 'Hā-Ki-Mun', keterangan: "Ha halus panjang, Kaf pendek, Mim pendek." },
+                    { char: 'خَالِدٌ', latin: 'Khā-Li-Dun', keterangan: "Kho panjang, Lam pendek, Dal pendek." }
+                ],
+                guide: "iqro2Page13Guide"
+            },
+            {
+                title: "iqro2Page14Title",
+                info: "iqro2Page14Info",
+                items: [
+                    { char: 'دَارَا', latin: 'Dā-Rā', keterangan: "Dal panjang, Ro panjang. Keduanya tidak menyambung." },
+                    { char: 'ذَكَرَا', latin: 'Dza-Ka-Rā', keterangan: "Dzal panjang, Kaf pendek, Ro panjang. Dzal tidak menyambung." },
+                    { char: 'رَاجِعَ', latin: 'Rā-Ji-A', keterangan: "Ro panjang, Jim pendek, Ain pendek. Ro tidak menyambung." },
+                    { char: 'زَارَا', latin: 'Zā-Rā', keterangan: "Za panjang, Ro panjang. Keduanya tidak menyambung." },
+                    { char: 'دَخَلَا', latin: 'Da-Kho-Lā', keterangan: "Dal pendek, Kho pendek, Lam panjang. Dal tidak menyambung." },
+                    { char: 'ذَهَبَا', latin: 'Dza-Ha-Bā', keterangan: "Dzal pendek, Ha besar pendek, Ba panjang. Dzal tidak menyambung." },
+                    { char: 'رَجَعَا', latin: 'Ro-Ja-Ā', keterangan: "Ro pendek, Jim pendek, Ain panjang. Ro tidak menyambung." },
+                    { char: 'زَكَاهَا', latin: 'Za-Kā-Hā', keterangan: "Za pendek, Kaf panjang, Ha besar panjang. Za tidak menyambung." },
+                    { char: 'دَاعِيَا', latin: 'Dā-A-Yā', keterangan: "Dal panjang, Ain pendek, Ya panjang. Dal tidak menyambung." },
+                    { char: 'ذَاهِبٌ', latin: 'Dzā-Hi-Bun', keterangan: "Dzal panjang, Ha besar pendek, Ba pendek." },
+                    { char: 'رَاهِبٌ', latin: 'Rā-Hi-Bun', keterangan: "Ro panjang, Ha besar pendek, Ba pendek." },
+                    { char: 'زَائِرٌ', latin: 'Zā-I-Run', keterangan: "Za panjang, Hamzah pendek, Ro pendek." }
+                ],
+                guide: "iqro2Page14Guide"
+            },
+            {
+                title: "iqro2Page15Title",
+                info: "iqro2Page15Info",
+                items: [
+                    { char: 'سَاعَةً', latin: 'Sā-A-Tan', keterangan: "Sin panjang, Ain pendek, Ta marbutah tanwin." },
+                    { char: 'شَارِبٌ', latin: 'Syā-Ri-Bun', keterangan: "Syin panjang, Ro pendek, Ba pendek." },
+                    { char: 'صَادِقٌ', latin: 'Shō-Di-Qon', keterangan: "Shod panjang, Dal pendek, Qof pendek." },
+                    { char: 'ضَالِّينَ', latin: 'Dhō-Lī-Na', keterangan: "Dhod panjang, Lam panjang, Ya sukun." },
+                    { char: 'سَالِمٌ', latin: 'Sā-Li-Mun', keterangan: "Sin panjang, Lam pendek, Mim pendek." },
+                    { char: 'شَاهِدٌ', latin: 'Syā-Hi-Dun', keterangan: "Syin panjang, Ha besar pendek, Dal pendek." },
+                    { char: 'صَالِحٌ', latin: 'Shō-Li-Hun', keterangan: "Shod panjang, Lam pendek, Ha halus pendek." },
+                    { char: 'ضَامِنٌ', latin: 'Dhō-Mi-Nun', keterangan: "Dhod panjang, Mim pendek, Nun pendek." },
+                    { char: 'سَامِعًا', latin: 'Sā-Mi-A', keterangan: "Sin panjang, Mim pendek, Ain tanwin." },
+                    { char: 'شَاطِئُ', latin: 'Syā-Thi-U', keterangan: "Syin panjang, Tho pendek, Hamzah dhammah." },
+                    { char: 'صَافًّا', latin: 'Shōf-Fan', keterangan: "Shod panjang, Fa bertasydid tanwin." },
+                    { char: 'ضَارِبٌ', latin: 'Dhō-Ri-Bun', keterangan: "Dhod panjang, Ro pendek, Ba pendek." }
+                ],
+                guide: "iqro2Page15Guide"
+            },
+            {
+                title: "iqro2Page16Title",
+                info: "iqro2Page16Info",
+                items: [
+                    { char: 'طَاعَةً', latin: 'Thō-A-Tan', keterangan: "Tho panjang, Ain pendek, Ta marbutah tanwin." },
+                    { char: 'ظَاهِرٌ', latin: 'Zhō-Hi-Ron', keterangan: "Zho panjang, Ha besar pendek, Ro pendek." },
+                    { char: 'عَالِمٌ', latin: 'Ā-Li-Mun', keterangan: "Ain panjang, Lam pendek, Mim pendek." },
+                    { char: 'غَالِبٌ', latin: 'Ghā-Li-Bun', keterangan: "Ghoin panjang, Lam pendek, Ba pendek." },
+                    { char: 'طَارِقٌ', latin: 'Thō-Ri-Qon', keterangan: "Tho panjang, Ro pendek, Qof pendek." },
+                    { char: 'ظَالِمٌ', latin: 'Zhō-Li-Mun', keterangan: "Zho panjang, Lam pendek, Mim pendek." },
+                    { char: 'عَامِلٌ', latin: 'Ā-Mi-Lun', keterangan: "Ain panjang, Mim pendek, Lam pendek." },
+                    { char: 'غَافِرٌ', latin: 'Ghā-Fi-Ron', keterangan: "Ghoin panjang, Fa pendek, Ro pendek." },
+                    { char: 'طَابَ', latin: 'Thō-Ba', keterangan: "Tho panjang, Ba pendek." },
+                    { char: 'ظَافِرٌ', latin: 'Zhā-Fi-Ron', keterangan: "Zho panjang, Fa pendek, Ro pendek." },
+                    { char: 'عَاقِبٌ', latin: 'Ā-Qi-Bun', keterangan: "Ain panjang, Qof pendek, Ba pendek." },
+                    { char: 'غَائِبٌ', latin: 'Ghā-I-Bun', keterangan: "Ghoin panjang, Hamzah pendek, Ba pendek." }
+                ],
+                guide: "iqro2Page16Guide"
+            },
+            {
+                title: "iqro2Page17Title",
+                info: "iqro2Page17Info",
+                items: [
+                    { char: 'فَ لَا', latin: 'Fā La', keterangan: "Fa panjang (2 ketukan), Lam pendek." },
+                    { char: 'قَ لَا', latin: 'Qō La', keterangan: "Qof tebal panjang, Lam pendek." },
+                    { char: 'كَ نَا', latin: 'Kā Na', keterangan: "Kaf panjang, Nun pendek." },
+                    { char: 'لَا مَ', latin: 'Lā Ma', keterangan: "Lam Alif panjang, Mim pendek." },
+                    { char: 'فَ قَ', latin: 'Fa Qō', keterangan: "Fa pendek, Qof panjang." },
+                    { char: 'قَ فَ', latin: 'Qo Fā', keterangan: "Qof pendek, Fa panjang." },
+                    { char: 'كَ لَا', latin: 'Ka Lā', keterangan: "Kaf pendek, Lam Alif panjang." },
+                    { char: 'لَ كَ', latin: 'La Kā', keterangan: "Lam pendek, Kaf panjang." },
+                    { char: 'بَ كَ', latin: 'Bā Kā', keterangan: "Keduanya panjang (2-2)." },
+                    { char: 'فَ نَا', latin: 'Nā Fā', keterangan: "Keduanya panjang (2-2)." },
+                    { char: 'قَ مَ', latin: 'Qō Ma', keterangan: "Qof panjang, Mim pendek." },
+                    { char: 'فَ قَ', latin: 'Fā Qa', keterangan: "Fa panjang, Qof pendek." },
+                    { char: 'لَا زَ', latin: 'Lā Zā', keterangan: "Keduanya panjang (2-2)." },
+                    { char: 'نَا كَ', latin: 'Kā Nā', keterangan: "Keduanya panjang (2-2)." },
+                    { char: 'قَ لَا', latin: 'Qō Lā', keterangan: "Keduanya panjang (2-2)." },
+                    { char: 'فَ لَا', latin: 'Fā Lā', keterangan: "Keduanya panjang (2-2)." },
+                ],
+                guide: "iqro2Page17Guide"
+            },
+            {
+                title: "iqro2Page18Title",
+                info: "iqro2Page18Info",
+                items: [
+                    { char: 'مَ نَا', latin: 'Mā Nā', keterangan: "Mim panjang (2 ketukan), Nun pendek." },
+                    { char: 'مَ ناَ', latin: 'Nā Mā', keterangan: "Nun panjang (2 ketukan), Mim pendek." },
+                    { char: 'وَ نَا', latin: 'Wā Nā', keterangan: "Wawu panjang (Alif terpisah), Nun pendek." },
+                    { char: 'هَ نَا', latin: 'Hā Nā', keterangan: "Ha besar panjang, Nun pendek." },
+                    { char: 'مَ نَا', latin: 'Ma Nā', keterangan: "Mim pendek, Nun panjang." },
+                    { char: 'نَ مَ', latin: 'Na Mā', keterangan: "Nun pendek, Mim panjang." },
+                    { char: 'وَ هَ', latin: 'Wa Hā', keterangan: "Wawu pendek, Ha panjang." },
+                    { char: 'هَ وَ', latin: 'Ha Wā', keterangan: "Ha pendek, Wawu panjang." },
+                    { char: 'بَ مَ', latin: 'Bā Mā', keterangan: "Ba panjang, Mim panjang." },
+                    { char: 'نَ هَ', latin: 'Nā Hā', keterangan: "Nun panjang, Ha panjang." },
+                    { char: 'مَ زَ', latin: 'Mā Zā', keterangan: "Mim panjang, Za panjang." },
+                    { char: 'رَ وَ', latin: 'Wā Rā', keterangan: "Keduanya panjang (Alif terpisah)." },
+                    { char: 'مَ هَ', latin: 'Mā Hā', keterangan: "Mim panjang, Ha panjang." },
+                    { char: 'نَ وَ', latin: 'Nā Wā', keterangan: "Nun panjang, Wawu panjang." },
+                    { char: 'لَا هَ', latin: 'Hā Lā', keterangan: "Ha panjang, Lam Alif panjang." },
+                    { char: 'نَ مَ', latin: 'Mā Nā', keterangan: "Mim panjang, Nun panjang." }
+                ],
+                guide: "iqro2Page18Guide"
+            },
+            {
+                title: "iqro2Page19Title",
+                info: "iqro2Page19Info",
+                items: [
+                    { char: 'صَ دَ قَ', latin: 'Sho Da Qō', keterangan: "Sho & Da pendek, Qof panjang." },
+                    { char: 'صَ دَ قَ', latin: 'Sho Dā Qo', keterangan: "Sho pendek, Dal panjang, Qof pendek." },
+                    { char: 'صَ دَ قَ', latin: 'Shā Da Qo', keterangan: "Sho panjang, Da & Qof pendek." },
+                    { char: 'نَ صَ رَ', latin: 'Na Sho Rā', keterangan: "Nun & Sho pendek, Ro panjang." },
+                    { char: 'نَ صَ رَ', latin: 'Na Shō Ro', keterangan: "Nun pendek, Sho panjang, Ro pendek." },
+                    { char: 'نَ صَ رَ', latin: 'Nā Sho Ro', keterangan: "Nun panjang, Sho & Ro pendek." },
+                    { char: 'جَ هَ دَ', latin: 'Ja Ha Dā', keterangan: "Jim & Ha (besar) pendek, Dal panjang." },
+                    { char: 'جَ هَ دَ', latin: 'Jā Ha Da', keterangan: "Jim pendek, Ha panjang, Dal pendek." },
+                    { char: 'جَ هَ دَ', latin: 'Jā Hā Da', keterangan: "Jim panjang, Ha & Dal pendek." },
+                    { char: 'فَ سَ قَ', latin: 'Fa Sa Qō', keterangan: "Fa & Sa pendek, Qof panjang." },
+                    { char: 'فَ سَ قَ', latin: 'Fa Sā Qo', keterangan: "Fa pendek, Sa panjang, Qof pendek." },
+                    { char: 'فَ سَ قَ', latin: 'Fā Sa Qo', keterangan: "Fa panjang, Sa & Qof pendek." },
+                    { char: 'رَ زَ قَ', latin: 'Ro Za Qō', keterangan: "Ro & Za pendek, Qof panjang." },
+                    { char: 'رَ زَ قَ', latin: 'Ro Zā Qo', keterangan: "Ro pendek, Za panjang, Qof pendek." },
+                    { char: 'رَ زَ قَ', latin: 'Rā Za Qo', keterangan: "Ro panjang, Za & Qof pendek." },
+                    { char: 'نَ بَ تَ', latin: 'Ba Na Tā', keterangan: "Ba & Nun pendek, Ta panjang." }
+                ],
+                guide: "iqro2Page19Guide"
+            },
+            {
+                title: "iqro2Page20Title",
+                info: "iqro2Page20Info",
+                items: [
+                    { char: 'كَ بَ تَ', latin: 'Ka Tā Ba', keterangan: "Ka pendek, Ta panjang, Ba pendek." },
+                    { char: 'كَ بَ تَ', latin: 'Ka Ta Bā', keterangan: "Ka pendek, Ta pendek, Ba panjang." },
+                    { char: 'كَ بَ تَ', latin: 'Kā Ta Ba', keterangan: "Ka panjang, Ta pendek, Ba pendek." },
+                    { char: 'جَ لَ سَ', latin: 'Ja La Sā', keterangan: "Jim pendek, Lam pendek, Sa panjang." },
+                    { char: 'جَ لَ سَ', latin: 'Ja Lā Sa', keterangan: "Jim pendek, Lam panjang, Sa pendek." },
+                    { char: 'جَ لَ سَ', latin: 'Jā La Sa', keterangan: "Jim panjang, Lam pendek, Sa pendek." },
+                    { char: 'شَ دَ هَ', latin: 'Sya Ha Dā', keterangan: "Sya pendek, Ha (besar) pendek, Dal panjang." },
+                    { char: 'شَ دَ هَ', latin: 'Sya Hā Da', keterangan: "Sya pendek, Ha panjang, Dal pendek." },
+                    { char: 'شَ دَ هَ', latin: 'Syā Ha Da', keterangan: "Sya panjang, Ha pendek, Dal pendek." },
+                    { char: 'سَ لَ مَ', latin: 'Sa La Mā', keterangan: "Sa pendek, Lam pendek, Mim panjang." },
+                    { char: 'سَ لَ مَ', latin: 'Sa Lā Ma', keterangan: "Sa pendek, Lam panjang, Mim pendek." },
+                    { char: 'سَ لَ مَ', latin: 'Sā La Ma', keterangan: "Sa panjang, Lam pendek, Mim pendek." },
+                    { char: 'زَ لَ غَ', latin: 'Gho Za Lā', keterangan: "Ghoin & Za pendek, Lam Alif panjang." },
+                    { char: 'زَ لَ غَ', latin: 'Gho Zā La', keterangan: "Ghoin pendek, Za panjang, Lam pendek." },
+                    { char: 'لَ عَ فَ', latin: 'Fa \'Ā La', keterangan: "Fa pendek, 'Ain panjang, Lam pendek." },
+                ],
+                guide: "iqro2Page20Guide"
+            },
+            {
+                title: "iqro2Page21Title",
+                info: "iqro2Page21Info",
+                items: [
+                    { char: 'بَ تَ نَا', latin: 'Bā Tā Nā', keterangan: "Ketiganya panjang (2-2-2)." },
+                    { char: 'بَ نَا يَ', latin: 'Yā Nā Bā', keterangan: "Ketiganya panjang (2-2-2)." },
+                    { char: 'تَ نَا يَ', latin: 'Tā Nā Yā', keterangan: "Ketiganya panjang (2-2-2)." },
+                    { char: 'جَ دَ حَ', latin: 'Hā Jā Da', keterangan: "Ha & Jim panjang, Dal pendek." },
+                    { char: 'ذَ خَ قَ', latin: 'Khā Dzā Qo', keterangan: "Kho & Dza panjang, Qof pendek." },
+                    { char: 'رَ زَ قَ', latin: 'Rā Zā Qo', keterangan: "Ro & Za panjang, Qof pendek." },
+                    { char: 'شَ دَ هَ', latin: 'Syā Hā Da', keterangan: "Sya & Ha (besar) panjang, Dal pendek." },
+                    { char: 'بَ حَ صَ', latin: 'Shā Hā Ba', keterangan: "Sho & Ha (halus) panjang, Ba pendek." },
+                    { char: 'بَ رَ ضَ', latin: 'Dhā Rā Ba', keterangan: "Dho & Ro panjang, Ba pendek." },
+                    { char: 'ثَ فَا شَ', latin: 'Thō Fā Sya', keterangan: "Tho & Fa panjang, Syin pendek." },
+                    { char: 'هَ رَ ظَ', latin: 'Zhō Hā Rā', keterangan: "Zho panjang, Ha pendek, Ro panjang." },
+                    { char: 'لَ مَ عَ', latin: 'Ā Lā Ma', keterangan: "'Ain panjang, Lam Alif panjang, Mim pendek." },
+                    { char: 'بَ لَ غَ', latin: 'Ghō Lā Ba', keterangan: "Ghoin panjang, Lam Alif panjang, Ba pendek." },
+                    { char: 'تَ لَ قَ', latin: 'Qō Tā La', keterangan: "Qof panjang, Ta panjang, Lam pendek." },
+                    { char: 'نَا كَ فَ', latin: 'Kā Nā Fā', keterangan: "Ketiganya panjang (2-2-2)." },
+                    { char: 'مَ بَ هَ', latin: 'Mā Hā Bā', keterangan: "Ketiganya panjang (2-2-2)." }
+                ],
+                guide: "iqro2Page21Guide"
+            },
+            {
+                title: "iqro2Page22Title",
+                info: "iqro2Page22Info",
+                items: [
+                    { char: 'جَ دَ هَ', latin: 'Jā Ha Dā', keterangan: "Jim pendek, Ha panjang, Dal panjang." },
+                    { char: 'جَ دَ هَ', latin: 'Jā Hā Da', keterangan: "Jim panjang, Ha pendek, Dal pendek." },
+                    { char: 'جَ دَ هَ', latin: 'Jā Hā Dā', keterangan: "Jim panjang, Ha panjang, Dal panjang." },
+                    { char: 'بَ تَ عَ', latin: 'Tā Ba \'A', keterangan: "Ta panjang, Ba & 'Ain pendek." },
+                    { char: 'بَ عَ تَ', latin: 'Ta Bā \'A', keterangan: "Ta pendek, Ba panjang, 'Ain pendek." },
+                    { char: 'بَ تَ عَ', latin: 'Ta Ba Ā', keterangan: "Ta & Ba pendek, 'Ain panjang." },
+                    { char: 'شَ دَ هَ', latin: 'Syā Ha Dā', keterangan: "Sya panjang, Ha & Dal pendek." },
+                    { char: 'شَ دَ هَ', latin: 'Sya Hā Da', keterangan: "Sya pendek, Ha panjang, Dal pendek." },
+                    { char: 'شَ دَ هَ', latin: 'Syā Hā Dā', keterangan: "Sya panjang, Ha panjang, Dal panjang." },
+                    { char: 'فَ رَ غَ', latin: 'Fa Rā Gho', keterangan: "Fa pendek, Ro panjang, Ghoin pendek." },
+                    { char: 'فَ رَ غَ', latin: 'Fā Ro Gho', keterangan: "Fa panjang, Ro & Ghoin pendek." },
+                    { char: 'فَ رَ غَ', latin: 'Fa Ro Ghā', keterangan: "Fa & Ro pendek, Ghoin panjang." },
+                    { char: 'تَ لَ قَ', latin: 'Qō Tā La', keterangan: "Qof & Ta panjang, Lam pendek." },
+                    { char: 'نَ لَ كَ', latin: 'Nā Kā La', keterangan: "Nun & Kaf panjang, Lam pendek." },
+                    { char: 'فَ سَ قَ', latin: 'Fā Sā Qo', keterangan: "Fa & Sa panjang, Qof pendek." },
+                    { char: 'بَ رَ كَ', latin: 'Bā Rā Ka', keterangan: "Ba & Ro panjang, Kaf pendek." }
+                ],
+                guide: "iqro2Page22Guide"
+            },
+            {
+                title: "iqro2Page23Title",
+                info: "iqro2Page23Info",
+                items: [
+                    { char: 'لَ غَ نَ يَ', latin: 'Lā Ghō Ni Ya', keterangan: "Lam Alif panjang, Gho panjang, Ni & Ya pendek." },
+                    { char: 'شَ تَ عَ غَ', latin: 'Ghō Syi Ya Tā', keterangan: "Gho panjang, Syi & Ya pendek, Ta panjang." },
+                    { char: 'صَ يَ نَ تَ', latin: 'Nā Sya Ya Tā', keterangan: "Nun panjang, Sya & Ya pendek, Ta panjang." },
+                    { char: 'فَ كِ هَا تَ', latin: 'Fā Ki Hā Ta', keterangan: "Fa panjang, Ki pendek, Ha panjang, Ta pendek." },
+                    { char: 'صِ عَا فَ تَ', latin: 'Ā Shi Fā Ta', keterangan: "'Ain panjang, Shi pendek, Fa panjang, Ta pendek." },
+                    { char: 'جَ رَا هَا تَ', latin: 'Hā Ja Ro Tā', keterangan: "Ha panjang, Ja & Ro pendek, Ta panjang." },
+                    { char: 'يَا دَا نَا يَ', latin: 'Yā Dā Yā Nā', keterangan: "Semuanya panjang (2-2-2-2)." },
+                    { char: 'تَ زَ دَ نَا', latin: 'Tā Zā Dā Nā', keterangan: "Semuanya panjang (2-2-2-2)." },
+                    { char: 'تَ لَا خَ فَ', latin: 'Khā Lā Fā Tā', keterangan: "Semuanya panjang (2-2-2-2)." },
+                    { char: 'فَ بِ ذَ مَ', latin: 'Fa Bi Mā Dzā', keterangan: "Fa & Bi pendek, Ma & Dza panjang." },
+                    { char: 'فَ لَا خَ تَ', latin: 'Fa Lā Tā Khā', keterangan: "Fa pendek, La, Ta, & Kho panjang." },
+                    { char: 'وَ دَ قَ تَ', latin: 'Wā Dzā Qō Tā', keterangan: "Semuanya panjang (2-2-2-2)." },
+                    { char: 'بَ رَ كَا نَ', latin: 'Bā Ro Kā Nā', keterangan: "Ba panjang, Ro pendek, Ka & Nun panjang." },
+                    { char: 'تَ رَ كَا نَ', latin: 'Tā Ro Kā Nā', keterangan: "Ta panjang, Ro pendek, Ka panjang." },
+                    { char: 'يَ رَ كَا نَ', latin: 'Yā Ro Kā Nā', keterangan: "Ya panjang, Ro pendek, Ka & Nun panjang." },
+                    { char: 'نَ رَ كَا نَ', latin: 'Nā Ro Kā Nā', keterangan: "Nun panjang, Ro pendek, Ka & Nun panjang." }
+                ],
+                guide: "iqro2Page23Guide"
+            },
+            {
+                title: "iqro2Page24Title",
+                info: "iqro2Page24Info",
+                items: [
+                    { char: 'جَ دَ هَ', latin: 'Jā Ha Dā', keterangan: "Jim panjang, Ha pendek, Dal panjang." },
+                    { char: 'حَ سَ بَ', latin: 'Hā Sa Bā', keterangan: "Ha panjang, Sa pendek, Ba panjang." },
+                    { char: 'خَ لَ فَ', latin: 'Khā La Fā', keterangan: "Kho panjang, Lam pendek, Fa panjang." },
+                    { char: 'نَ صَ رَ', latin: 'Nā Sho Rā', keterangan: "Nun panjang, Sho pendek, Ro panjang." },
+                    { char: 'غَ سَ قَ', latin: 'Ghō Sa Qō', keterangan: "Ghoin panjang, Sa pendek, Qof panjang." },
+                    { char: 'طَ غَ تَ', latin: 'Thō Ghō Tā', keterangan: "Semuanya panjang (2-2-2)." },
+                    { char: 'شَ دَ هَ', latin: 'Syā Ha Dā', keterangan: "Sya panjang, Ha pendek, Dal panjang." },
+                    { char: 'صَ يَ عَ', latin: 'Ā Shi Ya', keterangan: "'Ain panjang, Shi & Ya pendek." },
+                    { char: 'فَ كِ هَا', latin: 'Fā Ki Hā', keterangan: "Fa panjang, Ki pendek, Ha panjang." },
+                    { char: 'لَا غَ يَ', latin: 'Lā Ghi Ya', keterangan: "Lam Alif panjang, Ghi & Ya pendek." },
+                    { char: 'نَ شَ يَ', latin: 'Nā Shi Ya', keterangan: "Nun panjang, Shi & Ya pendek." },
+                    { char: 'بَ مَ وَ', latin: 'Wā Bi Mā', keterangan: "Wawu panjang, Bi pendek, Ma panjang." },
+                    { char: 'بَ رَ كَ', latin: 'Bā Ro Kā', keterangan: "Ba panjang, Ro pendek, Ka panjang." },
+                    { char: 'تَ رَ كَ', latin: 'Tā Ro Kā', keterangan: "Ta panjang, Ro pendek, Ka panjang." },
+                    { char: 'يَ رَ كَ', latin: 'Yā Ro Kā', keterangan: "Ya panjang, Ro pendek, Ka panjang." },
+                    { char: 'نَ رَ كَ', latin: 'Nā Ro Kā', keterangan: "Nun panjang, Ro pendek, Ka panjang." }
+                ],
+                guide: "iqro2Page24Guide"
+            },
+            {
+                title: "iqro2Page25Title",
+                info: "iqro2Page25Info",
+                items: [
+                    { char: 'بَ تَ نَا', latin: 'Bā Tā Nā Bā', keterangan: "Latihan konsistensi Mad (panjang)." },
+                    { char: 'جَ حَ خَ دَ ذَ قَ', latin: 'Hā Jā Da - Khā Dzā Qo', keterangan: "Kombinasi makhraj tenggorokan." },
+                    { char: 'رَ زَ هَ دَ سَ', latin: 'Syā - Qo Zā Rā Hā Da', keterangan: "Perhatikan huruf Ro dan Za yang tidak menyambung." },
+                    { char: 'صَ حَ بَ رَ ضَ', latin: 'Shā Hā Ba - Dhā Rā Ba', keterangan: "Huruf tebal (Istila') tetap tebal saat panjang." },
+                    { char: 'طَ ظَ فَ شَ غَ', latin: 'Thō Fā Sya - Zhō Hā Rā', keterangan: "Campuran panjang di awal, tengah, dan akhir." },
+                    { char: 'عَ غَ لَا مَ', latin: 'Ā Lā Ma - Ghō Lā Ba', keterangan: "Waspada bentuk Lam Alif (لَا)." },
+                    { char: 'فَ قَ تَ نَا', latin: 'Qō Tā La - Kā Nā Fā', keterangan: "Perbedaan Qof (tebal) dan Kaf (tipis)." },
+                    { char: 'كَ نَا رَ مَ', latin: 'Mā Hā Bā - Nā Ro Kā', keterangan: "Perhatikan Ro (pendek) diapit dua panjang." },
+                    { char: 'يَ نِ غَ شَ يَ', latin: 'Lā Ghō Ni Ya - Ghō Syi Ya', keterangan: "Persiapan menuju bunyi Kasroh (i)." },
+                    { char: 'صَ عَا فَ كِ', latin: 'Fā Ki Hā - Ā Shi Fā', keterangan: "Fokus pada ayunan suara yang stabil." },
+                    { char: 'يَا دَا يَا نَ', latin: 'Yā Dā Yā Nā - Tā Zā Dā Nā', keterangan: "Semuanya panjang (4 huruf)." },
+                    { char: 'خَ لَا فَ تَ', latin: 'Khā Lā Fā Tā - Wā Dzā Qō Tā', keterangan: "Semuanya panjang (4 huruf)." }
+                ],
+                guide: "iqro2Page25Guide"
+            },
+            {
+                title: "iqro2Page26Title",
+                info: "iqro2Page26Info",
+                items: [
+                    { char: 'جَ عَلَ لَ', latin: 'Ja\'ala laka - Ja\'alnā', keterangan: "Perhatikan 'Ain di tengah (tertutup)." },
+                    { char: 'وَمَ خَلَقَ نَا', latin: 'Wa mā kholaqo - Wa mā kholaqnā', keterangan: "Mim panjang, Kho-La-Qo pendek." },
+                    { char: 'لَا غَالِبَ لَنَا', latin: 'Lā ghōliba - Lā ghōlibā', keterangan: "Waspada perbedaan pendek dan panjang di akhir." },
+                    { char: 'فَقَالَ لَهَا', latin: 'Fa qōla lahā - Fa qōlā', keterangan: "Qof & Ha panjang, Lam & Ba pendek." },
+                    { char: 'مَا سَلَكَ نَا', latin: 'Mā salaka - Mā salaknā', keterangan: "Mim panjang, Sa-La-Ka pendek." },
+                    { char: 'وَمَا كَانَ فَ', latin: 'Wa mā kānā - Wa mā kānā fā', keterangan: "Rangkaian panjang yang berurutan." },
+                    { char: 'هَاجَارُوْا هَاجَرُوْا', latin: 'Hājaro - Hājōrorō', keterangan: "Ha panjang, Ja & Ro pendek (lalu panjang)." },
+                    { char: 'شَاهَدُوْا شَاهِدًا', latin: 'Syāhada - Syāhadā', keterangan: "Sya panjang, Ha & Da pendek (lalu panjang)." },
+                    { char: 'بَارَكُوْا بَارِكُوْا', latin: 'Bārokā - Bārokā', keterangan: "Ba panjang, Ro & Ka pendek (lalu panjang)." },
+                    { char: 'قَاتَلُوْا قَاتَلُوْا', latin: 'Qōtala - Qōtalā', keterangan: "Qof panjang, Ta & La pendek (lalu panjang)." }
+                ],
+                guide: "iqro2Page26Guide"
             }
         ]
     },
-    { 
-        level: 3, 
-        title: "Iqro 3", 
-        description: "Mengenal harakat Kasrah (bunyi 'i') dan Dhammah (bunyi 'u'), serta variasi bacaan panjang dan huruf sukun (mati).",
-        cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_3.png",
-        sections: [ 
-            { 
-                title: "Coming Soon", 
-                info: "Materi untuk Iqro 3 sedang dalam persiapan.",
-                items: []
-            }
-        ]
+    // Start of IqroLevelData for level 3 (Coming Soon)
+    {
+        level: 3,
+        title: "Iqro 3",
+        description: "Materi Iqro 3 akan segera hadir! Pelajari harakat Kasrah dan Dhammah, serta membiasakan membaca rangkaian huruf dengan tiga jenis harakat.",
+        cover: "https://via.placeholder.com/192x192/0E9F6E/FFFFFF?text=Iqro+3+Soon", // Placeholder image
+        sections: [] // Empty sections for "coming soon"
     },
-    { 
-        level: 4, 
-        title: "Iqro 4", 
-        description: "Mempelajari harakat Tanwin, hukum Nun Sukun/Tanwin, dan Qalqalah.",
-        cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_4.png",
-        sections: [ 
-            { 
-                title: "Coming Soon", 
-                info: "Materi untuk Iqro 4 sedang dalam persiapan.",
-                items: []
-            }
-        ]
+    // Start of IqroLevelData for level 4 (Coming Soon)
+    {
+        level: 4,
+        title: "Iqro 4",
+        description: "Materi Iqro 4 akan segera hadir! Mulai membaca huruf hijaiyah berharakat tanwin (fathatain, kasratain, dhammatain), mengenal tanda sukun, dan mengucapkan huruf-huruf qolqolah.",
+        cover: "https://via.placeholder.com/192x192/0E9F6E/FFFFFF?text=Iqro+4+Soon", // Placeholder image
+        sections: []
     },
-    { 
-        level: 5, 
-        title: "Iqro 5", 
-        description: "Mengenal berbagai jenis Mad, bacaan Tasydid, dan cara berhenti (waqaf).",
-        cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_5.png",
-        sections: [ 
-            { 
-                title: "Coming Soon", 
-                info: "Materi untuk Iqro 5 sedang dalam persiapan.",
-                items: []
-            }
-        ]
+    // Start of IqroLevelData for level 5 (Coming Soon)
+    {
+        level: 5,
+        title: "Iqro 5",
+        description: "Materi Iqro 5 akan segera hadir! Mengenal hukum tajwid sederhana seperti Idghom, Ikhfa, Tasydid, dan tanda mad yang lebih panjang untuk membaca potongan ayat Al-Qur’an.",
+        cover: "https://via.placeholder.com/192x192/0E9F6E/FFFFFF?text=Iqro+5+Soon", // Placeholder image
+        sections: []
     },
-    { 
-        level: 6, 
-        title: "Iqro 6", 
-        description: "Lanjutan hukum tajwid, waqaf, dan persiapan membaca Al-Quran.",
-        cover: "https://github.com/Klik2/sumber/raw/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_6.png",
-        sections: [ 
-            { 
-                title: "Coming Soon", 
-                info: "Materi untuk Iqro 6 sedang dalam persiapan.",
-                items: []
-            }
-        ]
+    // Start of IqroLevelData for level 6 (Coming Soon)
+    {
+        level: 6,
+        title: "Iqro 6",
+        description: "Materi Iqro 6 akan segera hadir! Tahap akhir sebelum membaca mushaf Al-Qur’an, dengan membaca rangkaian ayat lengkap, tanda waqaf (berhenti), dan menguasai semua aturan dasar tajwid sederhana.",
+        cover: "https://via.placeholder.com/192x192/0E9F6E/FFFFFF?text=Iqro+6+Soon", // Placeholder image
+        sections: []
     }
 ];
