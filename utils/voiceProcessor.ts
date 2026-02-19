@@ -1,32 +1,143 @@
 
+
+// Minimal declaration for Window augmentation if 'dom' lib is not fully recognized or if augmenting is explicitly desired
+// This ensures that properties like SpeechRecognition exist on `window` type.
+
+// FIX: Add comprehensive global type declarations for Web Speech API
 import { voiceTriggers } from '../data/voiceTriggers';
 
-// Extend the Window interface to include webkitSpeechRecognition for better type safety
+interface SpeechRecognitionEventMap {
+  "audiostart": Event;
+  "audioend": Event;
+  "end": Event;
+  "error": SpeechRecognitionErrorEvent;
+  "nomatch": SpeechRecognitionEvent;
+  "result": SpeechRecognitionEvent;
+  "soundstart": Event;
+  "soundend": Event;
+  "speechstart": Event;
+  "speechend": Event;
+  "start": Event;
+}
+
+interface SpeechRecognition extends EventTarget {
+  grammars: SpeechGrammarList;
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  serviceURI: string;
+  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onspeechend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  
+  start(): void;
+  stop(): void;
+  abort(): void;
+  
+  addEventListener<K extends keyof SpeechRecognitionEventMap>(type: K, listener: (this: SpeechRecognition, ev: SpeechRecognitionEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+  removeEventListener<K extends keyof SpeechRecognitionEventMap>(type: K, listener: (this: SpeechRecognition, ev: SpeechRecognitionEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOrEventListenerObject): void;
+}
+
+declare var SpeechRecognition: {
+  prototype: SpeechRecognition;
+  new(): SpeechRecognition;
+};
+
+declare var webkitSpeechRecognition: {
+  prototype: SpeechRecognition;
+  new(): SpeechRecognition;
+};
+
+
+interface SpeechRecognitionAlternative {
+  readonly confidence: number;
+  readonly transcript: string;
+}
+
+interface SpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  readonly resultIndex: number;
+  readonly results: SpeechRecognitionResultList;
+  readonly interpretation: any; // Placeholder for SpeechRecognitionAlternative or SpeechRecognitionResult
+  readonly emma: Document | null; // Obsolete, kept for compatibility
+}
+
+declare var SpeechRecognitionEvent: {
+  prototype: SpeechRecognitionEvent;
+  // FIX: Changed SpeechRecognitionEventInit to EventInit
+  new(type: string, eventInitDict: EventInit): SpeechRecognitionEvent;
+};
+
+// FIX: Define SpeechRecognitionErrorEventInit
+interface SpeechRecognitionErrorEventInit extends EventInit {
+    error: SpeechRecognitionErrorCode;
+    message?: string;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  readonly error: SpeechRecognitionErrorCode;
+  readonly message: string;
+}
+
+declare var SpeechRecognitionErrorEvent: {
+  prototype: SpeechRecognitionErrorEvent;
+  // FIX: Changed SpeechRecognitionErrorEventInit to EventInit
+  new(type: string, eventInitDict: SpeechRecognitionErrorEventInit): SpeechRecognitionErrorEvent; // Use SpeechRecognitionErrorEventInit here
+};
+
+type SpeechRecognitionErrorCode =
+    "no-speech" | "aborted" | "audio-capture" | "network" | "not-allowed" | "service-not-allowed" | "bad-grammar" | "language-not-supported";
+
+
+interface SpeechGrammar {
+  src: string;
+  weight: number;
+}
+
+interface SpeechGrammarList {
+  readonly length: number;
+  addFromString(string: string, weight?: number): void;
+  addFromURI(src: string, weight?: number): void;
+  item(index: number): SpeechGrammar;
+  [index: number]: SpeechGrammar;
+}
+
+declare var SpeechGrammarList: {
+  prototype: SpeechGrammarList;
+  new(): SpeechGrammarList;
+};
+
+
 declare global {
   interface Window {
     SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof webkitSpeechRecognition;
     SpeechGrammarList: typeof SpeechGrammarList;
-    webkitSpeechGrammarList: typeof SpeechGrammarList;
+    webkitSpeechGrammarList: typeof SpeechGrammarList; // FIX: Added declaration for webkitSpeechGrammarList
   }
 }
-
-// Global declarations for Web Speech API types to resolve 'Cannot find name' errors
-// These are typically provided by 'dom' lib in tsconfig, but added here for self-containment.
-declare var SpeechRecognition: {
-    prototype: SpeechRecognition;
-    new(): SpeechRecognition;
-};
-
-declare var SpeechGrammarList: {
-    prototype: SpeechGrammarList;
-    new(): SpeechGrammarList;
-};
-
-declare var SpeechRecognitionErrorEvent: {
-    prototype: SpeechRecognitionErrorEvent;
-    new(type: string, eventInitDict?: SpeechRecognitionErrorEventInit): SpeechRecognitionErrorEvent;
-};
 
 export type VoiceCommandAction = 'next' | 'previous' | 'repeat' | 'stop' | 'start' | 'help' | null;
 
@@ -57,6 +168,7 @@ export class VoiceProcessor {
     this.onError = options.onError;
     this.lang = options.lang || 'id-ID'; // Default to Indonesian
 
+    // FIX: Directly use window.SpeechRecognition and window.SpeechGrammarList for runtime check
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
 
@@ -139,7 +251,7 @@ export class VoiceProcessor {
         console.log("VoiceProcessor started listening...");
       } catch (e) {
         console.error("Error starting speech recognition:", e);
-        // FIX: Use SpeechRecognitionErrorEvent constructor with a valid error type
+        // FIX: Construct a basic SpeechRecognitionErrorEvent object to conform to the interface
         this.onError?.(new SpeechRecognitionErrorEvent('error', { error: 'aborted', message: e instanceof Error ? e.message : String(e) }));
       }
     }
