@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { iqroData } from '../data/iqroData';
 import { useIqroProgress } from '../hooks/useIqroProgress';
 import Introduction from '../components/iqro/Introduction';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext'; // NEW: Import TranslationKeys
 import { Trash2 } from 'lucide-react';
 
 const Iqro: React.FC = () => {
@@ -17,17 +17,17 @@ const Iqro: React.FC = () => {
                 <h1 className="text-3xl font-bold text-emerald-dark dark:text-white">Iqro Digital</h1>
                 <button 
                   onClick={() => {
-                    if (confirm(t('areYouSureReset'))) {
+                    if (confirm(t('areYouSureReset' as TranslationKeys))) {
                       resetProgress();
                       // Force a re-render to update progress bars
                       window.location.reload();
                     }
                   }}
                   className="flex items-center gap-2 text-sm font-semibold text-red-600 bg-red-100 dark:bg-red-900/30 px-3 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 transition min-h-[44px]"
-                  aria-label={t('resetProgress')}
+                  aria-label={t('resetProgress' as TranslationKeys)}
                 >
                   <Trash2 size={16} />
-                  <span>{t('reset')}</span>
+                  <span>{t('reset' as TranslationKeys)}</span>
                 </button>
             </div>
             

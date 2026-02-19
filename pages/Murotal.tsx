@@ -1,11 +1,10 @@
 
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchAllSurahs } from '../services/quranService';
 import { Surah } from '../types';
 import { Play, Pause, SkipBack, SkipForward, Loader2, Music, ListMusic } from 'lucide-react';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 
 const qaris = [
   { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy' },
@@ -41,15 +40,15 @@ const Murotal: React.FC = () => {
         if (data.length > 0 && !selectedSurah) {
             setSelectedSurah(data[0]);
         }
-      } catch (err) {
+      } catch (err: any) { // Type 'err' as any
         console.error("Failed to load surahs for Murotal", err);
-        setError("Gagal memuat daftar surah. Pastikan koneksi internet Anda aktif.");
+        setError(err.message || t('failedToLoadSurahList' as TranslationKeys));
       } finally {
         setSurahListLoading(false);
       }
     };
     loadSurahs();
-  }, []);
+  }, [t, selectedSurah]); // Add selectedSurah to deps to avoid stale closure warning
 
   const changeSurah = useCallback((direction: 'next' | 'prev') => {
     if (!selectedSurah || surahs.length === 0) return;
@@ -70,7 +69,6 @@ const Murotal: React.FC = () => {
     if (selectedSurah && selectedQari) {
       setIsAudioLoading(true);
       setError(null);
-      // FIX: Corrected URL to use 'audio-surah' for playing full surahs instead of 'audio' for single ayahs.
       const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${selectedQari}/${selectedSurah.number}.mp3`;
       const newAudio = new Audio(audioUrl);
       audioRef.current = newAudio;
@@ -89,9 +87,10 @@ const Murotal: React.FC = () => {
           newAudio.play().catch(e => console.error("Error autoplay:", e));
         }
       };
-      const handleError = () => {
+      const handleError = (e: Event) => {
         setIsAudioLoading(false);
-        setError("Gagal memuat audio. Silakan coba qari atau surah lain.");
+        console.error("Audio playback error:", e);
+        setError(t('failedToLoadAudio' as TranslationKeys) + `: ${e.type}`); // More specific error message
       };
 
       newAudio.addEventListener('play', handlePlay);
@@ -112,7 +111,7 @@ const Murotal: React.FC = () => {
         newAudio.removeEventListener('error', handleError);
       };
     }
-  }, [selectedSurah, selectedQari, changeSurah]);
+  }, [selectedSurah?.number, selectedQari, changeSurah, t]);
 
   const togglePlayPause = () => {
     if (audioRef.current) {
@@ -121,7 +120,7 @@ const Murotal: React.FC = () => {
       } else {
         audioRef.current.play().catch(e => {
             console.error("Error playing audio:", e);
-            setError("Gagal memutar audio.");
+            setError(t('failedToPlayAudio' as TranslationKeys) + `: ${e.message}`); // More specific error message
         });
       }
       setIsPlaying(!isPlaying);
@@ -150,32 +149,35 @@ const Murotal: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-10 pb-24 px-4 animate-in fade-in duration-500">
       <div className="text-center">
-        <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight uppercase">{t('murotalPlayer')}</h1>
-        <p className="text-slate-500 mt-2 font-medium">Dengarkan lantunan ayat suci dari Qari terbaik dunia.</p>
+        <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight uppercase">{t('murotalPlayer' as TranslationKeys)}</h1>
+        <p className="text-slate-500 mt-2 font-medium italic">{t('murotalPlayerIntro' as TranslationKeys)}</p>
       </div>
 
       <div className="bg-white dark:bg-dark-blue-card p-8 md:p-12 rounded-[3rem] shadow-xl border-2 border-slate-50 dark:border-slate-800 transition-all">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <label htmlFor="qari-select" className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('selectQari')}</label>
+            <label htmlFor="qari-select" className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('selectQari' as TranslationKeys)}</label>
             <select 
               id="qari-select" 
-              value={selectedQari} 
-              onChange={e => setSelectedQari(e.target.value)} 
-              className="w-full p-4 bg-slate-50 dark:bg-dark-blue border-2 border-transparent rounded-2xl focus:ring-4 focus:ring-emerald-500/10 font-bold transition-all min-h-[44px]"
+              value={selectedQari}
+              onChange={(e) => setSelectedQari(e.target.value)}
+              className="w-full p-4 bg-slate-50 dark:bg-dark-blue border-2 border-transparent rounded-2xl focus:ring-4 focus:ring-emerald-500/10 font-bold transition-all text-slate-950 dark:text-white shadow-inner min-h-[44px]"
+              aria-label={t('selectQari' as TranslationKeys)}
             >
-              {qaris.map(qari => <option key={qari.id} value={qari.id}>{qari.name}</option>)}
+              {qaris.map(q => <option key={q.id} value={q.id}>{q.name}</option>)}
             </select>
           </div>
+
           <div className="space-y-4">
-            <label htmlFor="surah-select" className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('selectSurah')}</label>
+            <label htmlFor="surah-select" className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('selectSurah' as TranslationKeys)}</label>
             <select 
               id="surah-select" 
               value={selectedSurah?.number || ''} 
-              onChange={e => setSelectedSurah(surahs.find(s => s.number === parseInt(e.target.value)) || null)} 
-              className="w-full p-4 bg-slate-50 dark:bg-dark-blue border-2 border-transparent rounded-2xl focus:ring-4 focus:ring-emerald-500/10 font-bold transition-all min-h-[44px]"
+              onChange={(e) => setSelectedSurah(surahs.find(s => s.number === parseInt(e.target.value)) || null)} 
+              className="w-full p-4 bg-slate-50 dark:bg-dark-blue border-2 border-transparent rounded-2xl focus:ring-4 focus:ring-emerald-500/10 font-bold transition-all text-slate-950 dark:text-white shadow-inner min-h-[44px]"
+              aria-label={t('selectSurah' as TranslationKeys)}
             >
-              {surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName}</option>)}
+              {surahs.map(s => <option key={s.number} value={s.number}>{s.number}. {s.englishName}</option>)}
             </select>
           </div>
         </div>
@@ -186,14 +188,14 @@ const Murotal: React.FC = () => {
             <div className="w-20 h-20 bg-emerald-600 rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-emerald-600/20">
               <Music size={40} />
             </div>
-            <h2 className="text-3xl font-black text-emerald-dark dark:text-white uppercase tracking-tight">{selectedSurah?.englishName || "Pilih Surah"}</h2>
+            <h2 className="text-3xl font-black text-emerald-dark dark:text-white uppercase tracking-tight">{selectedSurah?.englishName || t('selectSurah' as TranslationKeys)}</h2>
             <p className="font-arabic text-4xl text-emerald-dark dark:text-emerald-light mt-2">{selectedSurah?.name}</p>
         </div>
         
         <div className="mt-10 px-4">
             <input 
                 type="range"
-                aria-label="Seek track"
+                aria-label={t('seekTrack' as TranslationKeys)}
                 value={currentTime}
                 max={duration || 0}
                 onChange={handleSeek}
@@ -211,7 +213,7 @@ const Murotal: React.FC = () => {
               onClick={() => changeSurah('prev')} 
               disabled={currentSurahIndex <= 0} 
               className="p-4 text-slate-400 hover:text-emerald-dark disabled:opacity-20 transition-all hover:scale-110 min-h-[44px] min-w-[44px]"
-              aria-label="Sebelumnya"
+              aria-label={t('previous' as TranslationKeys)}
             >
                 <SkipBack size={32} />
             </button>
@@ -219,7 +221,7 @@ const Murotal: React.FC = () => {
               onClick={togglePlayPause} 
               disabled={isAudioLoading || !!error} 
               className="w-24 h-24 bg-emerald-600 text-white rounded-full shadow-[0_20px_50px_rgba(16,185,129,0.3)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center disabled:bg-slate-200 min-h-[44px] min-w-[44px]"
-              aria-label={isPlaying ? 'Pause' : 'Play'}
+              aria-label={isPlaying ? t('pause' as TranslationKeys) : t('play' as TranslationKeys)}
             >
                 {isAudioLoading ? <Loader2 className="animate-spin" size={32}/> : (isPlaying ? <Pause size={48} fill="currentColor" /> : <Play size={48} className="ml-2" fill="currentColor" />)}
             </button>
@@ -227,7 +229,7 @@ const Murotal: React.FC = () => {
               onClick={() => changeSurah('next')} 
               disabled={currentSurahIndex === -1 || currentSurahIndex >= surahs.length - 1} 
               className="p-4 text-slate-400 hover:text-emerald-dark disabled:opacity-20 transition-all hover:scale-110 min-h-[44px] min-w-[44px]"
-              aria-label="Selanjutnya"
+              aria-label={t('next' as TranslationKeys)}
             >
                 <SkipForward size={32} />
             </button>
@@ -236,18 +238,25 @@ const Murotal: React.FC = () => {
 
       <div className="bg-slate-100/50 dark:bg-dark-blue-card p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800">
         <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3 mb-6 uppercase tracking-wider">
-          <ListMusic className="text-emerald-600" /> Putar Cepat
+          <ListMusic className="text-emerald-600" /> {t('popularPlaylist' as TranslationKeys)}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 18, 36, 67, 114].map(num => (
             <button 
               key={num}
               onClick={() => setSelectedSurah(surahs.find(s => s.number === num) || null)}
-              className="p-4 bg-white dark:bg-dark-blue border-2 border-transparent hover:border-emerald-500 rounded-2xl text-left transition-all group min-h-[70px]"
-              aria-label={`Putar cepat Surah ${num}`}
+              className="p-4 bg-white dark:bg-dark-blue border-2 border-transparent rounded-2xl transition-all group active:scale-95 hover:border-emerald-200 dark:hover:border-emerald-900 shadow-md min-h-[70px]"
+              aria-label={`${t('play' as TranslationKeys)} Surah ${num} (${surahs.find(s => s.number === num)?.englishName || `Surah ${num}`})`}
             >
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Surah {num}</p>
-              <p className="font-bold text-slate-900 dark:text-white truncate">{surahs.find(s => s.number === num)?.englishName || '...'}</p>
+              <div className="flex flex-col items-start">
+                <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Surah {num}</span>
+                <span className="text-lg font-black text-slate-950 dark:text-white group-hover:text-emerald-600 transition-colors">
+                  {surahs.find(s => s.number === num)?.englishName || `Surah ${num}`}
+                </span>
+              </div>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-emerald-600 group-hover:bg-emerald-100 transition-all min-w-[44px] min-h-[44px]">
+                <Play size={20} />
+              </div>
             </button>
           ))}
         </div>

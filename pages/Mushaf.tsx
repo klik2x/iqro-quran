@@ -3,20 +3,35 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Loader2, List, Layers, BookUp } from 'lucide-react';
 import { Surah } from '../types';
-import { fetchAllSurahs } from '../services/quranService'; // FIX: Corrected import
-import { useTranslation } from '../contexts/LanguageContext';
+import { fetchAllSurahs } from '../services/quranService';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
+import { ErrorMessage } from '../components/ui/Feedback'; // Import ErrorMessage
 
 const Mushaf: React.FC = () => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // NEW: Error state
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<'surah' | 'juz'>('surah');
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
-  }, []);
+    const loadSurahs = async () => {
+        try {
+            setLoading(true);
+            setError(null); // Clear previous errors
+            const data = await fetchAllSurahs();
+            setSurahs(data);
+        } catch (err: any) {
+            console.error("Failed to fetch surahs:", err);
+            setError(err.message || t('failedToLoadSurahList' as TranslationKeys)); // Set specific error message
+        } finally {
+            setLoading(false);
+        }
+    };
+    loadSurahs();
+  }, [t]);
 
   const cleanSearch = search.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
   const filteredSurahs = surahs.filter(s => {
@@ -27,13 +42,13 @@ const Mushaf: React.FC = () => {
   });
 
   const handleJump = () => {
-    const surahNum = prompt('Masukkan nomor surah (1-114):');
+    const surahNum = prompt(t('enterSurahNumber' as TranslationKeys));
     if (surahNum) {
         const num = parseInt(surahNum, 10);
         if (!isNaN(num) && num >= 1 && num <= 114) {
             navigate(`/surah/${num}`);
         } else {
-            alert('Nomor surah tidak valid.');
+            alert(t('invalidSurahNumber' as TranslationKeys));
         }
     }
   };
@@ -42,7 +57,15 @@ const Mushaf: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-6">
         <Loader2 className="animate-spin text-emerald-600" size={60} />
-        <p className="text-slate-500 font-black text-xl animate-pulse">Menghubungkan ke Mushaf...</p>
+        <p className="text-slate-500 font-black text-xl animate-pulse">{t('connectingToMushaf' as TranslationKeys)}...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto p-4 pb-20">
+        <ErrorMessage message={error} />
       </div>
     );
   }
@@ -51,7 +74,7 @@ const Mushaf: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-4 pb-20 px-4">
       <div className="text-center py-4">
         <h2 className="text-2xl font-bold text-emerald-dark dark:text-emerald-light">
-          Daftar Surah
+          {t('surahList' as TranslationKeys)}
         </h2>
       </div>
 
@@ -61,13 +84,14 @@ const Mushaf: React.FC = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
               <input 
                 type="text" 
-                placeholder={t('searchSurah')}
+                placeholder={t('searchSurah' as TranslationKeys)}
                 className="pl-12 pr-6 py-3 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full focus:ring-4 focus:ring-emerald-500/10 outline-none w-full shadow-sm font-bold transition-all text-slate-900 dark:text-white min-h-[44px]"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label={t('searchSurah' as TranslationKeys)}
               />
             </div>
-            <button onClick={handleJump} className="p-3 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full shadow-sm text-emerald-dark dark:text-emerald-light min-h-[44px] min-w-[44px]" aria-label="Lompat ke Surah">
+            <button onClick={handleJump} className="p-3 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full shadow-sm text-emerald-dark dark:text-emerald-light min-h-[44px] min-w-[44px]" aria-label={t('jumpToSurah' as TranslationKeys)}>
                 <BookUp size={20} />
             </button>
         </div>
@@ -76,16 +100,16 @@ const Mushaf: React.FC = () => {
            <button 
              onClick={() => setViewMode('surah')}
              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-black transition-all min-h-[44px] ${viewMode === 'surah' ? 'bg-emerald-dark text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
-             aria-label="Tampilkan daftar Surah"
+             aria-label={t('displaySurahList' as TranslationKeys)}
            >
-              <List size={18}/> Surah
+              <List size={18}/> {t('surah' as TranslationKeys)}
            </button>
            <button 
              onClick={() => setViewMode('juz')}
              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full text-sm font-black transition-all min-h-[44px] ${viewMode === 'juz' ? 'bg-emerald-dark text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
-             aria-label="Tampilkan daftar Juz"
+             aria-label={t('displayJuzList' as TranslationKeys)}
            >
-              <Layers size={18}/> Juz
+              <Layers size={18}/> {t('juz' as TranslationKeys)}
            </button>
         </div>
       </div>
@@ -98,35 +122,41 @@ const Mushaf: React.FC = () => {
                 key={surah.number}
                 onClick={() => navigate(`/surah/${surah.number}`)}
                 className="flex items-center gap-4 p-4 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500 transition-all text-left shadow-sm group min-h-[88px]"
-                aria-label={`Baca Surah ${surah.englishName} (${surah.name})`}
+                aria-label={`${t('read' as TranslationKeys)} ${t('surah' as TranslationKeys)} ${surah.englishName} (${surah.name})`}
               >
-                <div className="w-10 h-10 bg-emerald-light/30 text-emerald-dark dark:bg-emerald-dark/50 dark:text-white rounded-xl flex items-center justify-center font-bold shrink-0 min-w-[44px] min-h-[44px]">
-                  {surah.number}
+                <div className="text-2xl font-bold text-emerald-dark dark:text-emerald-light">
+                  {surah.number}.
                 </div>
-                <div className="flex-1 overflow-hidden">
-                  <h3 className="font-bold text-emerald-dark dark:text-white truncate">{surah.englishName}</h3>
-                  <p className="text-xs text-slate-400 truncate">{surah.revelationType} • {surah.numberOfAyahs} Ayat</p>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">{surah.englishName}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{surah.englishNameTranslation}</p>
                 </div>
                 <div className="text-right">
-                  <span className="font-arabic text-2xl text-emerald-dark dark:text-emerald-light">{surah.name}</span>
+                  <p className="font-arabic text-2xl text-emerald-dark dark:text-emerald-light">{surah.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{surah.numberOfAyahs} {t('ayahSuffix' as TranslationKeys)}</p>
                 </div>
               </button>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-             {Array.from({length: 30}, (_, i) => i + 1).map(juz => (
-               <button 
-                 key={juz}
-                 onClick={() => navigate(`/juz/${juz}`)}
-                 className="p-6 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 text-center hover:border-emerald-500 transition-all shadow-sm active:scale-95 min-h-[88px]"
-                 aria-label={`Baca Juz ${juz}`}
-               >
-                  <p className="text-[10px] text-slate-400 uppercase font-bold mb-1">Juz</p>
-                  <span className="text-2xl font-bold text-emerald-dark dark:text-white">{juz}</span>
-               </button>
-             ))}
-          </div>
+            // Placeholder for Juz list view, implement as needed
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.from({ length: 30 }, (_, i) => i + 1).map((juzNum) => (
+                    <button 
+                        key={juzNum}
+                        onClick={() => navigate(`/juz/${juzNum}`)}
+                        className="flex items-center gap-4 p-4 bg-white dark:bg-dark-blue-card rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-emerald-500 transition-all text-left shadow-sm group min-h-[88px]"
+                        aria-label={`${t('read' as TranslationKeys)} ${t('juz' as TranslationKeys)} ${juzNum}`}
+                    >
+                        <div className="text-2xl font-bold text-emerald-dark dark:text-emerald-light">
+                        {juzNum}.
+                        </div>
+                        <div className="flex-1">
+                        <h3 className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">Juz {juzNum}</h3>
+                        </div>
+                    </button>
+                ))}
+            </div>
         )}
       </div>
     </div>

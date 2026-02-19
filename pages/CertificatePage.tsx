@@ -1,9 +1,10 @@
 
+
 import React, { useRef, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import { Download, X, Loader2, Award, User } from 'lucide-react';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 import CertificateGenerator from '../components/certificate/CertificateGenerator';
 import { CertificateData } from '../types'; // Import the new interface
 
@@ -56,13 +57,15 @@ const CertificatePage: React.FC = () => {
       const imgData = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = imgData;
-      link.download = `${t('sertifikatKelulusanIqro')}_Level_${levelNumber}.png`;
+      // FIX: Use TranslationKeys for the download filename
+      link.download = `${t('sertifikatKelulusanIqro' as TranslationKeys)}_Level_${levelNumber}.png`;
       document.body.appendChild(link); // Append to body to make it clickable
       link.click();
       document.body.removeChild(link); // Clean up
     } catch (error) {
       console.error("Error generating certificate:", error);
-      alert(t('failedToGenerateCertificate'));
+      // FIX: Use TranslationKeys for alert message
+      alert(t('failedToGenerateCertificate' as TranslationKeys));
     } finally {
       setIsGenerating(false);
     }
@@ -74,22 +77,22 @@ const CertificatePage: React.FC = () => {
   // but we can make it visually hidden.
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
-      <button onClick={() => navigate(-1)} className="mb-6 flex items-center gap-2 text-emerald-600 font-bold min-h-[44px] min-w-[44px] px-2 py-1" aria-label={t('cancel')}><X size={20}/> {t('cancel')}</button>
+      <button onClick={() => navigate(-1)} className="mb-6 flex items-center gap-2 text-emerald-600 font-bold min-h-[44px] min-w-[44px] px-2 py-1" aria-label={t('cancel' as TranslationKeys)}><X size={20}/> {t('cancel' as TranslationKeys)}</button>
       
       <div className="text-center">
         <h1 className="text-3xl font-black mb-2 flex items-center justify-center gap-2">
-          <Award size={32} className="text-gold-dark" /> {t('sertifikatKelulusanIqro')}
+          <Award size={32} className="text-gold-dark" /> {t('sertifikatKelulusanIqro' as TranslationKeys)}
         </h1>
-        <p className="text-slate-500">{t('certificateInstruction')}</p>
+        <p className="text-slate-500">{t('certificateInstruction' as TranslationKeys)}</p>
       </div>
 
       <div className="bg-white dark:bg-dark-blue-card rounded-3xl p-10 shadow-xl border border-slate-100 dark:border-slate-700 space-y-6">
         <div className="text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t('iqroLevel')} {levelNumber}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t('yourScore')}: {score}%</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t('iqroLevel' as TranslationKeys)} {levelNumber}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t('yourScore' as TranslationKeys)}: {score}%</p>
           {badge && (
             <div className="flex items-center justify-center mt-4 gap-2">
-              <span className="text-gold-dark text-lg font-bold">{t('badge')}:</span>
+              <span className="text-gold-dark text-lg font-bold">{t('badge' as TranslationKeys)}:</span>
               {getBadge(score)}
             </div>
           )}
@@ -97,16 +100,16 @@ const CertificatePage: React.FC = () => {
 
         <div className="space-y-2">
             <label htmlFor="user-name-input" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <User size={16} /> {t('enterYourNameForCertificate')}
+                <User size={16} /> {t('enterYourNameForCertificate' as TranslationKeys)}
             </label>
             <input
                 id="user-name-input"
                 type="text"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                placeholder={t('yourName')}
+                placeholder={t('yourName' as TranslationKeys)}
                 className="w-full p-3 bg-gray-100 dark:bg-dark-blue border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-dark"
-                aria-label={t('enterYourNameForCertificate')}
+                aria-label={t('enterYourNameForCertificate' as TranslationKeys)}
             />
         </div>
 
@@ -114,9 +117,10 @@ const CertificatePage: React.FC = () => {
           onClick={handleDownloadCertificate}
           className="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 mt-6 hover:bg-emerald-700 transition"
           disabled={isGenerating || !userName}
-          aria-label={t('downloadCertificate')}
+          // FIX: Use TranslationKeys for aria-label
+          aria-label={t('downloadCertificate' as TranslationKeys)}
         >
-          {isGenerating ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />} {t('downloadCertificate')}
+          {isGenerating ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />} {t('downloadCertificate' as TranslationKeys)}
         </button>
       </div>
 

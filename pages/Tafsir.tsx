@@ -1,10 +1,9 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { fetchAllSurahs, fetchTafsir } from '../services/quranService';
 import { Surah } from '../types';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 import { formatHonorifics } from '../utils/honorifics';
 import { BookOpen, Info, Search } from 'lucide-react';
 
@@ -14,35 +13,54 @@ const Tafsir: React.FC = () => {
     const [tafsirData, setTafsirData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [surahListLoading, setSurahListLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); // NEW: Error state
     const { t } = useTranslation();
 
     useEffect(() => {
-        fetchAllSurahs().then(setSurahs).finally(() => setSurahListLoading(false));
-    }, []);
+        const loadSurahs = async () => {
+            try {
+                setSurahListLoading(true);
+                setError(null);
+                const data = await fetchAllSurahs();
+                setSurahs(data);
+                // Set default selected surah if available and none selected yet
+                if (data.length > 0 && selectedSurah === 1) { // Only change if still default 1
+                    setSelectedSurah(data[0].number);
+                }
+            } catch (err: any) {
+                console.error("Failed to load surah list for tafsir:", err);
+                setError(err.message || t('failedToLoadSurahList' as TranslationKeys));
+            } finally {
+                setSurahListLoading(false);
+            }
+        };
+        loadSurahs();
+    }, [t, selectedSurah]); // Added selectedSurah to deps to avoid stale closure
 
     useEffect(() => {
+        if (!selectedSurah) return; // Don't load if no surah is selected
+
         const loadTafsir = async () => {
             setLoading(true);
             setError(null);
             try {
                 const data = await fetchTafsir(selectedSurah);
                 setTafsirData(data);
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Failed to fetch tafsir:", err);
-                setError("Gagal memuat tafsir. Silakan periksa koneksi Anda.");
+                setError(err.message || t('failedToLoadTafsir' as TranslationKeys));
             } finally {
                 setLoading(false);
             }
         };
         loadTafsir();
-    }, [selectedSurah]);
+    }, [selectedSurah, t]);
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-24 px-4 animate-in fade-in duration-500">
             <div className="text-center">
-                <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight uppercase">{t('tafsirTitle')}</h1>
-                <p className="text-slate-500 mt-2 font-medium italic">Memahami makna Al-Quran melalui penjelasan Al-Jalalayn.</p>
+                <h1 className="text-4xl font-black text-emerald-dark dark:text-white tracking-tight uppercase">{t('tafsirTitle' as TranslationKeys)}</h1>
+                <p className="text-slate-500 mt-2 font-medium italic">{t('tafsirIntroText' as TranslationKeys)}</p>
             </div>
             
             <div className="sticky top-20 bg-soft-white/90 dark:bg-dark-blue/90 backdrop-blur-md z-30 py-6 px-4 border-b-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
@@ -51,16 +69,16 @@ const Tafsir: React.FC = () => {
                     <Search size={24} />
                   </div>
                   <div className="flex-1 w-full">
-                    <label htmlFor="surah-select-tafsir" className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-1">{t('selectSurah')}</label>
+                    <label htmlFor="surah-select-tafsir" className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-1">{t('selectSurah' as TranslationKeys)}</label>
                     <select 
                         id="surah-select-tafsir" 
                         value={selectedSurah} 
                         onChange={e => setSelectedSurah(parseInt(e.target.value))}
                         disabled={surahListLoading}
                         className="w-full p-4 bg-white dark:bg-dark-blue border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 outline-none font-bold transition-all disabled:opacity-50 min-h-[44px]"
-                        aria-label="Pilih Surah untuk Tafsir"
+                        aria-label={t('selectSurahTafsir' as TranslationKeys)}
                     >
-                        {surahListLoading ? <option>Memuat surah...</option> : surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName} ({surah.name})</option>)}
+                        {surahListLoading ? <option>{t('loadingSurahs' as TranslationKeys)}...</option> : surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName} ({surah.name})</option>)}
                     </select>
                   </div>
                 </div>
@@ -68,7 +86,7 @@ const Tafsir: React.FC = () => {
 
             <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-3xl border border-blue-100 dark:border-blue-900/20 flex gap-4 text-blue-800 dark:text-blue-300 shadow-inner">
               <Info className="shrink-0 text-blue-500" />
-              <p className="text-sm font-bold leading-relaxed">Tafsir membantu kita mendalami konteks dan makna spiritual dari setiap ayat untuk memandu kehidupan sehari-hari.</p>
+              <p className="text-sm font-bold leading-relaxed">{t('tafsirInfoBox' as TranslationKeys)}</p>
             </div>
 
             <div className="space-y-6">
@@ -80,7 +98,7 @@ const Tafsir: React.FC = () => {
                     tafsirData.ayahs.map((ayah: any) => (
                         <div key={ayah.number} className="bg-white dark:bg-dark-blue-card p-8 md:p-10 rounded-[2.5rem] shadow-lg border border-slate-100 dark:border-slate-800 hover:border-emerald-500/50 transition-all group">
                             <div className="flex items-center gap-3 mb-6">
-                                <span className="text-[11px] font-black bg-emerald-600 text-white px-4 py-1.5 rounded-full uppercase tracking-widest shadow-md shadow-emerald-600/20 min-h-[44px] flex items-center">Ayat {ayah.numberInSurah}</span>
+                                <span className="text-[11px] font-black bg-emerald-600 text-white px-4 py-1.5 rounded-full uppercase tracking-widest shadow-md shadow-emerald-600/20 min-h-[44px] flex items-center">{t('ayah' as TranslationKeys)} {ayah.numberInSurah}</span>
                             </div>
                             <p className="text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed text-xl md:text-2xl font-bold tracking-tight">
                                 {formatHonorifics(ayah.text)}
@@ -90,7 +108,7 @@ const Tafsir: React.FC = () => {
                 ) : (
                     <div className="text-center py-20 bg-slate-50 dark:bg-dark-blue-card rounded-3xl border-2 border-dashed border-slate-200">
                         <BookOpen size={48} className="mx-auto text-slate-300 mb-4" />
-                        <p className="text-slate-400 font-bold">Silakan pilih surah untuk membaca tafsirnya.</p>
+                        <p className="text-slate-400 font-bold">{t('selectSurahForTafsir' as TranslationKeys)}</p>
                     </div>
                 )}
             </div>

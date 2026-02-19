@@ -4,15 +4,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Play, Share2, Loader2, 
   ZoomIn, ZoomOut, Copy, Check, Languages, Volume2, 
-  ChevronLeft, ChevronRight, Bookmark
+  ChevronLeft, ChevronRight, Bookmark, Eye, EyeOff
 } from 'lucide-react';
 import { fetchJuz, fetchTranslationEditions } from '../services/quranService';
 import { generateSpeech } from '../services/geminiService';
 import ShareModal from '../components/ShareModal';
 import { formatHonorifics } from '../utils/honorifics';
 import { toArabicNumerals } from '../utils/arabicNumbers';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 import { useBookmarks } from '../contexts/BookmarkContext';
+import { Ayah, Surah } from '../types'; 
+import { ErrorMessage } from '../components/ui/Feedback'; // Import ErrorMessage
 
 const JuzDetail: React.FC = () => {
   const { number } = useParams<{ number: string }>();
@@ -49,7 +51,7 @@ const JuzDetail: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Failed to load juz:", err);
-      setError(err.message || "Gagal memuat data Juz.");
+      setError(err.message || t('failedToLoadJuzData' as TranslationKeys));
     } finally {
       setLoading(false);
     }
@@ -57,7 +59,7 @@ const JuzDetail: React.FC = () => {
 
   useEffect(() => {
     load();
-  }, [number, translationLang]);
+  }, [number, translationLang, t]);
 
   const handlePlayAyah = (ayahNum: number) => {
     if (playingAyah === ayahNum) {
@@ -79,8 +81,7 @@ const JuzDetail: React.FC = () => {
     setPlayingTTS(ayahNum);
     try {
       const langName = availableTranslations.find(et => et.identifier === translationLang)?.language || 'Indonesian';
-      // FIX: Call .play() on the AudioPlayback object to get controls
-      const playback = await generateSpeech(text, langName, 'Kore');
+      const playback = await generateSpeech(text, langName, 'Kore', false, undefined); 
       const { controls } = playback.play();
       controls.onended = () => setPlayingTTS(null);
     } catch (e) {
@@ -89,17 +90,19 @@ const JuzDetail: React.FC = () => {
     }
   };
 
-  const copyAyah = (ayah: any, trans: string) => {
-    const text = `${ayah.text}\n\n"${trans}"\n(QS. ${ayah.surah.englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`;
+  const copyAyah = (ayah: Ayah, trans: string) => { 
+    const surahName = ayah.surah?.englishName || t('surah' as TranslationKeys);
+    const text = `${ayah.text}\n\n"${trans}"\n(QS. ${surahName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`;
     navigator.clipboard.writeText(text);
     setCopiedId(ayah.number);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleNativeShare = async (ayah: any, trans: string) => {
+  const handleNativeShare = async (ayah: Ayah, trans: string) => { 
+    const surahName = ayah.surah?.englishName || t('surah' as TranslationKeys);
     const shareData = {
-      title: 'Iqro Quran Digital',
-      text: `${ayah.text}\n\n"${trans}"\n(QS. ${ayah.surah.englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`,
+      title: t('iqroQuranDigital' as TranslationKeys),
+      text: `${ayah.text}\n\n"${trans}"\n(QS. ${surahName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`,
       url: window.location.href
     };
     if (navigator.share) {
@@ -107,18 +110,18 @@ const JuzDetail: React.FC = () => {
         await navigator.share(shareData);
       } catch (err) {}
     } else {
-      setShareVerse({ arabic: ayah.text, translation: trans, surah: ayah.surah.englishName, ayah: ayah.numberInSurah });
+      setShareVerse({ arabic: ayah.text, translation: trans, surah: surahName, ayah: ayah.numberInSurah });
     }
   };
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-full py-48 gap-8">
       <Loader2 className="animate-spin text-emerald-600" size={64} />
-      <p className="text-slate-500 font-bold text-lg animate-pulse">Memuat Juz {number}...</p>
+      <p className="text-slate-500 font-bold text-lg animate-pulse">{t('loadingJuz' as TranslationKeys, { juzNumber: number })}</p>
     </div>
   );
 
-  if (error || !data) return <div className="p-20 text-center text-red-500">{error}</div>;
+  if (error) return <div className="p-20 text-center"><ErrorMessage message={error} /></div>;
 
   const arabicEd = data[0];
   const translationEd = data[1];
@@ -132,36 +135,38 @@ const JuzDetail: React.FC = () => {
       <div className="bg-white dark:bg-dark-blue-card rounded-3xl p-6 mb-8 shadow-md border border-slate-100 dark:border-slate-800 text-center relative overflow-hidden">
         <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
           {juzNum > 1 && (
-            <button onClick={() => navigate(`/juz/${juzNum - 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm" aria-label="Juz Sebelumnya">
+            <button onClick={() => navigate(`/juz/${juzNum - 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm min-h-[44px] min-w-[44px]" aria-label={t('previousJuz' as TranslationKeys)}>
               <ChevronLeft size={28} />
             </button>
           )}
         </div>
         <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
           {juzNum < 30 && (
-            <button onClick={() => navigate(`/juz/${juzNum + 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm" aria-label="Juz Berikutnya">
+            <button onClick={() => navigate(`/juz/${juzNum + 1}`)} className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-full hover:scale-110 transition shadow-sm min-h-[44px] min-w-[44px]" aria-label={t('nextJuz' as TranslationKeys)}>
               <ChevronRight size={28} />
             </button>
           )}
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">Juz {juzNum}</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{t('juz' as TranslationKeys)} {juzNum}</h1>
         <p className="text-xs text-slate-400 font-black uppercase tracking-widest mt-1">
-          {arabicEd.ayahs.length} Ayat
+          {arabicEd.ayahs.length} {t('ayahSuffix' as TranslationKeys)}
         </p>
       </div>
 
       <div className="sticky top-20 bg-white/90 dark:bg-dark-blue-card/90 backdrop-blur-md z-30 p-3 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-center gap-3 mb-10">
         <button 
           onClick={() => setShowLatin(!showLatin)}
-          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+          className={`px-4 py-2 rounded-xl font-extrabold text-xs uppercase transition-all min-h-[44px] flex items-center gap-2 ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}
+          aria-label={showLatin ? t('hideLatin' as TranslationKeys) : t('showLatin' as TranslationKeys)}
         >
-          Latin: {showLatin ? 'ON' : 'OFF'}
+          {showLatin ? <EyeOff size={14}/> : <Eye size={14}/>} {showLatin ? t('hideLatin' as TranslationKeys) : t('showLatin' as TranslationKeys)}
         </button>
         <button 
           onClick={() => setShowTranslation(!showTranslation)}
-          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] uppercase transition-all ${showTranslation ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+          className={`px-4 py-2 rounded-xl font-extrabold text-xs uppercase transition-all min-h-[44px] flex items-center gap-2 ${showTranslation ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}
+          aria-label={showTranslation ? t('hideTranslation' as TranslationKeys) : t('showTranslation' as TranslationKeys)}
         >
-          Terjemahan: {showTranslation ? 'ON' : 'OFF'}
+          {showTranslation ? <EyeOff size={14}/> : <Eye size={14}/>} {showTranslation ? t('hideTranslation' as TranslationKeys) : t('showTranslation' as TranslationKeys)}
         </button>
         
         {showTranslation && (
@@ -170,8 +175,8 @@ const JuzDetail: React.FC = () => {
              <select 
                 value={translationLang}
                 onChange={(e) => setTranslationLang(e.target.value)}
-                className="bg-transparent text-[11px] font-bold outline-none cursor-pointer max-w-[120px]"
-                aria-label="Pilih Bahasa Terjemahan"
+                className="bg-transparent text-[11px] font-bold outline-none cursor-pointer max-w-[120px] min-h-[44px] px-2 py-1"
+                aria-label={t('selectTranslationLanguage' as TranslationKeys)}
               >
                 {availableTranslations.map(et => (
                   <option key={et.identifier} value={et.identifier}>{et.name} ({et.language})</option>
@@ -183,14 +188,14 @@ const JuzDetail: React.FC = () => {
         <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
 
         <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
-          <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Perkecil Font"><ZoomOut size={14}/></button>
+          <button onClick={() => setFontSize(Math.max(20, fontSize - 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors min-h-[44px] min-w-[44px]" aria-label={t('decreaseFontSize' as TranslationKeys)}><ZoomOut size={14}/></button>
           <span className="text-[10px] font-black w-6 text-center">{fontSize}</span>
-          <button onClick={() => setFontSize(Math.min(100, fontSize + 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors" aria-label="Perbesar Font"><ZoomIn size={14}/></button>
+          <button onClick={() => setFontSize(Math.min(100, fontSize + 4))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors min-h-[44px] min-w-[44px]" aria-label={t('increaseFontSize' as TranslationKeys)}><ZoomIn size={14}/></button>
         </div>
       </div>
 
       <div className="space-y-16">
-        {arabicEd.ayahs.map((ayah: any, index: number) => {
+        {arabicEd.ayahs.map((ayah: Ayah, index: number) => { 
           const showSurahHeader = ayah.surah.number !== lastSurahNumber;
           lastSurahNumber = ayah.surah.number;
           
@@ -249,39 +254,39 @@ const JuzDetail: React.FC = () => {
 
                     <div className="flex items-center justify-end gap-2 mt-2">
                        <button
-                          onClick={() => isBookmarkedAyah ? removeBookmark(ayah.number) : addBookmark(ayah, ayah.surah)}
-                          className={`p-2.5 rounded-xl transition-all shadow-sm ${isBookmarkedAyah ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
-                          aria-label={isBookmarkedAyah ? "Hapus Bookmark" : "Tambah Bookmark"}
+                          onClick={() => isBookmarkedAyah ? removeBookmark(ayah.number) : addBookmark(ayah, ayah.surah as Surah)}
+                          className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${isBookmarkedAyah ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
+                          aria-label={isBookmarkedAyah ? t('removeBookmark' as TranslationKeys) : t('addBookmark' as TranslationKeys)}
                       >
                           <Bookmark size={18} fill={isBookmarkedAyah ? 'currentColor' : 'none'} />
                       </button>
                       {showTranslation && (
                         <button 
                           onClick={() => handleTTS(translationText, ayah.number)}
-                          className={`p-2.5 rounded-xl transition-all shadow-sm ${playingTTS === ayah.number ? 'bg-purple-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-purple-500'}`}
-                          title="Dengarkan Terjemahan (AI TTS)" aria-label="Dengarkan Terjemahan"
+                          className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${playingTTS === ayah.number ? 'bg-purple-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-purple-500'}`}
+                          title={t('listenTranslation' as TranslationKeys)} aria-label={t('listenTranslation' as TranslationKeys)}
                         >
                           <Volume2 size={18} />
                         </button>
                       )}
                       <button 
                         onClick={() => handlePlayAyah(ayah.number)}
-                        className={`p-2.5 rounded-xl transition-all shadow-sm ${playingAyah === ayah.number ? 'bg-emerald-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500'}`}
-                        aria-label="Putar Murottal Ayat"
+                        className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${playingAyah === ayah.number ? 'bg-emerald-600 text-white animate-pulse' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500'}`}
+                        aria-label={t('playAyahMurottal' as TranslationKeys)}
                       >
                         <Play size={18} fill={playingAyah === ayah.number ? "white" : "none"} />
                       </button>
                       <button 
                         onClick={() => copyAyah(ayah, formattedTranslation)}
-                        className={`p-2.5 rounded-xl transition-all shadow-sm ${copiedId === ayah.number ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
-                        aria-label="Salin Ayat"
+                        className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${copiedId === ayah.number ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
+                        aria-label={t('copyAyah' as TranslationKeys)}
                       >
                         {copiedId === ayah.number ? <Check size={18} /> : <Copy size={18} />}
                       </button>
                       <button 
                         onClick={() => handleNativeShare(ayah, formattedTranslation)}
-                        className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                        aria-label="Bagikan Ayat"
+                        className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm min-h-[44px] min-w-[44px]"
+                        aria-label={t('shareAyah' as TranslationKeys)}
                       >
                         <Share2 size={18} />
                       </button>

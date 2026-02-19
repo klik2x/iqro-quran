@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { fetchAllSurahs, fetchSurah } from '../services/quranService';
-import { LoadingSpinner } from '../components/ui/Feedback';
-import { useTranslation } from '../contexts/LanguageContext';
+import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback'; // Import ErrorMessage
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 import { Play, Pause, Loader2 } from 'lucide-react';
 import MediaCarousel from '../components/ui/MediaCarousel';
 import HadithCard from '../components/ui/HadithCard';
@@ -26,17 +26,19 @@ const Dashboard: React.FC = () => {
         const makkiyah = surahs.filter(s => s.revelationType === 'Meccan').length;
         const madaniyah = surahs.filter(s => s.revelationType === 'Medinan').length;
         setStats([
-          { name: 'Makkiyah', value: makkiyah },
-          { name: 'Madaniyah', value: madaniyah },
+          { name: t('makkiyah' as TranslationKeys), value: makkiyah },
+          { name: t('madaniyah' as TranslationKeys), value: madaniyah },
         ]);
       } catch (error) {
         console.error("Failed to fetch surah stats", error);
+        // Do not set global error here, as it's handled locally for AyahOfTheDay.
+        // Dashboard stats error could be handled separately if needed for full page.
       } finally {
         setLoading(false);
       }
     };
     getStats();
-  }, []);
+  }, [t]);
 
   return (
     <div className="space-y-8">
@@ -47,7 +49,7 @@ const Dashboard: React.FC = () => {
       <AyahOfTheDay />
 
       <div className="bg-white dark:bg-dark-blue-card p-6 rounded-2xl shadow-md overflow-hidden">
-        <h2 className="text-xl font-bold mb-4 text-emerald-dark dark:text-white">{t('quranStats')}</h2>
+        <h2 className="text-xl font-bold mb-4 text-emerald-dark dark:text-white">{t('quranStats' as TranslationKeys)}</h2>
         {loading ? (
           <div className="h-64 flex items-center justify-center"><LoadingSpinner /></div>
         ) : (
@@ -75,16 +77,16 @@ const Dashboard: React.FC = () => {
               </ResponsiveContainer>
             </div>
             <div className="text-center md:text-left">
-              <h3 className="text-lg font-semibold">Tipe Surah</h3>
-              <p className="text-gray-600 dark:text-gray-300">Total 114 Surah</p>
+              <h3 className="text-lg font-semibold">{t('surahType' as TranslationKeys)}</h3>
+              <p className="text-gray-600 dark:text-gray-300">{t('totalSurahs' as TranslationKeys)} 114 {t('surahSuffix' as TranslationKeys)}</p>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-center md:justify-start space-x-2">
                   <div className="w-4 h-4 rounded-full bg-[#036666]"></div>
-                  <span>Makkiyah: {stats.find(s => s.name === 'Makkiyah')?.value} Surah</span>
+                  <span>{t('makkiyah' as TranslationKeys)}: {stats.find(s => s.name === t('makkiyah' as TranslationKeys))?.value} {t('surahSuffix' as TranslationKeys)}</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start space-x-2">
                   <div className="w-4 h-4 rounded-full bg-[#D4AF37]"></div>
-                  <span>Madaniyah: {stats.find(s => s.name === 'Madaniyah')?.value} Surah</span>
+                  <span>{t('madaniyah' as TranslationKeys)}: {stats.find(s => s.name === t('madaniyah' as TranslationKeys))?.value} {t('surahSuffix' as TranslationKeys)}</span>
                 </div>
               </div>
             </div>
@@ -108,12 +110,15 @@ const AyahOfTheDay: React.FC = () => {
     const { t } = useTranslation();
     const [dailyAyah, setDailyAyah] = useState<DailyAyah | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null); // NEW: Error state
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
         const getDailyAyah = async () => {
             try {
+                setLoading(true);
+                setError(null); // Clear previous errors
                 const date = new Date();
                 const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
                 
@@ -127,15 +132,16 @@ const AyahOfTheDay: React.FC = () => {
                 
                 setDailyAyah({ ayah: selectedAyah, surah: surahData });
 
-            } catch (error) {
-                console.error("Failed to fetch Ayah of the Day:", error);
+            } catch (err: any) {
+                console.error("Failed to fetch Ayah of the Day:", err);
+                setError(err.message || t('failedToLoadDailyAyah' as TranslationKeys)); // Set specific error message
             } finally {
                 setLoading(false);
             }
         };
 
         getDailyAyah();
-    }, []);
+    }, [t]);
 
     const playAudio = () => {
         if (!dailyAyah) return;
@@ -162,9 +168,10 @@ const AyahOfTheDay: React.FC = () => {
         <div className="bg-gradient-to-br from-emerald-dark to-emerald-light dark:from-emerald-dark dark:to-gray-800 text-white p-5 rounded-2xl shadow-lg relative min-h-[220px]">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-lg font-bold mb-2">{t('ayahOfTheDay')}</h2>
+                <h2 className="text-lg font-bold mb-2">{t('ayahOfTheDay' as TranslationKeys)}</h2>
               </div>
-              <button onClick={playAudio} className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition min-h-[44px] min-w-[44px]" disabled={!dailyAyah || loading}>
+              <button onClick={playAudio} className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition min-h-[44px] min-w-[44px]" disabled={!dailyAyah || loading || !!error}
+              aria-label={isPlaying ? t('pause' as TranslationKeys) : t('play' as TranslationKeys)}>
                 {isPlaying ? <Pause size={20} /> : <Play size={20} />}
               </button>
             </div>
@@ -185,12 +192,14 @@ const AyahOfTheDay: React.FC = () => {
                     </p>
                     <div className="mt-4 text-right">
                         <Link to={`/surah/${dailyAyah.surah.number}`} className="bg-white/30 hover:bg-white/50 text-white font-bold py-2 px-4 rounded-full transition text-sm min-h-[44px] inline-flex items-center">
-                            {t('read')} Surah
+                            {t('readSurah' as TranslationKeys)}
                         </Link>
                     </div>
                 </>
-            ) : (
-                <p>Gagal memuat ayat hari ini.</p>
+            ) : error ? ( // NEW: Display error message
+                <ErrorMessage message={`${t('failedToLoadDailyAyah' as TranslationKeys)}: ${error}`} />
+            ) : ( 
+                <p>{t('failedToLoadDailyAyah' as TranslationKeys)}</p>
             )}
         </div>
     );

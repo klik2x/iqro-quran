@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Server, TrendingUp, Settings2, X, AlertCircle, Loader2 } from 'lucide-react';
-import { useTranslation } from '../contexts/LanguageContext';
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
+import { useApiHealth } from '../contexts/ApiHealthContext'; // NEW: Import useApiHealth
 
 // This is a mock implementation for API quota monitoring as direct frontend access
 // to real-time quota of a backend service (like Gemini/ElevenLabs) is not typically feasible.
@@ -20,6 +21,7 @@ interface ApiServiceStats {
 const AdminStats: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const { isVocalStudioApiHealthy, setVocalStudioApiHealthy, triggerApiHealthCheck } = useApiHealth(); // NEW: Use API Health context
     const [stats, setStats] = useState<ApiServiceStats[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -47,7 +49,7 @@ const AdminStats: React.FC = () => {
                         totalRequests: 70,
                         hourlyLimit: 100,
                         dailyLimit: 3000,
-                        status: 'warning',
+                        status: isVocalStudioApiHealthy ? 'ok' : 'critical', // Reflect actual API health from context
                         lastChecked: new Date().toLocaleString(),
                     },
                     {
@@ -62,13 +64,13 @@ const AdminStats: React.FC = () => {
                 setStats(mockStats);
             } catch (err) {
                 console.error("Failed to fetch admin stats:", err);
-                setError("Gagal memuat statistik. Silakan coba lagi.");
+                setError(t('failedToLoadStats' as TranslationKeys)); // FIX: New translation key
             } finally {
                 setLoading(false);
             }
         };
         fetchMockStats();
-    }, []);
+    }, [t, isVocalStudioApiHealthy]); // Add isVocalStudioApiHealthy to dependency array
 
     const getStatusColor = (status: ApiServiceStats['status']) => {
         switch (status) {
@@ -87,18 +89,18 @@ const AdminStats: React.FC = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <button onClick={() => navigate(-1)} className="mb-6 flex items-center gap-2 text-emerald-600 font-bold min-h-[44px] min-w-[44px] px-2 py-1" aria-label={t('cancel')}><X size={20}/> {t('cancel')}</button>
-            <h1 className="text-3xl font-black mb-8 flex items-center gap-3"><Server className="text-purple-500" /> {t('adminStatsTitle')}</h1>
+            <button onClick={() => navigate(-1)} className="mb-6 flex items-center gap-2 text-emerald-600 font-bold min-h-[44px] min-w-[44px] px-2 py-1" aria-label={t('cancel' as TranslationKeys)}><X size={20}/> {t('cancel' as TranslationKeys)}</button>
+            <h1 className="text-3xl font-black mb-8 flex items-center gap-3"><Server className="text-purple-500" /> {t('adminStatsTitle' as TranslationKeys)}</h1>
             
             <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-3xl border border-blue-100 dark:border-blue-900/20 flex gap-4 text-blue-800 dark:text-blue-300 shadow-inner mb-8">
               <AlertCircle className="shrink-0 text-blue-500" />
-              <p className="text-sm font-bold leading-relaxed">{t('adminStatsDisclaimer')}</p>
+              <p className="text-sm font-bold leading-relaxed">{t('adminStatsDisclaimer' as TranslationKeys)}</p>
             </div>
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20">
                     <Loader2 className="animate-spin text-emerald-600" size={48} />
-                    <p className="mt-4 text-slate-500">{t('loadingStats')}</p>
+                    <p className="mt-4 text-slate-500">{t('loadingStats' as TranslationKeys)}</p>
                 </div>
             ) : error ? (
                 <div className="text-red-500 text-center py-20">{error}</div>
@@ -113,10 +115,10 @@ const AdminStats: React.FC = () => {
                                 </span>
                             </div>
                             <div className="space-y-3 text-slate-700 dark:text-slate-300 text-sm">
-                                <p><strong>{t('totalRequests')}:</strong> {service.totalRequests}</p>
+                                <p><strong>{t('totalRequests' as TranslationKeys)}:</strong> {service.totalRequests}</p>
                                 
                                 <div>
-                                    <p className="mb-1"><strong>{t('hourlyLimit')}:</strong> {service.totalRequests} / {service.hourlyLimit}</p>
+                                    <p className="mb-1"><strong>{t('hourlyLimit' as TranslationKeys)}:</strong> {service.totalRequests} / {service.hourlyLimit}</p>
                                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div 
                                             className="bg-emerald-500 h-2 rounded-full transition-all duration-500" 
@@ -126,7 +128,7 @@ const AdminStats: React.FC = () => {
                                 </div>
                                 
                                 <div>
-                                    <p className="mb-1"><strong>{t('dailyLimit')}:</strong> {service.totalRequests} / {service.dailyLimit}</p>
+                                    <p className="mb-1"><strong>{t('dailyLimit' as TranslationKeys)}:</strong> {service.totalRequests} / {service.dailyLimit}</p>
                                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <div 
                                             className="bg-blue-500 h-2 rounded-full transition-all duration-500" 
@@ -135,9 +137,29 @@ const AdminStats: React.FC = () => {
                                     </div>
                                 </div>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                                    {t('lastChecked')}: {service.lastChecked}
+                                    {t('lastChecked' as TranslationKeys)}: {service.lastChecked}
                                 </p>
                             </div>
+                            {service.name === 'Vocal Studio TTSPro' && ( // NEW: Add button for Vocal Studio only
+                                <div className="mt-4">
+                                    <button
+                                        onClick={() => setVocalStudioApiHealthy(!isVocalStudioApiHealthy)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${isVocalStudioApiHealthy ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600'}`}
+                                        aria-label={isVocalStudioApiHealthy ? "Simulasikan kegagalan Vocal Studio API" : "Simulasikan Vocal Studio API sehat"}
+                                    >
+                                        {isVocalStudioApiHealthy ? 'Simulasikan Kegagalan API' : 'Simulasikan API Sehat'}
+                                    </button>
+                                    {!isVocalStudioApiHealthy && (
+                                        <button
+                                            onClick={triggerApiHealthCheck}
+                                            className="ml-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                                            aria-label="Coba lagi cek API Vocal Studio"
+                                        >
+                                            Coba Lagi Cek API
+                                        </button>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -147,3 +169,4 @@ const AdminStats: React.FC = () => {
 };
 
 export default AdminStats;
+    

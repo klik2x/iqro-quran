@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from '../contexts/LanguageContext'; // Import useTranslation
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext'; // Import useTranslation
 
 const Welcome: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
     const { t } = useTranslation(); // Use translation hook
-    const texts = [t('greeting'), "Warahmatullahi", "Wabarakatuh", "Ahlan wa Sahlan"]; // Use t for greeting
+    // FIX: Use TranslationKeys type for t() calls
+    const texts = [t('greeting' as TranslationKeys), "Warahmatullahi", "Wabarakatuh", "Ahlan wa Sahlan"]; // Use t for greeting
     const [currentText, setCurrentText] = useState("");
     const [textIndex, setTextIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
@@ -52,6 +53,12 @@ const Welcome: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
     return (
         <div className="flex items-center justify-center h-screen bg-soft-white dark:bg-dark-blue">
             <div className="text-center">
+                {/* NEW: Logo for Welcome Page with circular frame and blink animation */}
+                <img 
+                    src="https://i.ibb.co/f4F93Vp/IQRO-Quran-logo-circular.png" 
+                    alt="IQRO Quran Digital Logo" 
+                    className="w-32 h-32 mx-auto mb-8 rounded-full shadow-lg border-2 border-gold-dark dark:border-gold-light animate-blink" 
+                />
                 <h1 className="text-4xl md:text-6xl font-bold text-emerald-dark dark:text-emerald-light whitespace-pre-wrap font-arabic">
                     {currentText}
                     <span className="animate-ping">|</span>
