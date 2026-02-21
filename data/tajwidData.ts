@@ -2,7 +2,7 @@
 export const tajwidData = [
   {
     rule: "Izhar Halqi",
-    explanation: "Izhar (إِظْهَار) berarti 'jelas'. Jika Nun Sukun (نْ) atau Tanwin (ـًـــٍـــٌ) bertemu dengan salah satu dari enam huruf Halqi (tenggorokan), maka dibaca dengan jelas tanpa dengung.",
+    explanation: "Izhar means clear pronunciation. If Noon Sukun (نْ) or Tanwin (ـًـٍـٌ) is followed by any of the six throat letters (ء هـ ع ح غ خ), it must be pronounced clearly without nasalization (ghunnah).",
     letters: "ء هـ ع ح غ خ",
     colorClass: "text-green-600 dark:text-green-400", // New: Color for Izhar
     examples: [
