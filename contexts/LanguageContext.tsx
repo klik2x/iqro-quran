@@ -48,17 +48,28 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('id');
+  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>(() => {
+    return (localStorage.getItem('appLanguage') as LanguageCode) || 'id';
+  });
   const [translations, setTranslations] = useState<Translations>(idStrings);
   const [isLoading, setIsLoading] = useState(false);
-  const [translationCache, setTranslationCache] = useState<Record<LanguageCode, Translations>>({ 'id': idStrings });
+  const [translationCache, setTranslationCache] = useState<Record<LanguageCode, Translations>>(() => {
+    const savedCache = localStorage.getItem('translationCache');
+    return savedCache ? JSON.parse(savedCache) : { 'id': idStrings };
+  });
+
+  useEffect(() => {
+    if (translationCache[currentLanguage]) {
+      setTranslations(translationCache[currentLanguage]);
+    }
+  }, [currentLanguage, translationCache]);
 
   const changeLanguage = useCallback(async (langCode: LanguageCode) => {
     if (langCode === currentLanguage) return;
 
     if (translationCache[langCode]) {
-        setTranslations(translationCache[langCode]);
         setCurrentLanguage(langCode);
+        localStorage.setItem('appLanguage', langCode);
         return;
     }
 
@@ -72,9 +83,13 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
             throw new Error("Translation did not return all keys.");
         }
 
-        setTranslationCache(prev => ({ ...prev, [langCode]: newTranslations as Translations }));
+        const updatedCache = { ...translationCache, [langCode]: newTranslations as Translations };
+        setTranslationCache(updatedCache);
+        localStorage.setItem('translationCache', JSON.stringify(updatedCache));
+        
         setTranslations(newTranslations as Translations);
         setCurrentLanguage(langCode);
+        localStorage.setItem('appLanguage', langCode);
     } catch (error) {
         console.error("Failed to translate:", error);
         alert(`Failed to switch language to ${langCode}. Please try again.`);
