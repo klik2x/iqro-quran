@@ -33,7 +33,8 @@ import PopupEntry from './pages/PopupEntry';
 import FamilyPrayerPopup from './components/ui/FamilyPrayerPopup';
 import SetoranBerhadiah from './pages/SetoranBerhadiah'; // Import new SetoranBerhadiah page
 import CertificatePage from './pages/CertificatePage'; // NEW IMPORT
-import AdminStats from './pages/AdminStats'; // NEW IMPORT
+import AdminStats from './pages/AdminStats';
+import AdminLogin from './pages/AdminLogin';
 
 // Custom Emoji Icon component for 🗣️
 const SpeakingHeadIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -65,7 +66,6 @@ const App: React.FC = () => {
 
 const AppRoutes: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false); // NEW: Admin state
   const [hasSeenWelcome, setHasSeenWelcome] = useState(sessionStorage.getItem('hasSeenWelcome') === 'true');
 
   useEffect(() => {
@@ -73,33 +73,17 @@ const AppRoutes: React.FC = () => {
     setIsLoggedIn(loggedIn);
   }, []);
 
-  const handleLogin = (username: string) => {
+  const handleLogin = () => {
     localStorage.setItem('isLoggedIn', 'true');
     setIsLoggedIn(true);
-    if (username === 'admin-iqro') {
-      localStorage.setItem('isAdmin', 'true');
-      setIsAdmin(true);
-    } else {
-      localStorage.removeItem('isAdmin');
-      setIsAdmin(false);
-    }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('isAdmin');
     sessionStorage.removeItem('hasSeenFamilyPrayerPopup');
     sessionStorage.removeItem('hasSeenWelcome');
     setIsLoggedIn(false);
-    setIsAdmin(false);
   };
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const admin = localStorage.getItem('isAdmin') === 'true';
-    setIsLoggedIn(loggedIn);
-    setIsAdmin(admin);
-  }, []);
 
   if (!hasSeenWelcome) {
     return <Welcome onFinish={() => setHasSeenWelcome(true)} />;
@@ -113,11 +97,6 @@ const AppRoutes: React.FC = () => {
           </Routes>
       );
   }
-
-  // Admin route protection
-  const AdminRoute = () => {
-    return isAdmin ? <Outlet /> : <Navigate to="/" />;
-  };
 
   return (
     <Routes>
@@ -139,9 +118,15 @@ const AppRoutes: React.FC = () => {
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/doa-keluarga" element={<PopupEntry />} />
-        <Route path="/admin" element={<AdminRoute />}>
-          <Route path="stats" element={<AdminStats />} /> {/* NEW HIDDEN ROUTE */}
-        </Route>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route 
+          path="/admin/stats" 
+          element={
+            localStorage.getItem('isAdminLoggedIn') === 'true' 
+              ? <AdminStats /> 
+              : <Navigate to="/admin/login" />
+          } 
+        />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
@@ -300,7 +285,6 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
         { path: '/privacy', icon: ShieldCheck, label: t('privacyPolicy' as TranslationKeys) },
         { path: '/terms', icon: FileText, label: t('termsOfService' as TranslationKeys) },
         { path: '/faq', icon: HelpCircle, label: t('faq' as TranslationKeys) },
-        { path: '/admin/stats', icon: Server, label: t('adminStatsTitle' as TranslationKeys) }, // NEW: Admin Stats
     ];
 
     return (
