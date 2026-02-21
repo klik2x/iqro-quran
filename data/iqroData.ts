@@ -7,6 +7,7 @@ export const iqroData: IqroLevelData[] = [
         title: "Iqro 1", 
         description: "Mengenal huruf Hijaiyah tunggal dengan harakat Fathah (bunyi 'a'). Fokus pada pengenalan bentuk huruf dan pelafalan dasarnya.",
         cover: "https://github.com/Klik2/sumber/blob/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_1.png?raw=true",
+
         sections: [
             {
                 title: "iqro1Page1Title",
@@ -744,6 +745,7 @@ export const iqroData: IqroLevelData[] = [
         title: "Iqro 2",
         description: "Memperkenalkan cara menyambung dua huruf serta menekankan bahwa bacaan harus tetap pendek (kecuali jika ada tanda panjang nantinya).",
         cover: "https://github.com/Klik2/sumber/blob/38e9b8adc0c075bae9f5608492b4150c8ca193de/Iqra_2.png?raw=true",
+ // Placeholder cover for Iqro 2
         sections: [
             {
                 title: "iqro2Page1Title",
