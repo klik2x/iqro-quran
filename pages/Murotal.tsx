@@ -21,6 +21,7 @@ interface Reciter {
 const Murotal: React.FC = () => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [reciters, setReciters] = useState<Reciter[]>([]);
+  const [favoriteReciterIds, setFavoriteReciterIds] = useState<number[]>([]);
   const [selectedReciter, setSelectedReciter] = useState<Reciter | null>(null);
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -38,6 +39,27 @@ const Murotal: React.FC = () => {
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('favoriteReciters');
+    if (saved) {
+      try {
+        setFavoriteReciterIds(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse favorite reciters", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteReciters', JSON.stringify(favoriteReciterIds));
+  }, [favoriteReciterIds]);
+
+  const toggleFavoriteReciter = (id: number) => {
+    setFavoriteReciterIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
 
   const fetchData = async () => {
     try {
@@ -211,9 +233,34 @@ const Murotal: React.FC = () => {
                   <h2 className="text-3xl font-black text-slate-900 dark:text-white leading-tight">
                     {selectedSurah?.englishName}
                   </h2>
-                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                    <User size={16} className="text-emerald-600" />
-                    <span className="text-sm font-bold">{selectedReciter?.name}</span>
+                  <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <User size={16} className="text-emerald-600" />
+                      <span className="text-sm font-bold">{selectedReciter?.name}</span>
+                    </div>
+                    {selectedReciter && (
+                      <button 
+                        onClick={() => toggleFavoriteReciter(selectedReciter.id)}
+                        className={`p-1.5 rounded-full transition-all ${
+                          favoriteReciterIds.includes(selectedReciter.id)
+                            ? 'text-rose-500 bg-rose-50 dark:bg-rose-900/20'
+                            : 'text-slate-300 hover:text-rose-400 bg-slate-50 dark:bg-slate-800'
+                        }`}
+                      >
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          width="16" height="16" 
+                          viewBox="0 0 24 24" 
+                          fill={favoriteReciterIds.includes(selectedReciter.id) ? "currentColor" : "none"} 
+                          stroke="currentColor" 
+                          strokeWidth="2.5" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        >
+                          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="w-20 h-20 bg-emerald-600 text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-emerald-600/30">
@@ -308,18 +355,30 @@ const Murotal: React.FC = () => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                   <User size={12} /> {t('selectQari' as TranslationKeys)}
                 </label>
-                <select 
-                  value={selectedReciter?.id || ''}
-                  onChange={(e) => {
-                    const r = reciters.find(rec => rec.id === parseInt(e.target.value));
-                    if (r) setSelectedReciter(r);
-                  }}
-                  className="w-full p-4 bg-white dark:bg-dark-blue-card border-2 border-transparent rounded-2xl font-bold text-slate-900 dark:text-white shadow-sm focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"
-                >
-                  {reciters.map(r => (
-                    <option key={r.id} value={r.id}>{r.name}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select 
+                    value={selectedReciter?.id || ''}
+                    onChange={(e) => {
+                      const r = reciters.find(rec => rec.id === parseInt(e.target.value));
+                      if (r) setSelectedReciter(r);
+                    }}
+                    className="w-full p-4 pr-12 bg-white dark:bg-dark-blue-card border-2 border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white shadow-sm focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all appearance-none cursor-pointer hover:border-emerald-200 dark:hover:border-emerald-900"
+                  >
+                    <optgroup label={t('favorites' as TranslationKeys)}>
+                      {reciters.filter(r => favoriteReciterIds.includes(r.id)).map(r => (
+                        <option key={`fav-${r.id}`} value={r.id}>⭐ {r.name}</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label={t('reciters' as TranslationKeys)}>
+                      {reciters.filter(r => !favoriteReciterIds.includes(r.id)).map(r => (
+                        <option key={r.id} value={r.id}>{r.name}</option>
+                      ))}
+                    </optgroup>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                </div>
               </div>
 
               {/* Surah List */}

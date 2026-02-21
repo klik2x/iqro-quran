@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Play, Share2, Loader2, 
   ZoomIn, ZoomOut, Copy, Check, Languages, Volume2, 
-  ChevronLeft, ChevronRight, Bookmark, Eye, EyeOff
+  ChevronLeft, ChevronRight, Bookmark, Eye, EyeOff,
+  MessageCircle
 } from 'lucide-react';
 import { fetchJuz, fetchTranslationEditions } from '../services/quranService';
 import { generateSpeech } from '../services/geminiService';
@@ -112,6 +113,13 @@ const JuzDetail: React.FC = () => {
     } else {
       setShareVerse({ arabic: ayah.text, translation: trans, surah: surahName, ayah: ayah.numberInSurah });
     }
+  };
+
+  const handleWhatsAppShare = (ayah: Ayah, translation: string) => {
+    const surahName = ayah.surah?.englishName || t('surah' as TranslationKeys);
+    const text = `*${ayah.text}*\n\n${translation}\n\n(QS. ${surahName}: ${ayah.numberInSurah})`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
   };
 
   if (loading) return (
@@ -226,8 +234,18 @@ const JuzDetail: React.FC = () => {
                     </div>
                  )}
 
-                <div className={`group animate-fade-in p-2 rounded-xl transition-colors ${playingAyah === ayah.number ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''}`}>
+                <div className={`group animate-fade-in p-4 rounded-3xl transition-colors border border-transparent ${playingAyah === ayah.number ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800' : 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30'}`}>
                   <div className="flex flex-col gap-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-wider">
+                          Ayah {ayah.numberInSurah}
+                        </span>
+                        <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-[10px] font-black uppercase tracking-wider">
+                          Page {ayah.page}
+                        </span>
+                      </div>
+                    </div>
                     <div className="text-right">
                       <p className="font-arabic leading-[2.8]" style={{ fontSize: `${fontSize}px` }} dir="rtl">
                         {verseText}
@@ -282,6 +300,13 @@ const JuzDetail: React.FC = () => {
                         aria-label={t('copyAyah' as TranslationKeys)}
                       >
                         {copiedId === ayah.number ? <Check size={18} /> : <Copy size={18} />}
+                      </button>
+                      <button 
+                        onClick={() => handleWhatsAppShare(ayah, formattedTranslation)}
+                        className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm min-h-[44px] min-w-[44px]"
+                        title="Share to WhatsApp"
+                      >
+                        <MessageCircle size={18} />
                       </button>
                       <button 
                         onClick={() => handleNativeShare(ayah, formattedTranslation)}
