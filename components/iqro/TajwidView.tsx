@@ -33,7 +33,7 @@ const TajwidView: React.FC = () => {
         )}</>;
     };
 
-    // FIX: Modified playAudio to accept isArabicContent flag
+    // FIX: Modified playAudio to handle isArabicContent and primaryWebSpeechLang correctly
     const playAudio = useCallback(async (text: string, id: string, isArabicContent: boolean = false) => {
         if (loadingAudio) return; // Prevent multiple audio loads
         
@@ -49,13 +49,15 @@ const TajwidView: React.FC = () => {
         
         setLoadingAudio(id);
         try {
+            // Determine primary language for Web Speech API
+            const primaryWebSpeechLang = currentLanguage === 'id' ? 'id-ID' : 'en-US';
+            const langHint = isArabicContent ? 'Arabic' : (currentLanguage === 'id' ? 'Indonesian' : 'English');
+
             // speakText now returns an AudioPlayback object
-            // FIX: Pass isArabicContent and isIqroContent: true to speakText
-            // Explanations are in currentLanguage, examples are Arabic.
             const playback = await speakText(
                 text, 
                 'Kore', 
-                isArabicContent ? 'Arabic' : (currentLanguage === 'id' ? 'Indonesian' : 'English'), 
+                langHint, 
                 isArabicContent, 
                 undefined, 
                 true // Force Web Speech API for all Tajwid content
