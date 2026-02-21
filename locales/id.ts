@@ -446,4 +446,8 @@ export const idStrings = {
   liveTvMurotalDescription: "Saksikan siaran langsung Murotal Al-Qur'an dari Makkah dan Madinah.",
   failedToLoadLiveTv: "Gagal memuat Live TV Murotal. Silakan coba lagi nanti.",
   videoTutorialTitle: "Panduan Video Penggunaan Aplikasi",
+  failedToLoadMurotal: "Gagal memuat data Murotal. Silakan periksa koneksi internet Anda.",
+  download: "Unduh",
+  reciters: "Daftar Qari",
+  surahList: "Daftar Surah",
 };
