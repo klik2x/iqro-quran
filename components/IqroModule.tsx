@@ -8,7 +8,6 @@ import { useIqroBookmarks } from '../hooks/useIqroBookmarks';
 import StudyView from './iqro/StudyView';
 import PracticeView from './iqro/PracticeView';
 import TajwidView from './iqro/TajwidView';
-import QuizView from './iqro/QuizView';
 import BookmarksView from './iqro/BookmarksView';
 import { IqroLevelData } from '../types'; // Import IqroLevelData type
 
@@ -52,7 +51,6 @@ const IqroModule: React.FC<IqroModuleProps> = ({ t, levelData }) => {
         {viewMode === 'study' && <StudyView levelData={levelData} />}
         {viewMode === 'practice' && <PracticeView levelData={levelData} />}
         {viewMode === 'tajwid' && <TajwidView />}
-
         {viewMode === 'bookmarks' && <BookmarksView onNavigate={(level) => { /* Navigation is now handled by parent */ }} />}
       </div>
   );
