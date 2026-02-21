@@ -4,37 +4,22 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation, TranslationKeys } from '../contexts/LanguageContext'; // Import useTranslation
 
 interface LoginProps {
-    onLogin: (username: string) => void;
+    onLogin: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const navigate = useNavigate();
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
     const { t } = useTranslation(); // Use translation hook
-
-    const handleLogin = () => {
-        // For now, we'll use a simple check for 'admin-iqro'
-        if (username === 'admin-iqro' && password === 'iqro-admin-2026') {
-            onLogin(username);
-            navigate('/');
-        } else if (username === 'user' && password === 'user') { // Example for regular user
-            onLogin(username);
-            navigate('/');
-        } else {
-            alert('Invalid username or password');
-        }
-    };
 
     const handleGoogleLogin = () => {
         // Placeholder for actual Google Auth
         console.log("Simulating Google Login...");
-        onLogin('google_user'); // Assuming 'google_user' as a placeholder username
+        onLogin();
         navigate('/');
     };
 
     const handleGuestLogin = () => {
-        onLogin('guest'); // Assuming 'guest' as a placeholder username
+        onLogin();
         navigate('/');
     };
 
@@ -48,44 +33,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     <h1 className="text-4xl font-bold text-emerald-dark dark:text-emerald-light">IQRO Quran</h1>
                 </div>
                 
-                <div className="bg-white dark:bg-dark-blue-card p-8 rounded-2xl shadow-lg space-y-4">
-                    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="w-full space-y-4">
-                        <input
-                            type="text"
-                            id="username"
-                            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-soft-white dark:bg-dark-blue-card text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-light"
-                            placeholder={t('username' as TranslationKeys)}
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="password"
-                            id="password"
-                            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-soft-white dark:bg-dark-blue-card text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-light"
-                            placeholder={t('password' as TranslationKeys)}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <button
-                            type="submit"
-                            className="w-full bg-emerald-dark text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition"
-                        >
-                            {t('login' as TranslationKeys)}
-                        </button>
-                    </form>
-
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white dark:bg-dark-blue-card text-gray-500">
-                                {t('or' as TranslationKeys)}
-                            </span>
-                        </div>
-                    </div>
+                <div className="bg-white dark:bg-dark-blue-card p-8 rounded-2xl shadow-lg space-y-6">
                     <button 
                         onClick={handleGoogleLogin}
                         className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-600 transition"
@@ -116,6 +64,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                         onClick={handleGuestLogin}
                         className="w-full bg-emerald-dark text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition"
                     >
+                        {/* FIX: Use TranslationKeys type for t() calls */}
                         {t('continueAsGuest' as TranslationKeys)}
                     </button>
                 </div>

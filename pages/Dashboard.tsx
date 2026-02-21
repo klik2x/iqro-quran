@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import LiveTvMurotal from '../components/LiveTvMurotal';
 import { fetchAllSurahs, fetchSurah } from '../services/quranService';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback'; // Import ErrorMessage
 import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 import { Play, Pause, Loader2 } from 'lucide-react';
-import LiveTvModule from '../components/LiveTvModule'; // NEW: Import LiveTvModule
+import MediaCarousel from '../components/ui/MediaCarousel';
 import HadithCard from '../components/ui/HadithCard';
 import PopupDisplay from '../components/ui/PopupDisplay';
 import { Surah, Ayah } from '../types';
@@ -94,9 +95,12 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
-      <LiveTvModule /> {/* NEW: Live TV Murotal Al-Qur'an */}
+      <MediaCarousel />
       <HadithCard />
       <PopupDisplay />
+
+      {/* NEW: Live TV Murotal Section */}
+      <LiveTvMurotal t={t} />
     </div>
   );
 };
