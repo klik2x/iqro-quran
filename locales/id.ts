@@ -442,8 +442,8 @@ export const idStrings = {
   faq9_a: "Anda dapat mengganti bahasa aplikasi melalui menu Pengaturan (ikon roda gigi) di pojok kanan atas, lalu pilih opsi 'Bahasa'.",
   faq10_q: "Bisakah saya mendapatkan sertifikat dari Setoran Berhadiah?",
   faq10_a: "Ya, jika Anda berhasil mencapai skor minimal 50% pada fitur Setoran Berhadiah, Anda dapat mengisi nama Anda dan mengunduh sertifikat kelulusan.",
-  username: "Nama Pengguna",
-  password: "Kata Sandi",
-  login: "Masuk",
-  liveTvMurotal: "Live TV Murotal Al-Qur'an (Makkah & Madinah)",
+  liveTvMurotal: "Live TV Murotal Al-Qur'an (from Makkah and Madinah)",
+  liveTvMurotalDescription: "Saksikan siaran langsung Murotal Al-Qur'an dari Makkah dan Madinah.",
+  failedToLoadLiveTv: "Gagal memuat Live TV Murotal. Silakan coba lagi nanti.",
+  videoTutorialTitle: "Panduan Video Penggunaan Aplikasi",
 };
