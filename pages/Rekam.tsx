@@ -131,35 +131,29 @@ const Rekam: React.FC = () => { // Renamed from RecordingModule to Rekam for con
     const draw = () => {
       animationFrameIdRef.current = requestAnimationFrame(draw);
 
-      analyser.getByteTimeDomainData(dataArray);
+      analyser.getByteFrequencyData(dataArray); // Use frequency data for bars
 
       const canvasCtx = canvas.getContext('2d');
       if (!canvasCtx) return;
 
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      canvasCtx.fillStyle = 'rgba(0, 0, 0, 0)';
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-      canvasCtx.lineWidth = 2;
-      canvasCtx.strokeStyle = 'rgb(16, 185, 129)'; // Emerald color
-      canvasCtx.beginPath();
-
-      const sliceWidth = canvas.width * 1.0 / bufferLength;
+      
+      const barWidth = (canvas.width / bufferLength) * 2.5;
+      let barHeight;
       let x = 0;
 
       for(let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = v * canvas.height / 2;
+        barHeight = dataArray[i] / 2;
 
-        if (i === 0) {
-          canvasCtx.moveTo(x, y);
-        } else {
-          canvasCtx.lineTo(x, y);
-        }
-        x += sliceWidth;
+        const gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, 0);
+        gradient.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
+        gradient.addColorStop(1, 'rgba(16, 185, 129, 1)');
+        
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
       }
-      canvasCtx.lineTo(canvas.width, canvas.height/2);
-      canvasCtx.stroke();
     };
 
     draw();
