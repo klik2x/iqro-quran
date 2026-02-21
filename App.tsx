@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility, Award, Server, Download } from 'lucide-react'; // Import Award, Server, and Download icon
 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
@@ -85,51 +86,75 @@ const AppRoutes: React.FC = () => {
     setIsLoggedIn(false);
   };
 
-  if (!hasSeenWelcome) {
-    return <Welcome onFinish={() => setHasSeenWelcome(true)} />;
-  }
-
-  if (!isLoggedIn) {
-      return (
-          <Routes>
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
-      );
-  }
-
   return (
-    <Routes>
-      <Route element={<MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/mushaf" element={<Mushaf />} />
-        <Route path="/surah/:number" element={<SurahDetail />} />
-        <Route path="/juz/:number" element={<JuzDetail />} />
-        <Route path="/iqro" element={<Iqro />} />
-        <Route path="/iqro/:levelNumber" element={<IqroDetail />} />
-        <Route path="/iqro/:levelNumber/certificate" element={<CertificatePage />} /> {/* NEW ROUTE */}
-        <Route path="/murotal" element={<Murotal />} />
-        <Route path="/tafsir" element={<Tafsir />} />
-        <Route path="/doa" element={<DoaPage />} />
-        <Route path="/rekam" element={<Rekam />} />
-        <Route path="/setoran-berhadiah" element={<SetoranBerhadiah />} /> {/* NEW ROUTE */}
-        <Route path="/bookmarks" element={<Bookmarks />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/doa-keluarga" element={<PopupEntry />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route 
-          path="/admin/stats" 
-          element={
-            localStorage.getItem('isAdminLoggedIn') === 'true' 
-              ? <AdminStats /> 
-              : <Navigate to="/admin/login" />
-          } 
-        />
-      </Route>
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <AnimatePresence mode="wait">
+      {!hasSeenWelcome ? (
+        <motion.div
+          key="welcome"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="h-full"
+        >
+          <Welcome onFinish={() => setHasSeenWelcome(true)} />
+        </motion.div>
+      ) : !isLoggedIn ? (
+        <motion.div
+          key="login"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="h-full"
+        >
+          <Routes>
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="app"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="h-full"
+        >
+          <Routes>
+            <Route element={<MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/mushaf" element={<Mushaf />} />
+              <Route path="/surah/:number" element={<SurahDetail />} />
+              <Route path="/juz/:number" element={<JuzDetail />} />
+              <Route path="/iqro" element={<Iqro />} />
+              <Route path="/iqro/:levelNumber" element={<IqroDetail />} />
+              <Route path="/iqro/:levelNumber/certificate" element={<CertificatePage />} /> {/* NEW ROUTE */}
+              <Route path="/murotal" element={<Murotal />} />
+              <Route path="/tafsir" element={<Tafsir />} />
+              <Route path="/doa" element={<DoaPage />} />
+              <Route path="/rekam" element={<Rekam />} />
+              <Route path="/setoran-berhadiah" element={<SetoranBerhadiah />} /> {/* NEW ROUTE */}
+              <Route path="/bookmarks" element={<Bookmarks />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/doa-keluarga" element={<PopupEntry />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route 
+                path="/admin/stats" 
+                element={
+                  localStorage.getItem('isAdminLoggedIn') === 'true' 
+                    ? <AdminStats /> 
+                    : <Navigate to="/admin/login" />
+                } 
+              />
+            </Route>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -186,7 +211,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
                 setInstallPrompt={setInstallPrompt} // NEW: Pass setInstallPrompt
              />}
             <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-y-auto">
-              <Outlet />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="h-full"
+                >
+                  <Outlet />
+                </motion.div>
+              </AnimatePresence>
             </main>
           </div>
         </div>

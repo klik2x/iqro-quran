@@ -1,6 +1,6 @@
 {
   "name": "IQRO Quran Digital V.4",
-  "description": "An accessible and feature-rich digital Quran application for learning and reading. It includes features like interactive Iqro lessons with audio, Live TV Murotal from Makkah and Madinah, Murotal player, Tafsir, prayer collection, and voice recording, all designed with a modern, responsive, and inclusive user interface.",
+  "description": "An accessible and feature-rich digital Quran application for learning and reading. It includes features like interactive Iqro lessons with audio, Live TV Murotal from Makkah and Madinah, Murotal player, Tafsir, prayer collection, and voice recording, all with offline access support for core features, designed with a modern, responsive, and inclusive user interface.",
   "requestFramePermissions": [
     "microphone"
   ]
