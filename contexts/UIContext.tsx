@@ -13,8 +13,15 @@ interface UIContextType {
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
 export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [zoom, setZoom] = useState<number>(1);
+  const [zoom, setZoom] = useState<number>(() => {
+    const savedZoom = localStorage.getItem('appZoom');
+    return savedZoom ? parseFloat(savedZoom) : 1;
+  });
   const [isReadingMode, setIsReadingMode] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('appZoom', zoom.toString());
+  }, [zoom]);
 
   const increaseZoom = () => setZoom(prev => Math.min(prev + 0.1, 1.5));
   const decreaseZoom = () => setZoom(prev => Math.max(prev - 0.1, 0.8));
