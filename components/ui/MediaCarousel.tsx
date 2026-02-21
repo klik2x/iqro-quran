@@ -6,11 +6,6 @@ import { useTranslation, TranslationKeys } from '../../contexts/LanguageContext'
 
 const mediaItems = [
     {
-        type: 'video',
-        title: 'Panduan Video Penggunaan Aplikasi',
-        content: 'https://www.youtube.com/embed/7-Qf3g-0xEI'
-    },
-    {
         type: 'image',
         title: 'Keutamaan Membaca Al-Quran',
         content: 'https://raw.githubusercontent.com/klik2x/iqro-quran/8aa50dcb5f68c90f2d697a8ca4fea6f26cff9a3e/assets/Alif-Lam-Mim.jpg'
