@@ -35,9 +35,14 @@ const handleResponse = async (response: Response) => {
   return data.data;
 };
 
+let surahCache: Surah[] | null = null;
+
 export const fetchAllSurahs = async (): Promise<Surah[]> => {
+  if (surahCache) return surahCache;
   const response = await fetchWithRetry(`${BASE_URL}/surah`);
-  return handleResponse(response);
+  const data = await handleResponse(response);
+  surahCache = data;
+  return data;
 };
 
 export const fetchSurahWithTranslation = async (surahNumber: number, lang: string = 'id.indonesian'): Promise<any> => {
