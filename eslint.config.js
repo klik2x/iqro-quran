@@ -1,47 +1,30 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-import pluginReactHooks from "eslint-plugin-react-hooks";
-import pluginReactRefresh from "eslint-plugin-react-refresh";
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
 
-export default [
-  { files: ["**/*.{js,mjs,cjs,ts,tsx}"], languageOptions: { globals: globals.browser } },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
+export default tseslint.config(
+  { ignores: ['dist'] },
   {
-    files: ["**/*.{ts,tsx}"],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: ['./tsconfig.json', './tsconfig.node.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
+      ecmaVersion: 2020,
+      globals: globals.browser,
     },
-  },
-  {
-    // Configuration for react-related files
-    files: ["**/*.{js,mjs,cjs,ts,tsx}"],
-    ...pluginReact.configs.recommended,
-    settings: {
-      react: {
-        version: "detect", // Automatically detect the React version
-      },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
     },
     rules: {
-      // suppress errors on missing imports
-      "react/react-in-jsx-scope": "off",
-      "react/jsx-uses-react": "off",
-      'react/prop-types': 'off', // Disable prop-types for functional components
-      '@typescript-eslint/no-explicit-any': 'warn', // Allow any for now, but warn
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // Warn on unused vars, ignore _ prefixed args
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
     },
   },
-  {
-    // Configuration for react-hooks
-    files: ["**/*.{js,mjs,cjs,ts,tsx}"],
-    ...pluginReactHooks.configs.recommended,
-  },
-  },
-  pluginReactRefresh.configs.recommended,
-];
+);

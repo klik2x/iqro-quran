@@ -66,13 +66,8 @@ const App: React.FC = () => {
 };
 
 const AppRoutes: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(() => localStorage.getItem('isLoggedIn') === 'true');
   const [hasSeenWelcome, setHasSeenWelcome] = useState(sessionStorage.getItem('hasSeenWelcome') === 'true');
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
-  }, []);
 
   const handleLogin = () => {
     localStorage.setItem('isLoggedIn', 'true');
@@ -269,7 +264,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-emerald-dark dark:text-emerald-light">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                     </svg>
-                    <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO Quran</h1>
+                    <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">{t('appName' as TranslationKeys)}</h1>
                 </div>
             </div>
             <div className="flex items-center gap-1">
@@ -330,7 +325,7 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-emerald-dark dark:text-emerald-light">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
                     </svg>
-                    <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">IQRO</h1>
+                    <h1 className="text-xl font-bold text-emerald-dark dark:text-emerald-light">{t('appShortName' as TranslationKeys)}</h1>
                 </div>
                 <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2 min-h-[44px] min-w-[44px]" aria-label={t('closeMenu' as TranslationKeys)}>
                     <X className="h-6 w-6" />
@@ -370,8 +365,8 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
               </ul>
             </nav>
              <div className="text-center text-xs text-gray-400 p-4 border-t border-gray-200 dark:border-gray-700">
-                <p className="mb-1 font-mono">System V.2.0</p>
-                <p>Te_eR™ Inovative @2026</p>
+                <p className="mb-1 font-mono">{t('systemVersion' as TranslationKeys)}</p>
+                <p>{t('developerCredit' as TranslationKeys)}</p>
             </div>
         </aside>
     );
