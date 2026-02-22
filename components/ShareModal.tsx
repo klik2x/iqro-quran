@@ -51,7 +51,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
           text: text,
           url: window.location.href
         });
-      } catch (e) {}
+      } catch (e) { console.warn("Share failed", e); }
     } else {
       navigator.clipboard.writeText(text);
       alert('Tautan disalin ke clipboard');
@@ -77,15 +77,56 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[70vh]">
-          <div ref={shareRef} className={`p-10 rounded-2xl mb-8 shadow-xl ${themes[theme]} text-center relative overflow-hidden`}>
-            <p className="font-arabic mb-8 leading-[2.5]" style={{ fontSize: `${imgFontSize}px`, color: theme === 'amber' ? '#036666' : 'white' }} dir="rtl">
-              {verse.arabic}
-            </p>
-            <p className="text-base font-bold italic mb-8 opacity-90">"{verse.translation}"</p>
-            <div className="flex flex-col items-center gap-2 mt-auto">
+          {/* Capture Area - Hidden from UI but used for html2canvas */}
+          <div className="fixed left-[-9999px] top-0">
+            <div 
+              ref={shareRef} 
+              className={`w-[600px] min-h-[800px] p-12 flex flex-col items-center justify-center text-center relative ${themes[theme]}`}
+              style={{ borderRadius: '0px' }} // No border radius for the raw image capture to avoid artifacts
+            >
+              <div className="flex-1 flex flex-col items-center justify-center w-full gap-10">
+                <p 
+                  className="font-arabic leading-[1.8] w-full px-4" 
+                  style={{ 
+                    fontSize: `${imgFontSize * 1.5}px`, 
+                    color: theme === 'amber' ? '#036666' : 'white',
+                    wordWrap: 'break-word'
+                  }} 
+                  dir="rtl"
+                >
+                  {verse.arabic}
+                </p>
+                
+                <div className="w-16 h-1 bg-current opacity-20 rounded-full"></div>
+                
+                <p 
+                  className="text-2xl font-bold italic opacity-90 w-full px-8 leading-relaxed"
+                  style={{ color: theme === 'amber' ? '#1e293b' : 'white' }}
+                >
+                  "{verse.translation}"
+                </p>
+              </div>
+
+              <div className="mt-12 flex flex-col items-center gap-3">
+                <p className="text-lg font-black uppercase tracking-[0.2em] opacity-80">QS. {verse.surah}: {verse.ayah}</p>
+                <div className="h-[2px] bg-current opacity-20 w-32"></div>
+                <p className="text-sm font-bold opacity-60">Share via Iqro Quran Digital | by Te_eR™ Inovative</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Preview Area */}
+          <div className={`p-8 rounded-2xl mb-8 shadow-xl ${themes[theme]} text-center relative overflow-hidden aspect-[3/4] flex flex-col items-center justify-center`}>
+            <div className="flex-1 flex flex-col items-center justify-center gap-6 overflow-hidden">
+              <p className="font-arabic leading-relaxed line-clamp-6" style={{ fontSize: `${imgFontSize}px`, color: theme === 'amber' ? '#036666' : 'white' }} dir="rtl">
+                {verse.arabic}
+              </p>
+              <p className="text-sm font-bold italic opacity-90 line-clamp-4">"{verse.translation}"</p>
+            </div>
+            <div className="flex flex-col items-center gap-1 mt-4 shrink-0">
               <p className="text-[10px] font-black uppercase tracking-widest">QS. {verse.surah}: {verse.ayah}</p>
-              <div className="h-[1px] bg-current opacity-20 w-24"></div>
-              <p className="text-[9px] font-bold opacity-60">Share via Iqro Quran Digital | by Te_eR™ Inovative</p>
+              <div className="h-[1px] bg-current opacity-20 w-20"></div>
+              <p className="text-[8px] font-bold opacity-60">Share via Iqro Quran Digital</p>
             </div>
           </div>
 

@@ -42,7 +42,7 @@ const DoaModule: React.FC = () => { // Removed t prop, will use useTranslation h
       url: window.location.href
     };
     if (navigator.share) {
-      try { await navigator.share(shareData); } catch (e) {}
+      try { await navigator.share(shareData); } catch (e) { console.warn("Share failed", e); }
     } else {
       handleCopy(doa);
     }

@@ -1,22 +1,47 @@
 
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Music, Loader2, ListMusic } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Music, Loader2, ListMusic, Bookmark, Search, Heart } from 'lucide-react';
 import { QARIS } from '../constants';
-import { fetchAllSurahs } from '../services/quranService'; // FIX: Corrected import
+import { fetchAllSurahs } from '../services/quranService';
 import { Surah } from '../types';
-import { useTranslation, TranslationKeys } from '../contexts/LanguageContext'; // NEW: Import TranslationKeys
+import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 
-const AudioPlayer: React.FC = () => { // Removed t prop, will use useTranslation hook directly
+const AudioPlayer: React.FC = () => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [selectedSurah, setSelectedSurah] = useState<number>(1);
   const [selectedQari, setSelectedQari] = useState(QARIS[0].identifier);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation(); // Use translation hook directly
+  const [surahSearch, setSurahSearch] = useState('');
+  const [favoriteQaris, setFavoriteQaris] = useState<string[]>(() => {
+    const saved = localStorage.getItem('favoriteQaris');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [favoriteSurahs, setFavoriteSurahs] = useState<number[]>(() => {
+    const saved = localStorage.getItem('favoriteSurahs');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchAllSurahs().then(setSurahs).finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteQaris', JSON.stringify(favoriteQaris));
+  }, [favoriteQaris]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteSurahs', JSON.stringify(favoriteSurahs));
+  }, [favoriteSurahs]);
+
+  const toggleFavoriteQari = (id: string) => {
+    setFavoriteQaris(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const toggleFavoriteSurah = (num: number) => {
+    setFavoriteSurahs(prev => prev.includes(num) ? prev.filter(n => n !== num) : [...prev, num]);
+  };
 
   const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${selectedQari}/${selectedSurah}.mp3`;
 
@@ -48,26 +73,66 @@ const AudioPlayer: React.FC = () => { // Removed t prop, will use useTranslation
           <div className="flex-1 space-y-8 w-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <label className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">{t('selectQari' as TranslationKeys)}</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">{t('selectQari' as TranslationKeys)}</label>
+                  <button 
+                    onClick={() => toggleFavoriteQari(selectedQari)}
+                    className={`p-1 rounded-full transition-all ${favoriteQaris.includes(selectedQari) ? 'text-rose-500' : 'text-slate-300'}`}
+                  >
+                    <Heart size={16} fill={favoriteQaris.includes(selectedQari) ? 'currentColor' : 'none'} />
+                  </button>
+                </div>
                 <select 
                   value={selectedQari}
                   onChange={(e) => setSelectedQari(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-emerald-500/10 font-black text-slate-950 dark:text-white shadow-inner transition-all min-h-[44px]"
                   aria-label={t('selectQari' as TranslationKeys)}
                 >
-                  {QARIS.map(q => <option key={q.identifier} value={q.identifier}>{q.name}</option>)}
+                  <optgroup label={t('favorites' as TranslationKeys)}>
+                    {QARIS.filter(q => favoriteQaris.includes(q.identifier)).map(q => <option key={`fav-${q.identifier}`} value={q.identifier}>⭐ {q.name}</option>)}
+                  </optgroup>
+                  <optgroup label={t('reciters' as TranslationKeys)}>
+                    {QARIS.filter(q => !favoriteQaris.includes(q.identifier)).map(q => <option key={q.identifier} value={q.identifier}>{q.name}</option>)}
+                  </optgroup>
                 </select>
               </div>
 
               <div className="space-y-3">
-                <label className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">{t('selectSurah' as TranslationKeys)}</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">{t('selectSurah' as TranslationKeys)}</label>
+                  <button 
+                    onClick={() => toggleFavoriteSurah(selectedSurah)}
+                    className={`p-1 rounded-full transition-all ${favoriteSurahs.includes(selectedSurah) ? 'text-emerald-500' : 'text-slate-300'}`}
+                  >
+                    <Bookmark size={16} fill={favoriteSurahs.includes(selectedSurah) ? 'currentColor' : 'none'} />
+                  </button>
+                </div>
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input 
+                    type="text"
+                    placeholder={t('searchSurah' as TranslationKeys)}
+                    value={surahSearch}
+                    onChange={(e) => setSurahSearch(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 font-bold text-sm"
+                  />
+                </div>
                 <select 
                   value={selectedSurah}
                   onChange={(e) => setSelectedSurah(parseInt(e.target.value))}
                   className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-emerald-500/10 font-black text-slate-950 dark:text-white shadow-inner transition-all min-h-[44px]"
                   aria-label={t('selectSurah' as TranslationKeys)}
                 >
-                  {surahs.map(s => <option key={s.number} value={s.number}>{s.number}. {s.englishName}</option>)}
+                  <optgroup label={t('favorites' as TranslationKeys)}>
+                    {surahs.filter(s => favoriteSurahs.includes(s.number)).map(s => <option key={`fav-${s.number}`} value={s.number}>⭐ {s.number}. {s.englishName}</option>)}
+                  </optgroup>
+                  <optgroup label={t('surahList' as TranslationKeys)}>
+                    {surahs
+                      .filter(s => !favoriteSurahs.includes(s.number))
+                      .filter(s => s.englishName.toLowerCase().includes(surahSearch.toLowerCase()) || s.number.toString().includes(surahSearch))
+                      .map(s => <option key={s.number} value={s.number}>{s.number}. {s.englishName}</option>)
+                    }
+                  </optgroup>
                 </select>
               </div>
             </div>
@@ -114,6 +179,7 @@ const AudioPlayer: React.FC = () => { // Removed t prop, will use useTranslation
             </div>
           </div>
         </div>
+      </div>
 
       <div className="bg-emerald-50/50 dark:bg-emerald-900/10 rounded-[3rem] p-10 border-2 border-emerald-100 dark:border-emerald-800 shadow-xl">
          <h3 className="text-2xl font-black flex items-center gap-3 text-emerald-900 dark:text-emerald-400 mb-8 tracking-tight">
@@ -126,7 +192,7 @@ const AudioPlayer: React.FC = () => { // Removed t prop, will use useTranslation
                  key={num}
                  onClick={() => setSelectedSurah(num)}
                  className={`flex items-center justify-between p-5 bg-white dark:bg-slate-800 rounded-2xl transition-all group active:scale-95 border-2 ${selectedSurah === num ? 'border-emerald-500 shadow-xl' : 'border-transparent shadow-md hover:border-emerald-200 dark:hover:border-emerald-900'} min-h-[70px]`}
-                 aria-label={`${t('play' as TranslationKeys)} Surah ${num} (${surahs.find(s => s.number === num)?.englishName || `Surah ${num}`})`}
+                 aria-label={`${t('play' as TranslationKeys)} Surah ${num}`}
                >
                  <div className="flex flex-col items-start">
                     <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">{t('surahNumber' as TranslationKeys)} {num}</span>
