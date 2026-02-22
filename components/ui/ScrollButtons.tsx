@@ -43,20 +43,20 @@ const ScrollButtons: React.FC = () => {
     }, []);
 
     return (
-        <div className={`fixed bottom-24 right-4 z-30 flex flex-col gap-2 transition-all duration-500 ${isVisible && isScrolling ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+        <div className={`fixed bottom-24 right-4 z-30 flex flex-col gap-2 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
             <button
                 onClick={scrollToTop}
-                className="bg-emerald-dark text-white rounded-full p-3 shadow-2xl hover:bg-emerald-600 transition active:scale-90"
+                className={`bg-white/20 dark:bg-black/20 backdrop-blur-md text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-full p-2.5 shadow-lg hover:bg-emerald-500 hover:text-white transition-all active:scale-90 ${isScrolling ? 'opacity-100 scale-100' : 'opacity-40 scale-90'}`}
                 aria-label="Scroll Top"
             >
-                <ChevronUp size={24} />
+                <ChevronUp size={20} />
             </button>
             <button
                 onClick={scrollToBottom}
-                className="bg-emerald-dark text-white rounded-full p-3 shadow-2xl hover:bg-emerald-600 transition active:scale-90"
+                className={`bg-white/20 dark:bg-black/20 backdrop-blur-md text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-full p-2.5 shadow-lg hover:bg-emerald-500 hover:text-white transition-all active:scale-90 ${isScrolling ? 'opacity-100 scale-100' : 'opacity-40 scale-90'}`}
                 aria-label="Scroll Bottom"
             >
-                <ChevronDown size={24} />
+                <ChevronDown size={20} />
             </button>
         </div>
     );
