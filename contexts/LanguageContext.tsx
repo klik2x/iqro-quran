@@ -67,7 +67,17 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const changeLanguage = useCallback(async (langCode: LanguageCode) => {
     if (langCode === currentLanguage) return;
 
+    // If it's Indonesian, just reset to original strings
+    if (langCode === 'id') {
+      setTranslations(idStrings);
+      setCurrentLanguage('id');
+      localStorage.setItem('appLanguage', 'id');
+      return;
+    }
+
+    // Check cache first
     if (translationCache[langCode]) {
+        setTranslations(translationCache[langCode]);
         setCurrentLanguage(langCode);
         localStorage.setItem('appLanguage', langCode);
         return;
@@ -76,23 +86,39 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     setIsLoading(true);
     try {
         const languageName = languages.find(l => l.code === langCode)?.name || langCode;
+        
+        // Translate idStrings to target language
         const newTranslations = await translateTexts(idStrings, languageName);
         
-        // Validate if Gemini returned a proper object
-        if (Object.keys(newTranslations).length < Object.keys(idStrings).length) {
-            throw new Error("Translation did not return all keys.");
+        // Validate keys
+        const translatedKeys = Object.keys(newTranslations);
+        const originalKeys = Object.keys(idStrings);
+        
+        if (translatedKeys.length < originalKeys.length * 0.8) { // Basic sanity check
+            throw new Error("Translation returned too few keys.");
         }
 
-        const updatedCache = { ...translationCache, [langCode]: newTranslations as Translations };
+        // Merge with original strings to ensure no missing keys
+        const finalTranslations = { ...idStrings, ...newTranslations } as Translations;
+
+        const updatedCache = { ...translationCache, [langCode]: finalTranslations };
         setTranslationCache(updatedCache);
         localStorage.setItem('translationCache', JSON.stringify(updatedCache));
         
-        setTranslations(newTranslations as Translations);
+        setTranslations(finalTranslations);
         setCurrentLanguage(langCode);
         localStorage.setItem('appLanguage', langCode);
     } catch (error) {
         console.error("Failed to translate:", error);
-        alert(`Failed to switch language to ${langCode}. Please try again.`);
+        // Fallback to English if translation fails and we aren't already on it
+        if (langCode !== 'en') {
+            console.log("Falling back to English...");
+            changeLanguage('en');
+        } else {
+            setTranslations(idStrings);
+            setCurrentLanguage('id');
+            alert(`Failed to switch language. Using default Indonesian.`);
+        }
     } finally {
         setIsLoading(false);
     }

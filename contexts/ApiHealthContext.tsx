@@ -57,11 +57,14 @@ export const ApiHealthProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, [checkApiStatus]);
 
   useEffect(() => {
-    // Initial health check on mount
-    checkApiStatus();
+    // Initial health check on mount (delayed to avoid sync setState in effect warning)
+    const timeoutId = setTimeout(() => {
+      checkApiStatus();
+    }, 0);
     // Periodically check API status
     const interval = setInterval(checkApiStatus, API_HEALTH_CHECK_INTERVAL);
     return () => {
+      clearTimeout(timeoutId);
       clearInterval(interval);
       if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
     };

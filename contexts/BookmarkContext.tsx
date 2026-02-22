@@ -17,19 +17,15 @@ interface BookmarkContextType {
 const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
 
 export const BookmarkProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [bookmarks, setBookmarks] = useState<BookmarkedAyah[]>([]);
-
-  useEffect(() => {
+  const [bookmarks, setBookmarks] = useState<BookmarkedAyah[]>(() => {
     try {
       const storedBookmarks = localStorage.getItem('quran_bookmarks');
-      if (storedBookmarks) {
-        setBookmarks(JSON.parse(storedBookmarks));
-      }
+      return storedBookmarks ? JSON.parse(storedBookmarks) : [];
     } catch (error) {
       console.error("Failed to parse bookmarks from localStorage", error);
-      setBookmarks([]);
+      return [];
     }
-  }, []);
+  });
 
   const saveBookmarks = (updatedBookmarks: BookmarkedAyah[]) => {
     setBookmarks(updatedBookmarks);

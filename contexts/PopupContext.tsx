@@ -11,19 +11,15 @@ const PopupContext = createContext<PopupContextType | undefined>(undefined);
 const POPUP_NAMES_KEY = 'popup_names';
 
 export const PopupProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [names, setNames] = useState<string[]>([]);
-
-  useEffect(() => {
+  const [names, setNames] = useState<string[]>(() => {
     try {
       const storedNames = localStorage.getItem(POPUP_NAMES_KEY);
-      if (storedNames) {
-        setNames(JSON.parse(storedNames));
-      }
+      return storedNames ? JSON.parse(storedNames) : [];
     } catch (error) {
       console.error("Failed to parse names from localStorage", error);
-      setNames([]);
+      return [];
     }
-  }, []);
+  });
 
   const saveNames = (nameString: string) => {
     const nameArray = nameString.split(',').map(name => name.trim()).filter(name => name.length > 0);
