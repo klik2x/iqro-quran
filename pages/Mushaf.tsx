@@ -12,20 +12,28 @@ const Mushaf: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null); // NEW: Error state
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [viewMode, setViewMode] = useState<'surah' | 'juz'>('surah');
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400); // 400ms debounce
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
     const loadSurahs = async () => {
         try {
             setLoading(true);
-            setError(null); // Clear previous errors
+            setError(null);
             const data = await fetchAllSurahs();
             setSurahs(data);
         } catch (err: any) {
             console.error("Failed to fetch surahs:", err);
-            setError(err.message || t('failedToLoadSurahList' as TranslationKeys)); // Set specific error message
+            setError(err.message || t('failedToLoadSurahList' as TranslationKeys));
         } finally {
             setLoading(false);
         }
@@ -33,13 +41,19 @@ const Mushaf: React.FC = () => {
     loadSurahs();
   }, [t]);
 
-  const cleanSearch = search.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  const cleanSearch = debouncedSearch.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
   const filteredSurahs = surahs.filter(s => {
     const cleanEnglishName = s.englishName.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
     return cleanEnglishName.includes(cleanSearch) || 
-           s.name.includes(search) || // Direct match for Arabic
-           s.number.toString().includes(search);
+           s.name.includes(debouncedSearch) || 
+           s.number.toString().includes(debouncedSearch);
   });
+
+  const juzPageMapping: Record<number, number> = {
+    1: 1, 2: 22, 3: 42, 4: 62, 5: 82, 6: 102, 7: 122, 8: 142, 9: 162, 10: 182,
+    11: 202, 12: 222, 13: 242, 14: 262, 15: 282, 16: 302, 17: 322, 18: 342, 19: 362, 20: 382,
+    21: 402, 22: 422, 23: 442, 24: 462, 25: 482, 26: 502, 27: 522, 28: 542, 29: 562, 30: 582
+  };
 
   const handleJump = () => {
     const surahNum = prompt(t('enterSurahNumber' as TranslationKeys));
@@ -152,7 +166,8 @@ const Mushaf: React.FC = () => {
                         {juzNum}.
                         </div>
                         <div className="flex-1">
-                        <h3 className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">Juz {juzNum}</h3>
+                          <h3 className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">Juz {juzNum}</h3>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{t('page' as TranslationKeys)} {juzPageMapping[juzNum]}</p>
                         </div>
                     </button>
                 ))}

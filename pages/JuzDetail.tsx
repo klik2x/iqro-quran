@@ -5,7 +5,7 @@ import {
   Play, Share2, Loader2, 
   ZoomIn, ZoomOut, Copy, Check, Languages, Volume2, 
   ChevronLeft, ChevronRight, Bookmark, Eye, EyeOff,
-  MessageCircle
+  MessageCircle, Search, ChevronUp
 } from 'lucide-react';
 import { fetchJuz, fetchTranslationEditions } from '../services/quranService';
 import { generateSpeech } from '../services/geminiService';
@@ -34,10 +34,43 @@ const JuzDetail: React.FC = () => {
   const [playingAyah, setPlayingAyah] = useState<number | null>(null);
   const [playingTTS, setPlayingTTS] = useState<number | null>(null);
   const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [ayahSearch, setAyahSearch] = useState('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { t } = useTranslation();
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const ayahRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const handleScroll = () => {
+    setShowScrollTop(window.scrollY > window.innerHeight * 0.5);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToAyah = (ayahNum: number) => {
+    const element = ayahRefs.current[ayahNum];
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('ring-4', 'ring-emerald-500/50');
+      setTimeout(() => {
+        element.classList.remove('ring-4', 'ring-emerald-500/50');
+      }, 2000);
+    }
+  };
+
+  const handleAyahSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const num = parseInt(ayahSearch, 10);
+    // In Juz, we might have multiple ayahs with same numberInSurah. 
+    // We'll scroll to the first one found in this Juz.
+    if (!isNaN(num) && num >= 1) {
+      scrollToAyah(num);
+    }
+  };
 
   const load = async () => {
     if (!number) return;
@@ -109,7 +142,9 @@ const JuzDetail: React.FC = () => {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (err) {}
+      } catch (err) {
+        console.warn("Native share failed or cancelled", err);
+      }
     } else {
       setShareVerse({ arabic: ayah.text, translation: trans, surah: surahName, ayah: ayah.numberInSurah });
     }
@@ -162,6 +197,22 @@ const JuzDetail: React.FC = () => {
       </div>
 
       <div className="sticky top-20 bg-white/90 dark:bg-dark-blue-card/90 backdrop-blur-md z-30 p-3 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-center gap-3 mb-10">
+        <form onSubmit={handleAyahSearch} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-xl">
+          <input 
+            type="number" 
+            placeholder={t('searchAyah' as TranslationKeys)}
+            value={ayahSearch}
+            onChange={(e) => setAyahSearch(e.target.value)}
+            className="bg-transparent text-[11px] font-bold outline-none w-20 min-h-[44px] px-2"
+            min="1"
+          />
+          <button type="submit" className="p-2 text-emerald-600 hover:scale-110 transition min-h-[44px] min-w-[44px]">
+            <Search size={16} />
+          </button>
+        </form>
+
+        <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+
         <button 
           onClick={() => setShowLatin(!showLatin)}
           className={`px-4 py-2 rounded-xl font-extrabold text-xs uppercase transition-all min-h-[44px] flex items-center gap-2 ${showLatin ? 'bg-gold-dark text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}
@@ -234,7 +285,10 @@ const JuzDetail: React.FC = () => {
                     </div>
                  )}
 
-                <div className={`group animate-fade-in p-4 rounded-3xl transition-colors border border-transparent ${playingAyah === ayah.number ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800' : 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30'}`}>
+                <div 
+                  ref={el => { if (!ayahRefs.current[ayah.numberInSurah]) ayahRefs.current[ayah.numberInSurah] = el; }}
+                  className={`group animate-fade-in p-4 rounded-3xl transition-colors border border-transparent ${playingAyah === ayah.number ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800' : 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30'}`}
+                >
                   <div className="flex flex-col gap-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -270,14 +324,34 @@ const JuzDetail: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 mt-2">
-                       <button
-                          onClick={() => isBookmarkedAyah ? removeBookmark(ayah.number) : addBookmark(ayah, ayah.surah as Surah)}
-                          className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${isBookmarkedAyah ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
-                          aria-label={isBookmarkedAyah ? t('removeBookmark' as TranslationKeys) : t('addBookmark' as TranslationKeys)}
-                      >
-                          <Bookmark size={18} fill={isBookmarkedAyah ? 'currentColor' : 'none'} />
-                      </button>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex gap-2">
+                        {index > 0 && (
+                          <button 
+                            onClick={() => scrollToAyah(arabicEd.ayahs[index-1].numberInSurah)}
+                            className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all min-h-[44px]"
+                          >
+                            <ChevronLeft size={14} /> {t('previousAyah' as TranslationKeys)}
+                          </button>
+                        )}
+                        {index < arabicEd.ayahs.length - 1 && (
+                          <button 
+                            onClick={() => scrollToAyah(arabicEd.ayahs[index+1].numberInSurah)}
+                            className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all min-h-[44px]"
+                          >
+                            {t('nextAyah' as TranslationKeys)} <ChevronRight size={14} />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                           onClick={() => isBookmarkedAyah ? removeBookmark(ayah.number) : addBookmark(ayah, ayah.surah as Surah)}
+                           className={`p-2.5 rounded-xl transition-all shadow-sm min-h-[44px] min-w-[44px] ${isBookmarkedAyah ? 'bg-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-500'}`}
+                           aria-label={isBookmarkedAyah ? t('removeBookmark' as TranslationKeys) : t('addBookmark' as TranslationKeys)}
+                       >
+                           <Bookmark size={18} fill={isBookmarkedAyah ? 'currentColor' : 'none'} />
+                       </button>
                       {showTranslation && (
                         <button 
                           onClick={() => handleTTS(translationText, ayah.number)}
@@ -318,6 +392,7 @@ const JuzDetail: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
             </React.Fragment>
           );
         })}
@@ -329,6 +404,16 @@ const JuzDetail: React.FC = () => {
           onClose={() => setShareVerse(null)} 
           verse={shareVerse} 
         />
+      )}
+
+      {showScrollTop && (
+        <button 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-24 right-6 p-4 bg-emerald-600 text-white rounded-full shadow-2xl hover:scale-110 transition-all z-40 animate-bounce"
+          aria-label={t('scrollToTop' as TranslationKeys)}
+        >
+          <ChevronUp size={24} />
+        </button>
       )}
     </div>
   );

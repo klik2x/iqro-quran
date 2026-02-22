@@ -67,7 +67,7 @@ const Bookmarks: React.FC = () => {
         url: window.location.href
       };
       if (navigator.share) {
-        try { await navigator.share(shareData); } catch (e) {}
+        try { await navigator.share(shareData); } catch (e) { console.warn("Share failed", e); }
       } else {
         navigator.clipboard.writeText(shareData.text);
         setCopiedId(ayah.number);

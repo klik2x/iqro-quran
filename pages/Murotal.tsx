@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchAllSurahs } from '../services/quranService';
 import { Surah } from '../types';
-import { Play, Pause, SkipBack, SkipForward, Loader2, Music, ListMusic, Volume2, VolumeX, Download, RefreshCw, User } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Loader2, Music, ListMusic, Volume2, VolumeX, Download, RefreshCw, User, Bookmark, Search } from 'lucide-react';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
 import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
 import LiveTvMurotal from '../components/LiveTvMurotal';
@@ -21,9 +21,17 @@ interface Reciter {
 const Murotal: React.FC = () => {
   const [surahs, setSurahs] = useState<Surah[]>([]);
   const [reciters, setReciters] = useState<Reciter[]>([]);
-  const [favoriteReciterIds, setFavoriteReciterIds] = useState<number[]>([]);
+  const [favoriteReciterIds, setFavoriteReciterIds] = useState<number[]>(() => {
+    const saved = localStorage.getItem('favoriteReciters');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [favoriteSurahNumbers, setFavoriteSurahNumbers] = useState<number[]>(() => {
+    const saved = localStorage.getItem('favoriteSurahs');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedReciter, setSelectedReciter] = useState<Reciter | null>(null);
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
+  const [surahSearch, setSurahSearch] = useState('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -41,23 +49,22 @@ const Murotal: React.FC = () => {
   }, [isPlaying]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('favoriteReciters');
-    if (saved) {
-      try {
-        setFavoriteReciterIds(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse favorite reciters", e);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
     localStorage.setItem('favoriteReciters', JSON.stringify(favoriteReciterIds));
   }, [favoriteReciterIds]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteSurahs', JSON.stringify(favoriteSurahNumbers));
+  }, [favoriteSurahNumbers]);
 
   const toggleFavoriteReciter = (id: number) => {
     setFavoriteReciterIds(prev => 
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleFavoriteSurah = (num: number) => {
+    setFavoriteSurahNumbers(prev => 
+      prev.includes(num) ? prev.filter(n => n !== num) : [...prev, num]
     );
   };
 
@@ -93,7 +100,7 @@ const Murotal: React.FC = () => {
   const changeSurah = useCallback((direction: 'next' | 'prev') => {
     if (!selectedSurah || surahs.length === 0) return;
     const currentIndex = surahs.findIndex(s => s.number === selectedSurah.number);
-    let newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
+    const newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
 
     if (newIndex >= 0 && newIndex < surahs.length) {
         setSelectedSurah(surahs[newIndex]);
@@ -230,8 +237,20 @@ const Murotal: React.FC = () => {
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Now Playing</span>
-                  <h2 className="text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                  <h2 className="text-3xl font-black text-slate-900 dark:text-white leading-tight flex items-center gap-3">
                     {selectedSurah?.englishName}
+                    {selectedSurah && (
+                      <button 
+                        onClick={() => toggleFavoriteSurah(selectedSurah.number)}
+                        className={`p-1.5 rounded-full transition-all ${
+                          favoriteSurahNumbers.includes(selectedSurah.number)
+                            ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                            : 'text-slate-300 hover:text-emerald-400 bg-slate-50 dark:bg-slate-800'
+                        }`}
+                      >
+                        <Bookmark size={16} fill={favoriteSurahNumbers.includes(selectedSurah.number) ? "currentColor" : "none"} />
+                      </button>
+                    )}
                   </h2>
                   <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
                     <div className="flex items-center gap-2">
@@ -386,33 +405,51 @@ const Murotal: React.FC = () => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                   <ListMusic size={12} /> {t('surahList' as TranslationKeys)}
                 </label>
+                <div className="relative mb-2">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                  <input 
+                    type="text"
+                    placeholder={t('searchSurah' as TranslationKeys)}
+                    value={surahSearch}
+                    onChange={(e) => setSurahSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-dark-blue-card border border-slate-100 dark:border-slate-800 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  />
+                </div>
                 <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                  {surahs.map((surah) => (
-                    <button
-                      key={surah.number}
-                      onClick={() => setSelectedSurah(surah)}
-                      className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all text-left border-2 ${
-                        selectedSurah?.number === surah.number 
-                          ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20' 
-                          : 'bg-white dark:bg-dark-blue-card border-transparent hover:border-emerald-200 dark:hover:border-emerald-900 text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black ${
-                          selectedSurah?.number === surah.number ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'
-                        }`}>
-                          {surah.number}
-                        </span>
-                        <div>
-                          <p className="text-sm font-black">{surah.englishName}</p>
-                          <p className={`text-[10px] font-medium uppercase tracking-wider ${selectedSurah?.number === surah.number ? 'text-white/70' : 'text-slate-400'}`}>
-                            {surah.englishNameTranslation}
-                          </p>
+                  {surahs
+                    .filter(s => 
+                      s.englishName.toLowerCase().includes(surahSearch.toLowerCase()) || 
+                      s.number.toString().includes(surahSearch)
+                    )
+                    .map((surah) => (
+                      <button
+                        key={surah.number}
+                        onClick={() => setSelectedSurah(surah)}
+                        className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all text-left border-2 ${
+                          selectedSurah?.number === surah.number 
+                            ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20' 
+                            : 'bg-white dark:bg-dark-blue-card border-transparent hover:border-emerald-200 dark:hover:border-emerald-900 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black ${
+                            selectedSurah?.number === surah.number ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'
+                          }`}>
+                            {surah.number}
+                          </span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-black">{surah.englishName}</p>
+                              {favoriteSurahNumbers.includes(surah.number) && <Bookmark size={10} fill="currentColor" className="text-emerald-400" />}
+                            </div>
+                            <p className={`text-[10px] font-medium uppercase tracking-wider ${selectedSurah?.number === surah.number ? 'text-white/70' : 'text-slate-400'}`}>
+                              {surah.englishNameTranslation}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <p className="font-arabic text-xl">{surah.name}</p>
-                    </button>
-                  ))}
+                        <p className="font-arabic text-xl">{surah.name}</p>
+                      </button>
+                    ))}
                 </div>
               </div>
             </div>
