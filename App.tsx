@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation, Link, Navigate, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HomeIcon, BookOpen, Mic, BookHeart, Menu, X, Cog, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility, Award, Download } from 'lucide-react'; // Import Award and Download icon
+import { HomeIcon, BookOpen, Mic, BrainCircuit, Headphones, BookHeart, Menu, X, Cog, Sun, Moon, Bookmark, Mail, Heart, ShieldCheck, FileText, HelpCircle, Users, Accessibility, Award, Server, Download } from 'lucide-react'; // Import Award, Server, and Download icon
 
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
@@ -193,7 +193,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ isLoggedIn, handleLogout }) => 
     <div className={`${theme} font-sans`} style={{ zoom: zoom }}>
       <div className="bg-soft-white dark:bg-dark-blue text-gray-800 dark:text-gray-200 min-h-screen">
         <div className="flex">
-          {!isReadingMode && <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} installPrompt={installPrompt} setInstallPrompt={setInstallPrompt} />}
+          {!isReadingMode && <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />}
           <div className={`flex-1 flex flex-col transition-all duration-300 ${isReadingMode ? 'md:ml-0' : 'md:ml-64'}`}>
              {!isReadingMode && <Header 
                 onMenuClick={() => setSidebarOpen(!isSidebarOpen)} 
@@ -273,7 +273,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
                         onClick={handleInstallClick} 
                         className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-blue-card min-h-[44px] min-w-[44px]" 
                         aria-label={t('installApp' as TranslationKeys)}
-                        title={t('installApp' as TranslationKeys)}
                     >
                         <Download className="h-6 w-6 text-emerald-dark dark:text-emerald-light" />
                     </button>
@@ -295,19 +294,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, isSetting
     );
 };
 
-const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boolean) => void; installPrompt: any; setInstallPrompt: (prompt: any) => void }> = ({ isSidebarOpen, setSidebarOpen, installPrompt, setInstallPrompt }) => {
+const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boolean) => void }> = ({ isSidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
     const { t } = useTranslation();
-
-    const handleInstallClick = async () => {
-        if (!installPrompt) return;
-        installPrompt.prompt();
-        const { outcome } = await installPrompt.userChoice;
-        if (outcome === 'accepted') {
-            setInstallPrompt(null);
-        }
-    };
-
     const navItems = [
         { path: '/', icon: HomeIcon, label: t('dashboard' as TranslationKeys) },
         { path: '/mushaf', icon: BookOpen, label: t('mushaf' as TranslationKeys) },
@@ -343,15 +332,6 @@ const Sidebar: React.FC<{ isSidebarOpen: boolean; setSidebarOpen: (isOpen: boole
                 </button>
             </div>
             <nav className="p-4 flex-grow overflow-y-auto">
-              {installPrompt && (
-                  <button 
-                      onClick={handleInstallClick} 
-                      className="w-full flex items-center space-x-3 px-3 py-3 mb-4 rounded-xl bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 transition transform active:scale-95 min-h-[44px]"
-                  >
-                      <Download className="h-5 w-5" />
-                      <span className="font-bold">{t('installApp' as TranslationKeys)}</span>
-                  </button>
-              )}
               <ul>
                   {navItems.map(item => (
                       <li key={item.path}>
