@@ -49,12 +49,12 @@ interface SpeechRecognition extends EventTarget {
   removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOrEventListenerObject): void;
 }
 
-declare var SpeechRecognition: {
+declare const SpeechRecognition: {
   prototype: SpeechRecognition;
   new(): SpeechRecognition;
 };
 
-declare var webkitSpeechRecognition: {
+declare const webkitSpeechRecognition: {
   prototype: SpeechRecognition;
   new(): SpeechRecognition;
 };
@@ -84,7 +84,7 @@ interface SpeechRecognitionEvent extends Event {
   readonly emma: Document | null; // Obsolete, kept for compatibility
 }
 
-declare var SpeechRecognitionEvent: {
+declare const SpeechRecognitionEvent: {
   prototype: SpeechRecognitionEvent;
   // FIX: Changed SpeechRecognitionEventInit to EventInit
   new(type: string, eventInitDict: EventInit): SpeechRecognitionEvent;
@@ -101,7 +101,7 @@ interface SpeechRecognitionErrorEvent extends Event {
   readonly message: string;
 }
 
-declare var SpeechRecognitionErrorEvent: {
+declare const SpeechRecognitionErrorEvent: {
   prototype: SpeechRecognitionErrorEvent;
   // FIX: Changed SpeechRecognitionErrorEventInit to EventInit
   new(type: string, eventInitDict: SpeechRecognitionErrorEventInit): SpeechRecognitionErrorEvent; // Use SpeechRecognitionErrorEventInit here
@@ -124,7 +124,7 @@ interface SpeechGrammarList {
   [index: number]: SpeechGrammar;
 }
 
-declare var SpeechGrammarList: {
+declare const SpeechGrammarList: {
   prototype: SpeechGrammarList;
   new(): SpeechGrammarList;
 };
