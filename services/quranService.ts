@@ -61,11 +61,6 @@ export const fetchTafsir = async (surahNumber: number, tafsirEdition: string = '
     return handleResponse(response);
 };
 
-export const fetchTafsirEditions = async (): Promise<any[]> => {
-    const response = await fetchWithRetry(`${BASE_URL}/edition/type/tafsir`);
-    return handleResponse(response);
-};
-
 export const fetchTranslationEditions = async (): Promise<any[]> => {
     const response = await fetchWithRetry(`${BASE_URL}/edition/type/translation`);
     return handleResponse(response);
@@ -78,11 +73,6 @@ export const fetchJuz = async (juzNumber: number, lang: string = 'id.indonesian'
     return handleResponse(response);
   });
   return Promise.all(promises);
-};
-
-export const fetchPage = async (pageNumber: number): Promise<any> => {
-  const response = await fetchWithRetry(`${BASE_URL}/page/${pageNumber}/quran-uthmani`);
-  return handleResponse(response);
 };
 
 export const searchQuran = async (keyword: string, surah: number | 'all', language: string) => {
