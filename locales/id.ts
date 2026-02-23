@@ -495,4 +495,12 @@ export const idStrings = {
   scrollToTop: "Scroll ke Atas",
   invalidAyahNumber: "Nomor ayat tidak valid.",
   page: "Halaman",
+  displayPageList: "Tampilkan Daftar Halaman",
+  previousPage: "Halaman Sebelumnya",
+  nextPage: "Halaman Berikutnya",
+  exitFullscreen: "Keluar Layar Penuh",
+  fullscreen: "Layar Penuh",
+  selectTafsirEdition: "Pilih Edisi Tafsir",
+  loadingEditions: "Memuat Edisi...",
+  failedToLoadTafsirData: "Gagal memuat data tafsir.",
 };
