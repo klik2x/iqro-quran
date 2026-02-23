@@ -103,6 +103,13 @@ const webSpeechSpeak = (text: string, lang: string = 'id-ID'): Promise<void> => 
   });
 };
 
+// Global flag for API health, can be updated by components or the service itself
+let isApiGloballyHealthy = true;
+
+export const setApiGlobalHealth = (isHealthy: boolean) => {
+    isApiGloballyHealthy = isHealthy;
+};
+
 // Updated generateSpeech to support voice selection and Web Speech API fallback
 export const generateSpeech = async (
   text: string, 
@@ -120,9 +127,9 @@ export const generateSpeech = async (
   // Determine the primary language for Web Speech API
   const primaryWebSpeechLang = isArabic ? arabicLangCode : localLangCode;
 
-  // --- FORCE WEB SPEECH API for Iqro content ---
-  if (isIqroContent) {
-    console.log("Using Web Speech API for Iqro content:", text, primaryWebSpeechLang);
+  // --- FORCE WEB SPEECH API for Iqro content or if API is globally unhealthy ---
+  if (isIqroContent || !isApiGloballyHealthy) {
+    if (!isApiGloballyHealthy) console.warn("Gemini API is globally unhealthy, using Web Speech API fallback.");
     const playFn = (): AudioPlaybackControls => {
         let isStopped = false;
         const stopAllPlayback = () => {
@@ -247,6 +254,9 @@ export const generateSpeech = async (
 
   } catch (error) {
     console.warn("Gemini TTS failed, falling back to Web Speech API:", error);
+    // Auto-Switch: If error is detected, set global health to false
+    setApiGlobalHealth(false);
+    
     // --- Fallback to Web Speech API ---
     const playFn = (): AudioPlaybackControls => {
       let isStopped = false;
