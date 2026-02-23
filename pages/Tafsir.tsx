@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { fetchAllSurahs, fetchTafsir } from '../services/quranService';
+import { fetchAllSurahs, fetchTafsir, fetchTafsirEditions } from '../services/quranService';
 import { Surah } from '../types';
 import { LoadingSpinner, ErrorMessage } from '../components/ui/Feedback';
 import { useTranslation, TranslationKeys } from '../contexts/LanguageContext';
@@ -10,6 +10,8 @@ import { BookOpen, Info, Search } from 'lucide-react';
 const Tafsir: React.FC = () => {
     const [surahs, setSurahs] = useState<Surah[]>([]);
     const [selectedSurah, setSelectedSurah] = useState<number>(1);
+    const [selectedEdition, setSelectedEdition] = useState<string>('id.jalalayn');
+    const [editions, setEditions] = useState<any[]>([]);
     const [tafsirData, setTafsirData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [surahListLoading, setSurahListLoading] = useState(true);
@@ -17,34 +19,38 @@ const Tafsir: React.FC = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const loadSurahs = async () => {
+        const loadInitialData = async () => {
             try {
                 setSurahListLoading(true);
                 setError(null);
-                const data = await fetchAllSurahs();
-                setSurahs(data);
-                // Set default selected surah if available and none selected yet
-                if (data.length > 0 && selectedSurah === 1) { // Only change if still default 1
-                    setSelectedSurah(data[0].number);
+                const [surahData, editionData] = await Promise.all([
+                    fetchAllSurahs(),
+                    fetchTafsirEditions()
+                ]);
+                setSurahs(surahData);
+                setEditions(editionData);
+                
+                if (surahData.length > 0 && selectedSurah === 1) {
+                    setSelectedSurah(surahData[0].number);
                 }
             } catch (err: any) {
-                console.error("Failed to load surah list for tafsir:", err);
-                setError(err.message || t('failedToLoadSurahList' as TranslationKeys));
+                console.error("Failed to load initial data for tafsir:", err);
+                setError(err.message || t('failedToLoadTafsirData' as TranslationKeys));
             } finally {
                 setSurahListLoading(false);
             }
         };
-        loadSurahs();
-    }, [t, selectedSurah]); // Added selectedSurah to deps to avoid stale closure
+        loadInitialData();
+    }, [t, selectedSurah]);
 
     useEffect(() => {
-        if (!selectedSurah) return; // Don't load if no surah is selected
+        if (!selectedSurah) return;
 
         const loadTafsir = async () => {
             setLoading(true);
             setError(null);
             try {
-                const data = await fetchTafsir(selectedSurah);
+                const data = await fetchTafsir(selectedSurah, selectedEdition);
                 setTafsirData(data);
             } catch (err: any) {
                 console.error("Failed to fetch tafsir:", err);
@@ -54,7 +60,7 @@ const Tafsir: React.FC = () => {
             }
         };
         loadTafsir();
-    }, [selectedSurah, t]);
+    }, [selectedSurah, selectedEdition, t]);
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-24 px-4 animate-in fade-in duration-500">
@@ -63,7 +69,7 @@ const Tafsir: React.FC = () => {
                 <p className="text-slate-500 mt-2 font-medium italic">{t('tafsirIntroText' as TranslationKeys)}</p>
             </div>
             
-            <div className="sticky top-20 bg-soft-white/90 dark:bg-dark-blue/90 backdrop-blur-md z-30 py-6 px-4 border-b-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm">
+            <div className="sticky top-20 bg-soft-white/90 dark:bg-dark-blue/90 backdrop-blur-md z-30 py-6 px-4 border-b-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm space-y-4">
                 <div className="flex flex-col md:flex-row items-center gap-4">
                   <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 min-w-[44px] min-h-[44px]">
                     <Search size={24} />
@@ -79,6 +85,25 @@ const Tafsir: React.FC = () => {
                         aria-label={t('selectSurahTafsir' as TranslationKeys)}
                     >
                         {surahListLoading ? <option>{t('loadingSurahs' as TranslationKeys)}...</option> : surahs.map(surah => <option key={surah.number} value={surah.number}>{surah.number}. {surah.englishName} ({surah.name})</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 shrink-0 min-w-[44px] min-h-[44px]">
+                    <BookOpen size={24} />
+                  </div>
+                  <div className="flex-1 w-full">
+                    <label htmlFor="edition-select-tafsir" className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-1">{t('selectTafsirEdition' as TranslationKeys)}</label>
+                    <select 
+                        id="edition-select-tafsir" 
+                        value={selectedEdition} 
+                        onChange={e => setSelectedEdition(e.target.value)}
+                        disabled={surahListLoading}
+                        className="w-full p-4 bg-white dark:bg-dark-blue border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 outline-none font-bold transition-all disabled:opacity-50 min-h-[44px]"
+                        aria-label={t('selectTafsirEdition' as TranslationKeys)}
+                    >
+                        {surahListLoading ? <option>{t('loadingEditions' as TranslationKeys)}...</option> : editions.map(edition => <option key={edition.identifier} value={edition.identifier}>{edition.name} ({edition.language})</option>)}
                     </select>
                   </div>
                 </div>
