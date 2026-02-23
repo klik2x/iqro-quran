@@ -1,6 +1,5 @@
 
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback, useRef } from 'react';
-import { setApiGlobalHealth } from '../services/geminiService';
 
 interface ApiHealthContextType {
   isVocalStudioApiHealthy: boolean;
@@ -29,22 +28,18 @@ export const ApiHealthProvider: React.FC<{ children: ReactNode }> = ({ children 
       if (response.ok) {
         console.log("Vocal Studio API is healthy.");
         setIsVocalStudioApiHealthy(true);
-        setApiGlobalHealth(true);
       } else {
         console.warn(`Vocal Studio API health check failed with status: ${response.status}`);
         setIsVocalStudioApiHealthy(false);
-        setApiGlobalHealth(false);
       }
     } catch (error) {
       console.error("Error during Vocal Studio API health check:", error);
       setIsVocalStudioApiHealthy(false);
-      setApiGlobalHealth(false);
     }
   }, []);
 
   const setVocalStudioApiHealthyWrapper = useCallback((isHealthy: boolean) => {
     setIsVocalStudioApiHealthy(isHealthy);
-    setApiGlobalHealth(isHealthy); // Sync with geminiService
     if (!isHealthy) {
       // If API becomes unhealthy, schedule a retry check
       console.warn("Vocal Studio API reported unhealthy. Scheduling retry...");
