@@ -297,14 +297,24 @@ export const translateTexts = async (
   targetLanguage: string
 ): Promise<Record<string, string>> => {
   try {
-    const prompt = `Translate the JSON object values from Indonesian to ${targetLanguage}. Maintain the JSON structure and keys exactly. Only translate the string values. Here is the JSON object: ${JSON.stringify(texts)}`;
+    const systemInstruction = `You are a professional translator for a Quran application. 
+    Translate the values of the provided JSON object from Indonesian to ${targetLanguage}.
     
-    // FIX: Initialize GoogleGenAI instance inside the function to ensure API key is fresh
+    STRICT RULES:
+    1. DO NOT translate Arabic text (e.g., verses, surah names in Arabic).
+    2. DO NOT translate Latin transliteration of Quranic verses (e.g., "Alhamdulillahi rabbil 'alamin").
+    3. DO NOT translate Hijaiyah letters.
+    4. Maintain the JSON structure and keys exactly.
+    5. Return ONLY the translated JSON object.`;
+
+    const prompt = `Translate this JSON object to ${targetLanguage}: ${JSON.stringify(texts)}`;
+    
     const aiInstance = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
     const response = await aiInstance.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [{text: prompt}],
       config: {
+        systemInstruction,
         responseMimeType: "application/json",
       },
     });

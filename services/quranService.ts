@@ -28,7 +28,9 @@ const handleResponse = async (response: Response) => {
     try {
       const text = await response.text();
       errorMessage += ` - ${text}`;
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Failed to read error response text", e);
+    }
     throw new Error(errorMessage);
   }
   const data = await response.json();
