@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Share2, Copy, Check, Eye, EyeOff, Languages, Play, Volume2, ChevronDown } from 'lucide-react';
+import { Search, Share2, Copy, Check, Languages, Play, ChevronDown } from 'lucide-react';
 import { DOA_LIST } from '../constants';
 import { fetchTranslationEditions } from '../services/quranService';
 import { formatHonorifics } from '../utils/honorifics';
@@ -29,7 +29,7 @@ const DoaModule: React.FC = () => { // Removed t prop, will use useTranslation h
   );
 
   const handleCopy = (doa: any) => {
-    const text = `${doa.arabic}\n\n${doa.translation}\n(${doa.source})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`;
+    const text = `${doa.arabic}\n\n${doa.translation}\n(${doa.source})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`;
     navigator.clipboard.writeText(text);
     setCopiedId(doa.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -38,7 +38,7 @@ const DoaModule: React.FC = () => { // Removed t prop, will use useTranslation h
   const handleNativeShare = async (doa: any) => {
     const shareData = {
       title: t('doaTitle' as TranslationKeys) + ' - ' + doa.title,
-      text: `${doa.arabic}\n\n${doa.translation}\n(${doa.source})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`,
+      text: `${doa.arabic}\n\n${doa.translation}\n(${doa.source})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`,
       url: window.location.href
     };
     if (navigator.share) {

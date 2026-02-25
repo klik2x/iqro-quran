@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { X, Download, Copy, Check, Share2, ZoomIn, ZoomOut, Loader2 } from 'lucide-react';
+import { X, Download, Share2, ZoomIn, ZoomOut, Loader2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 interface ShareModalProps {
@@ -43,7 +43,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
   };
 
   const handleNativeShare = async () => {
-    const text = `${verse.arabic}\n\n"${verse.translation}"\n(QS. ${verse.surah}: ${verse.ayah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`;
+    const text = `${verse.arabic}\n\n"${verse.translation}"\n(QS. ${verse.surah}: ${verse.ayah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -59,9 +59,9 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
   };
 
   const themes = {
-    emerald: 'bg-[#036666] text-white',
-    dark: 'bg-slate-950 text-white border-2 border-slate-800',
-    amber: 'bg-[#FDFBF7] text-slate-900 border-2 border-amber-200'
+    emerald: 'bg-gradient-to-br from-[#036666] to-[#024d4d] text-white',
+    dark: 'bg-gradient-to-br from-slate-950 to-slate-900 text-white border-2 border-slate-800',
+    amber: 'bg-gradient-to-br from-[#FDFBF7] to-[#F5F0E6] text-slate-900 border-2 border-amber-200'
   };
 
   if (!isOpen) return null;
@@ -81,36 +81,42 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, verse }) => {
           <div className="fixed left-[-9999px] top-0">
             <div 
               ref={shareRef} 
-              className={`w-[600px] min-h-[800px] p-12 flex flex-col items-center justify-center text-center relative ${themes[theme]}`}
-              style={{ borderRadius: '0px' }} // No border radius for the raw image capture to avoid artifacts
+              className={`w-[600px] min-h-[900px] p-16 flex flex-col items-center relative ${themes[theme]}`}
+              style={{ borderRadius: '0px' }} 
             >
-              <div className="flex-1 flex flex-col items-center justify-center w-full gap-10">
+              <div className="flex-1 flex flex-col items-center justify-center w-full gap-12 py-10">
                 <p 
-                  className="font-arabic leading-[1.8] w-full px-4" 
+                  className="font-arabic leading-[1.6] w-full px-4 text-center" 
                   style={{ 
-                    fontSize: `${imgFontSize * 1.5}px`, 
+                    fontSize: `${imgFontSize * 1.6}px`, 
                     color: theme === 'amber' ? '#036666' : 'white',
-                    wordWrap: 'break-word'
+                    wordWrap: 'break-word',
+                    overflowWrap: 'break-word'
                   }} 
                   dir="rtl"
                 >
                   {verse.arabic}
                 </p>
                 
-                <div className="w-16 h-1 bg-current opacity-20 rounded-full"></div>
+                <div className="w-24 h-1 bg-current opacity-20 rounded-full"></div>
                 
                 <p 
-                  className="text-2xl font-bold italic opacity-90 w-full px-8 leading-relaxed"
-                  style={{ color: theme === 'amber' ? '#1e293b' : 'white' }}
+                  className="text-3xl font-bold italic opacity-95 w-full px-10 leading-relaxed text-center"
+                  style={{ 
+                    color: theme === 'amber' ? '#1e293b' : 'white',
+                    wordWrap: 'break-word',
+                    overflowWrap: 'break-word'
+                  }}
                 >
                   "{verse.translation}"
                 </p>
               </div>
 
-              <div className="mt-12 flex flex-col items-center gap-3">
-                <p className="text-lg font-black uppercase tracking-[0.2em] opacity-80">QS. {verse.surah}: {verse.ayah}</p>
-                <div className="h-[2px] bg-current opacity-20 w-32"></div>
-                <p className="text-sm font-bold opacity-60">Share via Iqro Quran Digital | by Te_eR™ Inovative</p>
+              <div className="mt-16 flex flex-col items-center gap-4 pb-10 w-full">
+                <p className="text-xl font-black uppercase tracking-[0.3em] opacity-90">QS. {verse.surah}: {verse.ayah}</p>
+                <div className="h-[3px] bg-current opacity-20 w-40"></div>
+                <p className="text-sm font-bold opacity-70">Share via Iqro Quran Digital | by Te_eR™ Inovative</p>
+                <p className="text-[10px] font-medium opacity-50 tracking-tight">{window.location.href}</p>
               </div>
             </div>
           </div>
