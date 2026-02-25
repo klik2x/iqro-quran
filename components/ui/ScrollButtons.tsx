@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
 const ScrollButtons: React.FC = () => {
@@ -6,23 +6,28 @@ const ScrollButtons: React.FC = () => {
     const [isScrolling, setIsScrolling] = useState(false);
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const showButtons = () => {
+    const showButtons = useCallback(() => {
         setIsScrolling(true);
         if (timerRef.current) clearTimeout(timerRef.current);
         
         timerRef.current = setTimeout(() => {
             setIsScrolling(false);
         }, 6000); // Hide after 6 seconds
-    };
+    }, []);
 
-    const handleScroll = () => {
-        if (window.pageYOffset > 300) {
+    const handleScroll = useCallback(() => {
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Show only after scrolling more than half of the page
+        if (scrollTop > (scrollHeight - clientHeight) / 2) {
             setIsVisible(true);
             showButtons();
         } else {
             setIsVisible(false);
         }
-    };
+    }, [showButtons]);
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -40,7 +45,7 @@ const ScrollButtons: React.FC = () => {
             window.removeEventListener('scroll', handleScroll);
             if (timerRef.current) clearTimeout(timerRef.current);
         };
-    }, []);
+    }, [handleScroll]);
 
     return (
         <div className={`fixed bottom-24 right-4 z-30 flex flex-col gap-2 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
