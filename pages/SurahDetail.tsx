@@ -4,7 +4,7 @@ import {
   Play, Share2, Loader2, 
   ZoomIn, ZoomOut, Copy, Check, Languages, Volume2, 
   ChevronLeft, ChevronRight, Bookmark, Download, Eye, EyeOff,
-  MessageCircle, Search, ChevronUp
+  MessageCircle, Search
 } from 'lucide-react';
 import { fetchSurahWithTranslation, fetchTranslationEditions } from '../services/quranService';
 // FIX: Corrected import statement for generateSpeech
@@ -34,21 +34,11 @@ const SurahDetail: React.FC = () => {
   const [playingTTS, setPlayingTTS] = useState<number | null>(null);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [ayahSearch, setAyahSearch] = useState('');
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const { t } = useTranslation();
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const ayahRefs = useRef<Record<number, HTMLDivElement | null>>({});
-
-  const handleScroll = () => {
-    setShowScrollTop(window.scrollY > window.innerHeight * 0.5);
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollToAyah = (ayahNum: number) => {
     const element = ayahRefs.current[ayahNum];
@@ -93,7 +83,8 @@ const SurahDetail: React.FC = () => {
 
   useEffect(() => {
     load();
-  }, [number, translationLang, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [number, translationLang]);
 
   const handlePlayAyah = (ayahNum: number) => {
     if (playingAyah === ayahNum) {
@@ -125,16 +116,17 @@ const SurahDetail: React.FC = () => {
   };
 
   const copyAyah = (ayah: any, trans: string) => {
-    const text = `${ayah.text}\n\n"${trans}"\n(QS. ${data[0].englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`;
+    const text = `${ayah.text}\n\n"${trans}"\n(QS. ${data[0].englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`;
     navigator.clipboard.writeText(text);
     setCopiedId(ayah.number);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
   const handleNativeShare = async (ayah: any, trans: string) => {
+    const text = `${ayah.text}\n\n"${trans}"\n(QS. ${data[0].englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`;
     const shareData = {
       title: t('iqroQuranDigital' as TranslationKeys),
-      text: `${ayah.text}\n\n"${trans}"\n(QS. ${data[0].englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`,
+      text: text,
       url: window.location.href
     };
     if (navigator.share) {
@@ -183,7 +175,7 @@ const SurahDetail: React.FC = () => {
 };
 
   const handleWhatsAppShare = (ayah: any, translation: string) => {
-    const text = `*${ayah.text}*\n\n${translation}\n\n(QS. ${arabicEd.englishName}: ${ayah.numberInSurah})`;
+    const text = `*${ayah.text}*\n\n${translation}\n\n(QS. ${data[0].englishName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
@@ -203,7 +195,7 @@ const SurahDetail: React.FC = () => {
   const surahNum = parseInt(number || '1');
 
   return (
-    <div className="max-w-4xl mx-auto pb-48 px-4 sm:px-6">
+    <div className="max-w-4xl mx-auto pb-48 px-4 sm:px-6 overflow-x-hidden">
       <div className="bg-white dark:bg-dark-blue-card rounded-3xl p-6 mb-8 shadow-md border border-slate-100 dark:border-slate-800 text-center relative overflow-hidden">
         <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
           {surahNum > 1 && (
@@ -353,13 +345,13 @@ const SurahDetail: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between mt-2">
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {ayah.numberInSurah > 1 && (
                       <button 
                         onClick={() => scrollToAyah(ayah.numberInSurah - 1)}
                         className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all min-h-[44px]"
                       >
-                        <ChevronLeft size={14} /> {t('previousAyah' as TranslationKeys)}
+                        <ChevronLeft size={14} /> &lt; prev ayat
                       </button>
                     )}
                     {ayah.numberInSurah < arabicEd.numberOfAyahs && (
@@ -367,7 +359,7 @@ const SurahDetail: React.FC = () => {
                         onClick={() => scrollToAyah(ayah.numberInSurah + 1)}
                         className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all min-h-[44px]"
                       >
-                        {t('nextAyah' as TranslationKeys)} <ChevronRight size={14} />
+                        ayat next &gt; <ChevronRight size={14} />
                       </button>
                     )}
                   </div>
@@ -432,16 +424,6 @@ const SurahDetail: React.FC = () => {
           onClose={() => setShareVerse(null)} 
           verse={shareVerse} 
         />
-      )}
-
-      {showScrollTop && (
-        <button 
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-24 right-6 p-4 bg-emerald-600 text-white rounded-full shadow-2xl hover:scale-110 transition-all z-40 animate-bounce"
-          aria-label={t('scrollToTop' as TranslationKeys)}
-        >
-          <ChevronUp size={24} />
-        </button>
       )}
     </div>
   );

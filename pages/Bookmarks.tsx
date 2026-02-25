@@ -63,7 +63,7 @@ const Bookmarks: React.FC = () => {
     const handleNativeShare = async (ayah: BookmarkedAyah) => {
       const shareData = {
         title: t('iqroQuranDigital' as TranslationKeys) + ' - ' + t('bookmark' as TranslationKeys),
-        text: `${ayah.text}\n\n"${ayah.translation}"\n(QS. ${ayah.surahName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`,
+        text: `${ayah.text}\n\n"${ayah.translation}"\n(QS. ${ayah.surahName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`,
         url: window.location.href
       };
       if (navigator.share) {
@@ -76,7 +76,7 @@ const Bookmarks: React.FC = () => {
     };
 
     const handleCopy = (ayah: BookmarkedAyah) => {
-        const text = `${ayah.text}\n\n"${ayah.translation}"\n(QS. ${ayah.surahName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative`;
+        const text = `${ayah.text}\n\n"${ayah.translation}"\n(QS. ${ayah.surahName}: ${ayah.numberInSurah})\n\nShare via Iqro Quran Digital | by Te_eR™ Inovative | ${window.location.href}`;
         navigator.clipboard.writeText(text);
         setCopiedId(ayah.number);
         setTimeout(() => setCopiedId(null), 2000);
